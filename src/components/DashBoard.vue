@@ -1,11 +1,15 @@
 <template>
-    <div class="container">
-        <h1>Welcome to Smart Travellers Dashboard</h1>
+    <div class="dashboard">
+        <DashBoard></DashBoard>
     </div>
 </template>
 
 <script>
+import DashBoard from '@/components/DashBoard';
 export default {
-    name: 'dashboard'
-}
+    name: "dashboard",
+    components: {
+        DashBoard
+    }
+};
 </script>

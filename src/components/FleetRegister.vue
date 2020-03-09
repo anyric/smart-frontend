@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard">
+    <div class="register">
         <FleetRegister></FleetRegister>
     </div>
 </template>

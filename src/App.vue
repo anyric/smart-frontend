@@ -7,7 +7,6 @@
         <v-list>
           <v-list-item v-for='(menu, i) in menus' :key="i" :to="menu.route">
             <v-list-group v-if='menu.children && menu.children.length'  :key="menu.text">
-
               <template v-slot:activator>
                 <v-list-item-action>
                   <v-icon small color="white darken-2">{{menu.icon}}</v-icon>
@@ -46,7 +45,7 @@
     </v-navigation-drawer>
     <!-- End of Right vertical Menu -->
     <!-- Start of Top Horizontal bar -->
-    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="teal darken-4" dark>
+    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="teal darken-1" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
         <span class="hidden-sm-and-down">Smart Traveller</span>
@@ -80,21 +79,21 @@
         { route: '/agents', icon: 'fas fa-handshake', text: 'Manage Agents' },
         { 
           icon: 'fas fa-bus-alt',
-          'icon-alt': 'mdi-chevron-down',
+          'icon-alt': 'fas fa-chevron-down',
           text: 'Manage Fleet',
           children: [
-            { route: '/fleets/types', text: 'Fleet types' },
-            { route: '/fleets/register', text: 'Fleet Register' },
+            { route: '/fleets/types', text: 'Types' },
+            { route: '/fleets/register', text: 'Register' },
           ]},
         { 
           icon: 'fas fa-road',
-          'icon-alt': 'mdi-chevron-down',
-          text: 'Manage Trip',
+          'icon-alt': 'fas fa-chevron-down',
+          text: 'Manage Trips',
           children: [
             { route: '/trips/locations', text: 'Locations' },
             { route: '/trips/routes', text: 'Routes' },
-            { route: '/trips/assign', text: 'Assign Trips'},
-            { route: '/trips/fares', text: 'Trip Fares' },
+            { route: '/trips/assign', text: 'Assign Fleets'},
+            { route: '/trips/fares', text: 'Ticket Fares' },
           ]},
         { route: '/settings', icon: 'mdi-settings', text: 'Settings' },
       ],
@@ -106,9 +105,6 @@
   color: white;
 }
 .v-list-item__title{
-  color: white;
-}
-.v-list-item__v-icon{
   color: white;
 }
 </style>

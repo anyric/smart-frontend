@@ -59,7 +59,7 @@ const routes = [
     },
     {
         path: '/trips/fares',
-        name: 'prices',
+        name: 'trip-fares',
         component: TripFares
     },
     {
