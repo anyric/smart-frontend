@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
   export default {
     data: () => ({
         entity: [
@@ -46,6 +47,16 @@
             },
         ],
     }),
+    computed: {
+		...mapGetters({
+                isLoggedIn: "IS_LOGGED_IN"
+			}),
+    },
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
+    },
     methods: {
         viewDetails(url){
             this.$router.push({name: url});

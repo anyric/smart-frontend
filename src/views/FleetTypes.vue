@@ -95,7 +95,7 @@ export default {
 		editedItem: {
 			name: '',
 			status: false
-		},
+        },
 		isOpen: false,
 		dialogId: 0,
 		dialogItem: null,
@@ -116,7 +116,8 @@ export default {
 
     computed: {
 		...mapGetters({
-				fleetTypes: 'FLEET_TYPES',
+                fleetTypes: 'FLEET_TYPES',
+                isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add FleetType' : 'Edit FleetType'
@@ -129,6 +130,12 @@ export default {
 		},
     },
 
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
+    },
+    
     methods: {
 		editItem (item) {
 			this.editedIndex = this.fleetTypes.indexOf(item)

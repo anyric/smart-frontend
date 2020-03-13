@@ -131,7 +131,8 @@ export default {
 
     computed: {
 		...mapGetters({
-				assignTrips: 'ASSIGN_TRIPS',
+                assignTrips: 'ASSIGN_TRIPS',
+                isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Assignment' : 'Edit Assignment'
@@ -142,6 +143,12 @@ export default {
 		dialog (val) {
 			val || this.close()
 		},
+    },
+
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
     },
 
     methods: {

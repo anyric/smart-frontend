@@ -138,7 +138,8 @@ export default {
 
     computed: {
 		...mapGetters({
-				routes: 'ROUTES',
+        routes: 'ROUTES',
+        isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Route' : 'Edit Route'
@@ -150,6 +151,12 @@ export default {
 			val || this.close()
 		},
     },
+
+	mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
+	},
 
     methods: {
 		editItem (item) {

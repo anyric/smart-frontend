@@ -112,6 +112,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+
 export default {
     data: () => ({
 		editedItem: {
@@ -125,6 +126,7 @@ export default {
 			seatNos: 0,
 			status: true,
 		},
+		
 		isOpen: false,
 		dialogId: 0,
 		dialogItems: null,
@@ -153,6 +155,7 @@ export default {
     computed: {
 		...mapGetters({
 				fleets: 'FLEETS',
+				isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Fleet' : 'Edit Fleet'
@@ -164,6 +167,12 @@ export default {
 			val || this.close()
 		},
     },
+
+	mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
+	},
 
     methods: {
 		editItem (item) {

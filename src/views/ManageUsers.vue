@@ -28,7 +28,7 @@
                       </template>
                       <span>User</span>
                     </v-tooltip>
-                    <v-dialog v-model="dialog" max-width="800px" max-height="300px">
+                    <v-dialog v-model="dialog" persistent max-width="800px" max-height="300px">
                         <v-card>
                             <v-card-title>
                                 <span class="headline">{{ formTitle }}</span>
@@ -38,23 +38,34 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.firstName" label="FirstName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.first_name" label="FirstName"></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.lastName" label="LastName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.last_name" label="LastName"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.mobile" label="Mobile"></v-text-field>
+                                            <v-text-field
+                                                required
+                                                :disabled="!(editedIndex <= -1)"
+                                                v-model="editedItem.mobile"
+                                                label="Mobile"
+                                            ></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
                                             <v-text-field required v-model="editedItem.username" label="Username"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col cols="12" class="sm12">
+                                        <v-col cols="12" v-if="(editedIndex > -1)" class="sm12">
                                             <v-text-field required v-model="editedItem.email" label="Email"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="6" class="sm12" v-if="(editedIndex <= -1)">
+                                            <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="6" class="sm12" v-if="(editedIndex <= -1)">
+                                            <v-text-field v-model="editedItem.password" label="Password"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -87,6 +98,7 @@
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template>
         </v-data-table>
+
         </v-col>
         </v-row>
 		<main-confirm-dialog
@@ -107,10 +119,10 @@ export default {
 			mobile: '',
 			username: '',
 			email: '',
-			firstName: '',
-			LastName: '',
+			first_name: '',
+			last_name: '',
 			Active: false
-		},
+        },
 		isOpen: false,
 		dialogId: 0,
 		dialogItem: null,
@@ -126,24 +138,21 @@ export default {
 			},
 			{ text: 'Username', value: 'username' },
 			{ text: 'Email', value: 'email' },
-			{ text: 'FirstName', value: 'firstName' },
-			{ text: 'LastName', value: 'lastName' },
-			{ text: 'Active', value: 'active' },
+			{ text: 'FirstName', value: 'first_name' },
+			{ text: 'LastName', value: 'last_name' },
+			{ text: 'Active', value: 'is_active' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
-				users: 'USERS',
+                users: 'USERS',
+                isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add User' : 'Edit User'
 		},
-    },
-
-    mounted(){
-        this.$store.dispatch('GET_USERS')
     },
 
     watch: {
@@ -151,7 +160,12 @@ export default {
 			val || this.close()
 		},
     },
-
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
+        this.$store.dispatch('GET_USERS')
+    },
     methods: {
 		editItem (item) {
 			this.editedIndex = this.users.indexOf(item)
@@ -180,9 +194,25 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.users[this.editedIndex], this.editedItem)
+                let data = {
+                    username: this.editedItem.username,
+                    email: this.editedItem.email,
+                    first_name: this.editedItem.first_name,
+                    last_name: this.editedItem.last_name
+                };
+                console.log(data)
+                Object.assign(this.users[this.editedIndex], this.editedItem)
 			} else {
-			this.users.push(this.editedItem)
+                console.log(this.editedItem, "here in else")
+                let data = {
+                    mobile: this.editedItem.mobile,
+                    username: this.editedItem.username,
+                    email: this.editedItem.email,
+                    first_name: this.editedItem.first_name,
+                    last_name: this.editedItem.last_name
+                };
+                console.log(data)
+                // this.users.push(this.editedItem)
 			}
 			this.close()
 		},

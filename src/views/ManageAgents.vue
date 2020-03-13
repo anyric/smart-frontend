@@ -124,7 +124,7 @@ export default {
 			presentAdress: '',
 			permanentAdress: '',
 			Active: false
-		},
+        },
 		isOpen: false,
 		dialogId: 0,
 		dialogItem: null,
@@ -152,7 +152,8 @@ export default {
 
     computed: {
 		...mapGetters({
-				agents: 'AGENTS',
+                agents: 'AGENTS',
+                isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Agent' : 'Edit Agent'
@@ -163,6 +164,12 @@ export default {
 		dialog (val) {
 			val || this.close()
 		},
+    },
+
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
     },
 
     methods: {

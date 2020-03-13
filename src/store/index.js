@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import Router from '../router'
 import Api from '@/service/api'
 
 Vue.use(Vuex);
@@ -8,6 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         users: null,
+        currentUser: null,
         defaultUsers: [
             {
                 id: 1,
@@ -207,6 +209,12 @@ export default new Vuex.Store({
         ],
     },
     getters: {
+        GET_LOGGED_IN_USER: (state) => {
+            return state.currentUser;
+        },
+        IS_LOGGED_IN: (state) => {
+            return state.currentUser && state.currentUser.token;
+        },
         USERS: (state) => {
             return state.users || state.defaultUsers;
         },
@@ -233,6 +241,16 @@ export default new Vuex.Store({
         },
     },
     mutations: {
+        SET_LOGGED_IN_USER: (state, user) => {
+            state.currentUser = user;
+        },
+        SET_LOGGED_OUT_USER: (state) => {
+            state.currentUser = {};
+            window.localStorage.currentUser = JSON.stringify({});
+        },
+        SET_IS_LOGIN: (state, payload) => {
+            state.isLogin = payload;
+        },
         SET_USERS: (state, payload) => {
             state.users = payload;
         },
@@ -259,30 +277,62 @@ export default new Vuex.Store({
         },
     },
     actions: {
-        GET_USERS: async ({commit}) => {
-
-            await Api().get('/users')
+        SET_CURRENT_USER: ({commit}, payload) => {
+            commit('SET_LOGGED_IN_USER', payload);
+        },
+        LOGIN: async ({commit}, user) => {
+            await Api().post('/auth/login/', user)
             .then((response) => {
-                console.log('Getting users');
-                console.log(response.data);
-                commit('SET_USERS', response.data);
+                let user = response.data;
+                console.log(user)
+                commit('SET_LOGGED_IN_USER', user);
+                localStorage.setItem('currentUser',JSON.stringify(user));
+                Router.push({name: 'dashboard'});
+                location.reload(true);
             })
             .catch(error=>{
-                console.log(error.message + " I'm here error")
+                console.log(error.message + " login error")
             })
         },
-        SAVE_USER: async ({dispatch}, payload) => {
-            try {
-                let response;
-                if(payload.id){
-                    response = await Api().put('/users',payload);
-                }else{
-                    response = await Api().post('/users',payload);
-                }
-                dispatch("GET_USERS");
-                return Promise.resolve(response.data);
-            } catch (error) {
-                return Promise.reject(error.response.data);
+        LOGOUT: async ({commit}) => {
+            await Api().post('/auth/logout/')
+            .then(() => {
+                commit('SET_LOGGED_OUT_USER');
+                localStorage.removeItem('currentUser');
+                location.reload(true);
+            })
+            .catch(error=>{
+                console.log(error.message + " logout error")
+            })
+        },
+        GET_USERS: async ({commit}) => {
+            await Api().get('/users')
+            .then((response) => {
+                commit('SET_USERS', response.data.results);
+            })
+            .catch(error=>{
+                console.log(error.message + " get error");
+            })
+        },
+        SAVE_USER: async ({dispatch}, user) => {
+            if(user.pk){
+                await Api().put('/users', user)
+                .then((response) => {
+                    dispatch("GET_USERS", response.data);
+                    Router.push({name: 'users'});
+                })
+                .catch(error=>{
+                    console.log(error.message + " edit error")
+                })
+            }else{
+                await Api().post('/users', user)
+                .then((response) => {
+                    dispatch("GET_USERS", response.data);
+                    Router.push({name: 'users'});
+                })
+                .catch(error=>{
+                    console.log(error.message + " post error")
+                })
             }
         },
     },

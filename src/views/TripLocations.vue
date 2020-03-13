@@ -123,7 +123,8 @@ export default {
 
     computed: {
 		...mapGetters({
-				locations: 'LOCATIONS',
+                locations: 'LOCATIONS',
+                isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Location' : 'Edit Location'
@@ -134,6 +135,12 @@ export default {
 		dialog (val) {
 			val || this.close()
 		},
+    },
+
+    mounted() {
+        if(!this.isLoggedIn){
+            this.$router.push({name: 'login'});
+        }
     },
 
     methods: {
