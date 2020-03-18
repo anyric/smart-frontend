@@ -72,9 +72,6 @@
                     <span>Delete Fleet Type</span>
                 </v-tooltip>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
         </v-data-table>
             </v-col>
         </v-row>
@@ -134,6 +131,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_FLEET_TYPES');
     },
     
     methods: {

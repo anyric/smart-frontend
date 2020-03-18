@@ -81,9 +81,6 @@
                 <span>Delete Assignment</span>
               </v-tooltip>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
         </v-data-table>
             </v-col>
         </v-row>
@@ -119,11 +116,11 @@ export default {
 			{
 			text: 'Registration No',
 			align: 'start',
-			value: 'registrationNo',
+			value: 'fleet_registration_no',
 			},
-			{ text: 'Route Name', value: 'route' },
-			{ text: 'Start Date', value: 'startDate' },
-			{ text: 'End Date', value: 'endDate' },
+			{ text: 'Route Name', value: 'route_name' },
+			{ text: 'Start Date', value: 'trip_start_date' },
+			{ text: 'End Date', value: 'trip_end_date' },
 			{ text: 'Status', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
@@ -131,7 +128,7 @@ export default {
 
     computed: {
 		...mapGetters({
-                assignTrips: 'ASSIGN_TRIPS',
+                assignTrips: 'ASSIGNED_TRIPS',
                 isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
@@ -149,6 +146,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_ASSIGNED_TRIPS');
     },
 
     methods: {

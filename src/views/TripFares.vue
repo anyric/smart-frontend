@@ -112,9 +112,9 @@ import { mapGetters } from "vuex";
 export default {
   data: () => ({
     editedItem: {
-      fleetType: "",
-      route: "",
-      fare: ""
+      fleet_type: "",
+      trip_route: "",
+      price_per_person: ""
     },
     isOpen: false,
     dialogId: 0,
@@ -127,10 +127,10 @@ export default {
       {
         text: "Fleet Type",
         align: "start",
-        value: "fleetType"
+        value: "fleet_type"
       },
-      { text: "Route Name", value: "route" },
-      { text: "Fare", value: "fare" },
+      { text: "Route Name", value: "trip_route" },
+      { text: "Fare", value: "price_per_person" },
       { text: "Actions", value: "action", sortable: false }
     ]
   }),
@@ -155,6 +155,7 @@ export default {
     if (!this.isLoggedIn) {
       this.$router.push({ name: "login" });
     }
+    this.$store.dispatch('GET_FARES');
   },
 
   methods: {

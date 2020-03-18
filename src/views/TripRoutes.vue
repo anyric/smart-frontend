@@ -108,9 +108,9 @@ export default {
     data: () => ({
 		editedItem: {
 			name: '',
-			start: '',
-			end: '',
-			stopages: '',
+			start_point: '',
+			end_point: '',
+			stopage_points: '',
 			description: '',
 			status: ''
 		},
@@ -127,9 +127,9 @@ export default {
 			align: 'start',
 			value: 'name',
 			},
-			{ text: 'Start', value: 'start' },
-			{ text: 'End', value: 'end' },
-			{ text: 'Stopages', value: 'stopages' },
+			{ text: 'Start', value: 'start_point' },
+			{ text: 'End', value: 'end_point' },
+			{ text: 'Stopages', value: 'stopage_points' },
 			{ text: 'Description', value: 'description' },
 			{ text: 'Status', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
@@ -156,6 +156,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_ROUTES');
 	},
 
     methods: {

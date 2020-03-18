@@ -140,13 +140,13 @@ export default {
 				align: 'start',
 				value: 'id',
 			},
-			{text: 'Registration No', value: 'registrationNo',},
-			{ text: 'Engine No', value: 'engineNo' },
-			{ text: 'Chasis No', value: 'chasisNo' },
-			{ text: 'Model No', value: 'modelNo' },
-			{ text: 'Fleet Type', value: 'fleetType' },
+			{text: 'Registration No', value: 'registration_no',},
+			{ text: 'Engine No', value: 'engine_no' },
+			{ text: 'Chasis No', value: 'chasis_no' },
+			{ text: 'Model No', value: 'model_no' },
+			{ text: 'Fleet Type', value: 'fleet_type' },
 			{ text: 'Layout', value: 'layout' },
-			{ text: 'Seat No', value: 'seatNos' },
+			{ text: 'Seat No', value: 'seat_nos' },
 			{ text: 'Status', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
@@ -171,7 +171,8 @@ export default {
 	mounted() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
-        }
+		}
+		this.$store.dispatch('GET_FLEETS');
 	},
 
     methods: {

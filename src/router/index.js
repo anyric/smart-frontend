@@ -84,7 +84,7 @@ const routes = [
             },
             {
                 path: 'trips/assignments',
-                name: 'trip-assign',
+                name: 'trip-assigned',
                 component: TripAssignments,
             },
             {
