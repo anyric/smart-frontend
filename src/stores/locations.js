@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        locations: [
+        locations: null,
+        defaultLocations: [
             {
                 id: 1,
                 name: "Kampala",
@@ -31,7 +32,7 @@ export default {
     },
     getters: {
         LOCATIONS: (state) => {
-            return state.locations || [];
+            return state.locations || state.defaultLocations;
         },
     },
     mutations: {
@@ -43,7 +44,10 @@ export default {
         GET_LOCATIONS: async ({commit}) => {
             await Api().get('/locations')
             .then((response) => {
-                commit('SET_LOCATIONS', response.data.results);
+                let data = response.data.results;
+                if(data.length >0){
+                    commit('SET_LOCATIONS', response.data.results);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

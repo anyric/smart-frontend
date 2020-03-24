@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import VueCookie from 'vue-cookie';
 
 import Router from '../router'
 import Api from '@/service/api'
@@ -24,7 +25,6 @@ export default {
         },
         SET_LOGGED_OUT_USER: (state) => {
             state.currentUser = {};
-            window.localStorage.currentUser = JSON.stringify({});
         },
         SET_IS_LOGGED_IN: (state, payload) => {
             state.isLogin = payload;
@@ -38,25 +38,24 @@ export default {
             await Api().post('/auth/login/', user)
             .then((response) => {
                 let user = response.data;
-                console.log(user)
                 commit('SET_LOGGED_IN_USER', user);
-                localStorage.setItem('currentUser',JSON.stringify(user));
+                VueCookie.set('currentUser', JSON.stringify(user), 1);
                 Router.push({name: 'dashboard'});
                 location.reload(true);
             })
             .catch(error=>{
-                console.log(error.message + " login error")
+                console.log(error.message, "login error")
             })
         },
         LOGOUT: async ({commit}) => {
             await Api().post('/auth/logout/')
             .then(() => {
                 commit('SET_LOGGED_OUT_USER');
-                localStorage.removeItem('currentUser');
+                VueCookie.delete('currentUser');
                 location.reload(true);
             })
             .catch(error=>{
-                console.log(error.message + " logout error")
+                console.log(error.message, "logout error")
             })
         },
     },

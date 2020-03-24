@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        fares: [
+        fares: null,
+        defaultFares: [
             {
                 id: 1,
                 fleet_type: "Universal",
@@ -55,7 +56,7 @@ export default {
     },
     getters: {
         FARES: (state) => {
-            return state.fares || [];
+            return state.fares || state.defaultFares;
         },
     },
     mutations: {
@@ -67,7 +68,10 @@ export default {
         GET_FARES: async ({commit}) => {
             await Api().get('/trip-prices')
             .then((response) => {
-                commit('SET_FARES', response.data.results);
+                let data = response.data.results;
+                if(data.length > 0){
+                    commit('SET_FARES', data);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

@@ -38,15 +38,20 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.firstName" label="FirstName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.first_name" label="First Name"></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.lastName" label="LastName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.last_name" label="Last Name"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.mobile" label="Mobile"></v-text-field>
+                                            <v-text-field
+                                                required
+                                                v-model="editedItem.mobile"
+                                                :disabled="!(editedIndex <= -1)"
+                                                label="Mobile"
+                                            ></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
                                             <v-text-field required v-model="editedItem.username" label="Username"></v-text-field>
@@ -62,10 +67,10 @@
                                     </v-row>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.presentAdress" label="Present Adress"></v-text-field>
+                                            <v-text-field required v-model="editedItem.present_adress" label="Present Adress"></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.permanentAdress" label="Permanent Adress"></v-text-field>
+                                            <v-text-field required v-model="editedItem.permanent_adress" label="Permanent Adress"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -118,11 +123,11 @@ export default {
 			mobile: '',
 			username: '',
 			email: '',
-			firstName: '',
-			LastName: '',
+			first_name: '',
+			Last_name: '',
 			station: '',
-			presentAdress: '',
-			permanentAdress: '',
+			present_adress: '',
+			permanent_adress: '',
 			Active: false
         },
 		isOpen: false,
@@ -140,11 +145,11 @@ export default {
 			},
 			{ text: 'Username', value: 'username' },
 			{ text: 'Email', value: 'email' },
-			{ text: 'FirstName', value: 'firstName' },
-			{ text: 'LastName', value: 'lastName' },
+			{ text: 'First Name', value: 'first_name' },
+			{ text: 'Last Name', value: 'last_name' },
 			{ text: 'Station', value: 'station' },
-			{ text: 'Present Adress', value: 'presentAdress' },
-			{ text: 'Permanent Adress', value: 'permanentAdress' },
+			{ text: 'Present Adress', value: 'present_adress' },
+			{ text: 'Permanent Adress', value: 'permanent_adress' },
 			{ text: 'Active', value: 'active' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],

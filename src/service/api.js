@@ -1,7 +1,8 @@
 import axios from 'axios';
+import VueCookie from 'vue-cookie';
 
 export default () =>{
-    let currentUser = localStorage.getItem('currentUser');
+    let currentUser = VueCookie.get('currentUser');
     if(currentUser){
         currentUser = JSON.parse(currentUser);
     }

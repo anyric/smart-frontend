@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        fleetTypes: [
+        fleetTypes: null,
+        defaultFleetTypes: [
             {
                 id: 1,
                 name: "Universal",
@@ -23,7 +24,7 @@ export default {
     },
     getters: {
         FLEET_TYPES: (state) => {
-            return state.fleetTypes || [];
+            return state.fleetTypes || state.defaultFleetTypes;
         },
     },
     mutations: {
@@ -35,7 +36,10 @@ export default {
         GET_FLEET_TYPES: async ({commit}) => {
             await Api().get('/fleet-types')
             .then((response) => {
-                commit('SET_FLEET_TYPES', response.data.results);
+                let data = response.data.results;
+                if(data.length >0){
+                    commit('SET_FLEET_TYPES', response.data.results);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

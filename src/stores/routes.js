@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        routes: [
+        routes: null,
+        defaultRoutes: [
             {
                 id: 1,
                 name: "Kampala - Moyo",
@@ -40,7 +41,7 @@ export default {
     },
     getters: {
         ROUTES: (state) => {
-            return state.routes || [];
+            return state.routes || state.defaultRoutes;
         },
     },
     mutations: {
@@ -52,7 +53,10 @@ export default {
         GET_ROUTES: async ({commit}) => {
             await Api().get('/routes')
             .then((response) => {
-                commit('SET_ROUTES', response.data.results);
+                let data = response.data.results;
+                if(data.length >0){
+                    commit('SET_ROUTES', response.data.results);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

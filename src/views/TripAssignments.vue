@@ -38,18 +38,18 @@
                                 <v-container>
                                     <v-row>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.registrationNo" label="Registration No"></v-text-field>
+                                            <v-text-field required v-model="editedItem.fleet_registration_no" label="Registration No"></v-text-field>
                                         </v-col>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.route" label="Route"></v-text-field>
+                                            <v-text-field required v-model="editedItem.route_name" label="Route"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col col="4" class="sm12">
-                                            <v-text-field required v-model="editedItem.startDate" label="Start Date"></v-text-field>
+                                            <v-text-field required v-model="editedItem.trip_start_date" label="Start Date"></v-text-field>
                                         </v-col>
                                         <v-col col="4" class="sm12">
-                                            <v-text-field required v-model="editedItem.endDate" label="End Date"></v-text-field>
+                                            <v-text-field required v-model="editedItem.trip_end_date" label="End Date"></v-text-field>
                                         </v-col>
                                         <v-col col="4" class="sm12">
                                             <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
@@ -99,10 +99,10 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
 		editedItem: {
-			registrationNo: '',
-			route: "",
-			startDate: '',
-			endDate: '',
+			fleet_registration_no: '',
+			route_name: "",
+			trip_start_date: '',
+			trip_end_date: '',
 			status: '',
 		},
 		isOpen: false,

@@ -8,17 +8,18 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        agents: [
+        agents: null,
+        defaultAgents: [
             {
                 id: 1,
                 mobile: "+256700000000",
                 username: "anyric",
                 email: 'anyric@smart.com',
-                firstName: 'Ric',
-                lastName: 'Any',
+                first_name: 'Ric',
+                last_name: 'Any',
                 station:'Moyo',
-                presentAdress: 'Elenderea',
-                permanentAdress: 'Lefori',
+                present_adress: 'Elenderea',
+                permanent_adress: 'Lefori',
                 staff: false,
                 active: true,
             },
@@ -27,11 +28,11 @@ export default {
                 mobile: "+256701111111",
                 username: "smart",
                 email: 'info@smart.com',
-                firstName: 'info',
-                lastName: 'smart',
+                first_name: 'info',
+                last_name: 'smart',
                 station:'Kampala',
-                presentAdress: 'Bukoto',
-                permanentAdress: 'Wakiso',
+                present_adress: 'Bukoto',
+                permanent_adress: 'Wakiso',
                 staff: true,
                 active: true,
             }
@@ -39,7 +40,7 @@ export default {
     },
     getters: {
         AGENTS: (state) => {
-            return state.agents || [];
+            return state.agents || state.defaultAgents;
         },
     },
     mutations: {
@@ -51,7 +52,10 @@ export default {
         GET_AGENTS: async ({commit}) => {
             await Api().get('/agents')
             .then((response) => {
-                commit('SET_AGENTS', response.data.results);
+                let data = response.data.results;
+                if(data.length > 0){
+                    commit('SET_AGENTS', data);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

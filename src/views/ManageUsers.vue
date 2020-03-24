@@ -38,10 +38,10 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.first_name" label="FirstName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.first_name" label="First Name"></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.last_name" label="LastName"></v-text-field>
+                                            <v-text-field required v-model="editedItem.last_name" label="Last Name"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
@@ -138,8 +138,8 @@ export default {
 			},
 			{ text: 'Username', value: 'username' },
 			{ text: 'Email', value: 'email' },
-			{ text: 'FirstName', value: 'first_name' },
-			{ text: 'LastName', value: 'last_name' },
+			{ text: 'First Name', value: 'first_name' },
+			{ text: 'Last Name', value: 'last_name' },
 			{ text: 'Active', value: 'is_active' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],

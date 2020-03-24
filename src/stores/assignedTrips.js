@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        assignedTrips: [
+        assignedTrips: null,
+        defaultAssignedTrips: [
             {
                 id: 1,
                 fleet_registration_no: 'UAC022F',
@@ -29,7 +30,7 @@ export default {
     },
     getters: {
         ASSIGNED_TRIPS: (state) => {
-            return state.assignedTrips || [];
+            return state.assignedTrips || state.defaultAssignedTrips;
         },
     },
     mutations: {
@@ -41,7 +42,10 @@ export default {
         GET_ASSIGNED_TRIPS: async ({commit}) => {
             await Api().get('/fleet-assignments')
             .then((response) => {
-                commit('SET_ASSIGNED_TRIPS', response.data.results);
+                let data = response.data.results;
+                if (data.length > 0){
+                    commit('SET_ASSIGNED_TRIPS', data);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

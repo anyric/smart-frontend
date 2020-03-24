@@ -8,34 +8,35 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        fleets: [
+        fleets: null,
+        defaultFleets: [
             {
                 id: 1,
-                registrationNo: 'UAC022F',
-                engineNo: 'UA013-01315490',
-                chasisNo: 'AE100-0121047',
-                modelNo: 'AE065',
-                fleetType: 'Universal',
+                registration_no: 'UAC022F',
+                engine_no: 'UA013-01315490',
+                chasis_no: 'AE100-0121047',
+                model_no: 'AE065',
+                fleet_type: 'Universal',
                 layout: '2 - 3',
-                seatNos: 69,
+                seat_nos: 69,
                 status: 'active',
             },
             {
                 id: 2,
-                registrationNo: 'UAJ024F',
-                engineNo: 'UA089-01330990',
-                chasisNo: 'AE300-0193047',
-                modelNo: 'PR087',
-                fleetType: 'Premium',
+                registration_no: 'UAJ024F',
+                engine_no: 'UA089-01330990',
+                chasis_no: 'AE300-0193047',
+                model_no: 'PR087',
+                fleet_type: 'Premium',
                 layout: '2 - 2',
-                seatNos: 49,
+                seat_nos: 49,
                 status: 'active',
             }
         ],
     },
     getters: {
         FLEETS: (state) => {
-            return state.fleets || [];
+            return state.fleets || state.defaultFleets;
         },
     },
     mutations: {
@@ -47,8 +48,10 @@ export default {
         GET_FLEETS: async ({commit}) => {
             await Api().get('/fleets')
             .then((response) => {
-                console.log(response.data.results);
-                commit('SET_FLEETS', response.data.results);
+                let data = response.data.results;
+                if(data.length >0){
+                    commit('SET_FLEETS', data);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

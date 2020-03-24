@@ -38,23 +38,23 @@
 										<v-container>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.registrationNo" label="Registration No"></v-text-field>
+													<v-text-field required v-model="editedItem.registration_no" label="Registration No"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.engineNo" label="Engine No"></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.chasisNo" label="Chasis No"></v-text-field>
-												</v-col>
-												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.modelNo" label="Model No"></v-text-field>
+													<v-text-field required v-model="editedItem.engine_no" label="Engine No"></v-text-field>
 												</v-col>
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.fleetType" label="Fleet Type"></v-text-field>
+													<v-text-field required v-model="editedItem.chasis_no" label="Chasis No"></v-text-field>
+												</v-col>
+												<v-col col="6" class="sm12">
+													<v-text-field required v-model="editedItem.model_no" label="Model No"></v-text-field>
+												</v-col>
+											</v-row>
+											<v-row>
+												<v-col col="6" class="sm12">
+													<v-text-field required v-model="editedItem.fleet_type" label="Fleet Type"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
 													<v-text-field required v-model="editedItem.layout" label="Layout"></v-text-field>
@@ -62,7 +62,7 @@
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.seatNos" label="Seat No"></v-text-field>
+													<v-text-field required v-model="editedItem.seat_nos" label="Seat No"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
 													<v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
@@ -94,9 +94,6 @@
 							<span>Delete Fleet</span>
 						</v-tooltip>
 					</template>
-					<template v-slot:no-data>
-						<v-btn color="primary" @click="initialize">Reset</v-btn>
-					</template>
 				</v-data-table>
             </v-col>
         </v-row>
@@ -117,13 +114,13 @@ export default {
     data: () => ({
 		editedItem: {
 			id: 0,
-			registrationNo: '',
-			engineNo: '',
-			chasisNo: '',
-			modelNo: '',
-			fleetType: '',
+			registration_no: '',
+			engine_no: '',
+			chasis_no: '',
+			model_no: '',
+			fleet_type: '',
 			layout: '',
-			seatNos: 0,
+			seat_nos: 0,
 			status: true,
 		},
 		
@@ -135,18 +132,18 @@ export default {
 		search: '',
 		editedIndex: -1,
 		headers: [
-			{
-				text: 'Id',
-				align: 'start',
-				value: 'id',
-			},
-			{text: 'Registration No', value: 'registration_no',},
+			// {
+			// 	text: 'Id',
+			// 	align: 'start',
+			// 	value: 'id',
+			// },
+			{ text: 'Registration No', align: 'start', value: 'registration_no',},
 			{ text: 'Engine No', value: 'engine_no' },
 			{ text: 'Chasis No', value: 'chasis_no' },
 			{ text: 'Model No', value: 'model_no' },
 			{ text: 'Fleet Type', value: 'fleet_type' },
 			{ text: 'Layout', value: 'layout' },
-			{ text: 'Seat No', value: 'seat_nos' },
+			{ text: 'Total Seat', value: 'seat_nos' },
 			{ text: 'Status', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],

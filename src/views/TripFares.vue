@@ -46,17 +46,17 @@
                     <v-container>
                       <v-row>
                         <v-col col="12">
-                          <v-text-field required v-model="editedItem.fleetType" label="Fleet Type"></v-text-field>
+                          <v-text-field required v-model="editedItem.fleet_type" label="Fleet Type"></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col col="12">
-                          <v-text-field required v-model="editedItem.route" label="Route"></v-text-field>
+                          <v-text-field required v-model="editedItem.trip_route" label="Route"></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col col="12">
-                          <v-text-field required v-model="editedItem.fare" label="Fare"></v-text-field>
+                          <v-text-field required v-model="editedItem.price_per_person" label="Fare Per Person"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -90,9 +90,6 @@
               </template>
               <span>Delete Fare</span>
             </v-tooltip>
-          </template>
-          <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize">Reset</v-btn>
           </template>
         </v-data-table>
       </v-col>
@@ -130,7 +127,7 @@ export default {
         value: "fleet_type"
       },
       { text: "Route Name", value: "trip_route" },
-      { text: "Fare", value: "price_per_person" },
+      { text: "Fare Per Person", value: "price_per_person" },
       { text: "Actions", value: "action", sortable: false }
     ]
   }),

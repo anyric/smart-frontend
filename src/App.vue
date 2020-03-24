@@ -117,7 +117,7 @@ export default {
 		}
 	},
 	created() {
-		let user = localStorage.getItem('currentUser');
+		let user = this.$cookie.get('currentUser');
 		if(user){
 			this.$store.dispatch("SET_CURRENT_USER",JSON.parse(user));
 			this.currentUser = JSON.parse(user);

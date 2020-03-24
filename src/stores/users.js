@@ -9,7 +9,6 @@ Vue.use(Vuex);
 export default {
     state: {
         users: null,
-        currentUser: null,
         defaultUsers: [
             {
                 id: 1,
@@ -47,7 +46,10 @@ export default {
         GET_USERS: async ({commit}) => {
             await Api().get('/users')
             .then((response) => {
-                commit('SET_USERS', response.data.results);
+                let data = response.data.results;
+                if(data.length >0){
+                    commit('SET_USERS', response.data.results);
+                }
             })
             .catch(error=>{
                 console.log(error.message + " get error");

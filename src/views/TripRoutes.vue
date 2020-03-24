@@ -46,15 +46,15 @@
                                     </v-row>
                                     <v-row>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.start" label="Start"></v-text-field>
+                                            <v-text-field required v-model="editedItem.start_point" label="Start Point"></v-text-field>
                                         </v-col>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.end" label="End"></v-text-field>
+                                            <v-text-field required v-model="editedItem.end_point" label="End Point"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.stopages" label="Stopages"></v-text-field>
+                                            <v-text-field required v-model="editedItem.stopage_points" label="Stopage Points"></v-text-field>
                                         </v-col>
                                         <v-col class="sm12">
                                             <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
@@ -85,9 +85,6 @@
                 </template>
                 <span>Delete Route</span>
               </v-tooltip>
-            </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template>
         </v-data-table>
       </v-col>
@@ -127,9 +124,9 @@ export default {
 			align: 'start',
 			value: 'name',
 			},
-			{ text: 'Start', value: 'start_point' },
-			{ text: 'End', value: 'end_point' },
-			{ text: 'Stopages', value: 'stopage_points' },
+			{ text: 'Start Point', value: 'start_point' },
+			{ text: 'End Point', value: 'end_point' },
+			{ text: 'Stopage Point', value: 'stopage_points' },
 			{ text: 'Description', value: 'description' },
 			{ text: 'Status', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
