@@ -46,10 +46,10 @@ export default {
     },
     actions: {
         GET_FLEETS: async ({commit}) => {
-            await Api().get('/fleets')
+            await Api().get('/fleets/')
             .then((response) => {
                 let data = response.data.results;
-                if(data.length >0){
+                if(data.length > 0){
                     commit('SET_FLEETS', data);
                 }
             })
@@ -57,9 +57,9 @@ export default {
                 console.log(error.message + " get error");
             })
         },
-        SAVE_FLEETS: async ({dispatch}, fleets) => {
+        SAVE_FLEET: async ({dispatch}, fleets) => {
             if(fleets.pk){
-                await Api().put('/fleets', fleets)
+                await Api().put('/fleets/', fleets)
                 .then((response) => {
                     dispatch("GET_FLEETS", response.data);
                     Router.push({name: 'fleets'});
@@ -68,7 +68,7 @@ export default {
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/fleets', fleets)
+                await Api().post('/fleets/', fleets)
                 .then((response) => {
                     dispatch("GET_FLEETS", response.data);
                     Router.push({name: 'fleets'});

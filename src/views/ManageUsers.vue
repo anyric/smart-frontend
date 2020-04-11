@@ -68,6 +68,17 @@
                                             <v-text-field v-model="editedItem.password" label="Password"></v-text-field>
                                         </v-col>
                                     </v-row>
+                                     <v-row>
+                                        <v-col cols="4" class="sm12">
+                                            <v-checkbox required v-model="editedItem.is_active" label="Is Active"></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="4" class="sm12">
+                                            <v-checkbox v-model="editedItem.is_staff" label="Is Staff"></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="4" class="sm12">
+                                            <v-checkbox v-model="editedItem.is_admin" label="Is Admin"></v-checkbox>
+                                        </v-col>
+                                    </v-row>
                                 </v-container>
                             </v-card-text>
 
@@ -94,9 +105,6 @@
                     <span>Delete User</span>
                 </v-tooltip>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
         </v-data-table>
 
         </v-col>
@@ -116,12 +124,16 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
 		editedItem: {
+            id: '',
 			mobile: '',
 			username: '',
 			email: '',
 			first_name: '',
 			last_name: '',
-			Active: false
+            password: '',
+            is_ative: true,
+            is_staff: false,
+            is_admin: false
         },
 		isOpen: false,
 		dialogId: 0,
@@ -140,7 +152,9 @@ export default {
 			{ text: 'Email', value: 'email' },
 			{ text: 'First Name', value: 'first_name' },
 			{ text: 'Last Name', value: 'last_name' },
-			{ text: 'Active', value: 'is_active' },
+            { text: 'Active', value: 'is_active' },
+            { text: 'Staff', value: 'is_staff' },
+            { text: 'Admin', value: 'is_admin' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
@@ -194,25 +208,32 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-                let data = {
-                    username: this.editedItem.username,
-                    email: this.editedItem.email,
-                    first_name: this.editedItem.first_name,
-                    last_name: this.editedItem.last_name
+                let user = {
+                    pk: this.editedItem.id,
+                    data: {
+                        username: this.editedItem.username,
+                        email: this.editedItem.email,
+                        first_name: this.editedItem.first_name,
+                        last_name: this.editedItem.last_name,
+                        is_active: this.editedItem.is_ative,
+                        is_staff: this.editedItem.is_staff,
+                        is_admin: this.editedItem.is_admin
+                    }
                 };
-                console.log(data)
-                Object.assign(this.users[this.editedIndex], this.editedItem)
+                this.$store.dispatch('SAVE_USER', user)
 			} else {
-                console.log(this.editedItem, "here in else")
                 let data = {
                     mobile: this.editedItem.mobile,
                     username: this.editedItem.username,
                     email: this.editedItem.email,
                     first_name: this.editedItem.first_name,
-                    last_name: this.editedItem.last_name
+                    last_name: this.editedItem.last_name,
+                    password: this.editedItem.password,
+                    is_active: this.editedItem.is_ative,
+                    is_staff: this.editedItem.is_staff,
+                    is_admin: this.editedItem.is_admin
                 };
-                console.log(data)
-                // this.users.push(this.editedItem)
+                this.$store.dispatch('SAVE_USER', data)
 			}
 			this.close()
 		},

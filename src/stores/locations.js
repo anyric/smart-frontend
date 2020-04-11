@@ -42,10 +42,10 @@ export default {
     },
     actions: {
         GET_LOCATIONS: async ({commit}) => {
-            await Api().get('/locations')
+            await Api().get('/locations/')
             .then((response) => {
                 let data = response.data.results;
-                if(data.length >0){
+                if(data.length > 0){
                     commit('SET_LOCATIONS', response.data.results);
                 }
             })
@@ -55,7 +55,7 @@ export default {
         },
         SAVE_LOCATION: async ({dispatch}, location) => {
             if(location.pk){
-                await Api().put('/locations', location)
+                await Api().put('/locations/', location)
                 .then((response) => {
                     dispatch("GET_LOCATIONS", response.data);
                     Router.push({name: 'locations'});
@@ -64,7 +64,7 @@ export default {
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/locations', location)
+                await Api().post('/locations/', location)
                 .then((response) => {
                     dispatch("GET_LOCATIONS", response.data);
                     Router.push({name: 'locations'});

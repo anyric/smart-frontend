@@ -17,8 +17,9 @@ export default {
                 email: 'anyric@smart.com',
                 firstName: 'Ric',
                 lastName: 'Any',
-                staff: false,
-                active: true,
+                is_staff: false,
+                is_active: true,
+                is_admin: false
             },
             {
                 id: 2,
@@ -27,8 +28,9 @@ export default {
                 email: 'info@smart.com',
                 firstName: 'smart',
                 lastName: 'info',
-                staff: true,
-                active: true,
+                is_staff: true,
+                is_active: true,
+                is_admin: false
             }
         ],
     },
@@ -44,10 +46,10 @@ export default {
     },
     actions: {
         GET_USERS: async ({commit}) => {
-            await Api().get('/users')
+            await Api().get('/users/')
             .then((response) => {
                 let data = response.data.results;
-                if(data.length >0){
+                if(data.length > 0){
                     commit('SET_USERS', response.data.results);
                 }
             })
@@ -57,18 +59,20 @@ export default {
         },
         SAVE_USER: async ({dispatch}, user) => {
             if(user.pk){
-                await Api().put('/users', user)
-                .then((response) => {
-                    dispatch("GET_USERS", response.data);
+                await Api().patch('/users/'+ user.pk +'/', user.data)
+                .then(() => {
+                    // console.log(response.data);
+                    dispatch("GET_USERS");
                     Router.push({name: 'users'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/users', user)
-                .then((response) => {
-                    dispatch("GET_USERS", response.data);
+                await Api().post('/users/', user)
+                .then(() => {
+                    // console.log(response.data)
+                    dispatch("GET_USERS");
                     Router.push({name: 'users'});
                 })
                 .catch(error=>{

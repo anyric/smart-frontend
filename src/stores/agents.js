@@ -18,10 +18,10 @@ export default {
                 first_name: 'Ric',
                 last_name: 'Any',
                 station:'Moyo',
-                present_adress: 'Elenderea',
-                permanent_adress: 'Lefori',
-                staff: false,
-                active: true,
+                present_address: 'Elenderea',
+                permanent_address: 'Lefori',
+                is_staff: false,
+                is_active: true,
             },
             {
                 id: 2,
@@ -31,10 +31,10 @@ export default {
                 first_name: 'info',
                 last_name: 'smart',
                 station:'Kampala',
-                present_adress: 'Bukoto',
-                permanent_adress: 'Wakiso',
-                staff: true,
-                active: true,
+                present_address: 'Bukoto',
+                permanent_address: 'Wakiso',
+                is_staff: true,
+                is_active: true,
             }
         ],
     },
@@ -50,7 +50,7 @@ export default {
     },
     actions: {
         GET_AGENTS: async ({commit}) => {
-            await Api().get('/agents')
+            await Api().get('/agents/')
             .then((response) => {
                 let data = response.data.results;
                 if(data.length > 0){
@@ -63,22 +63,22 @@ export default {
         },
         SAVE_AGENT: async ({dispatch}, agent) => {
             if(agent.pk){
-                await Api().put('/agents', agent)
+                await Api().patch('/agents/' + agent.pk + '/', agent.data)
                 .then((response) => {
                     dispatch("GET_AGENTS", response.data);
                     Router.push({name: 'agents'});
                 })
                 .catch(error=>{
-                    console.log(error.message + " edit error")
+                    console.log(error.message)
                 })
             }else{
-                await Api().post('/agents', agent)
-                .then((response) => {
-                    dispatch("GET_AGENTS", response.data);
+                await Api().post('/agents/', agent)
+                .then(() => {
+                    dispatch("GET_AGENTS");
                     Router.push({name: 'agents'});
                 })
                 .catch(error=>{
-                    console.log(error.message + " post error")
+                    console.log(error.message)
                 })
             }
         },

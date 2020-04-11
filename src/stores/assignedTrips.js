@@ -40,7 +40,7 @@ export default {
     },
     actions: {
         GET_ASSIGNED_TRIPS: async ({commit}) => {
-            await Api().get('/fleet-assignments')
+            await Api().get('/fleet-assignments/')
             .then((response) => {
                 let data = response.data.results;
                 if (data.length > 0){
@@ -53,7 +53,7 @@ export default {
         },
         SAVE_ASSIGNED_TRIPS: async ({dispatch}, trips_assigned) => {
             if(trips_assigned.pk){
-                await Api().put('/fleet-assignments', trips_assigned)
+                await Api().patch('/fleet-assignments/', trips_assigned)
                 .then((response) => {
                     dispatch("GET_ASSIGNED_TRIPS", response.data);
                     Router.push({name: 'trip-assigned'});
@@ -62,7 +62,7 @@ export default {
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/fleet-assignments', trips_assigned)
+                await Api().post('/fleet-assignments/', trips_assigned)
                 .then((response) => {
                     dispatch("GET_ASSIGNED_TRIPS", response.data);
                     Router.push({name: 'trip-assigned'});

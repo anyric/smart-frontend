@@ -66,7 +66,7 @@ export default {
     },
     actions: {
         GET_FARES: async ({commit}) => {
-            await Api().get('/trip-prices')
+            await Api().get('/trip-prices/')
             .then((response) => {
                 let data = response.data.results;
                 if(data.length > 0){
@@ -77,9 +77,9 @@ export default {
                 console.log(error.message + " get error");
             })
         },
-        SAVE_USER: async ({dispatch}, fare) => {
+        SAVE_FARE: async ({dispatch}, fare) => {
             if(fare.pk){
-                await Api().put('/trip-prices', fare)
+                await Api().patch('/trip-prices/', fare)
                 .then((response) => {
                     dispatch("GET_FARES", response.data);
                     Router.push({name: 'trip-fares'});
@@ -88,7 +88,7 @@ export default {
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/trip-prices', fare)
+                await Api().post('/trip-prices/', fare)
                 .then((response) => {
                     dispatch("GET_FARES", response.data);
                     Router.push({name: 'trip-fares'});

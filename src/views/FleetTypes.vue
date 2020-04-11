@@ -28,7 +28,7 @@
                       </template>
                       <span>Fleet Type</span>
                     </v-tooltip>
-                    <v-dialog v-model="dialog" persistent max-width="800px" max-height="300px">
+                    <v-dialog v-model="dialog" persistent max-width="400px" max-height="300px">
                         <v-card>
                             <v-card-title>
                                 <span class="headline">{{ formTitle }}</span>
@@ -43,7 +43,7 @@
                                     </v-row>
                                     <v-row>
                                         <v-col class="sm12">
-                                            <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
+                                            <v-checkbox required v-model="editedItem.status" label="Available"></v-checkbox>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -106,7 +106,7 @@ export default {
 			align: 'start',
 			value: 'name',
 			},
-			{ text: 'Status', value: 'status' },
+			{ text: 'Available', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
@@ -167,9 +167,22 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.fleetTypes[this.editedIndex], this.editedItem)
+                let fleet_type = {
+                    pk: this.editedItem.id,
+                    data: {
+                        name: this.editedItem.name,
+                        status: this.editedItem.status
+                    }
+                };
+                this.$store.dispatch('SAVE_FLEET_TYPE', fleet_type)
 			} else {
-			this.users.push(this.editedItem)
+                let data = JSON.parse(this.$cookie.get('currentUser'));
+                let fleet_type = {
+                    name: this.editedItem.name,
+                    status: this.editedItem.status,
+                    created_by: data.user.pk
+                };
+                this.$store.dispatch('SAVE_FLEET_TYPE', fleet_type)
 			}
 			this.close()
 		},

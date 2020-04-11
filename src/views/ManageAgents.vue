@@ -45,7 +45,7 @@
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col cols="6" class="sm12">
+                                        <v-col class="sm12">
                                             <v-text-field
                                                 required
                                                 v-model="editedItem.mobile"
@@ -53,8 +53,11 @@
                                                 label="Mobile"
                                             ></v-text-field>
                                         </v-col>
-                                        <v-col cols="6" class="sm12">
+                                        <v-col class="sm12">
                                             <v-text-field required v-model="editedItem.username" label="Username"></v-text-field>
+                                        </v-col>
+                                        <v-col class="sm12" v-if="(editedIndex <= -1)">
+                                            <v-text-field v-model="editedItem.password" label="Password"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
@@ -67,10 +70,10 @@
                                     </v-row>
                                     <v-row>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.present_adress" label="Present Adress"></v-text-field>
+                                            <v-text-field required v-model="editedItem.present_address" label="Present Adress"></v-text-field>
                                         </v-col>
                                         <v-col cols="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.permanent_adress" label="Permanent Adress"></v-text-field>
+                                            <v-text-field required v-model="editedItem.permanent_address" label="Permanent Adress"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -99,9 +102,6 @@
                     <span>Delete Agent</span>
                 </v-tooltip>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
         </v-data-table>
         </v-col>
         </v-row>
@@ -120,15 +120,19 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
 		editedItem: {
+            id: '',
 			mobile: '',
 			username: '',
 			email: '',
 			first_name: '',
-			Last_name: '',
+			last_name: '',
 			station: '',
-			present_adress: '',
-			permanent_adress: '',
-			Active: false
+			present_address: '',
+            permanent_address: '',
+            password: '',
+            is_active: true,
+            is_staff: false,
+            is_admin: false
         },
 		isOpen: false,
 		dialogId: 0,
@@ -148,9 +152,9 @@ export default {
 			{ text: 'First Name', value: 'first_name' },
 			{ text: 'Last Name', value: 'last_name' },
 			{ text: 'Station', value: 'station' },
-			{ text: 'Present Adress', value: 'present_adress' },
-			{ text: 'Permanent Adress', value: 'permanent_adress' },
-			{ text: 'Active', value: 'active' },
+			{ text: 'Present Address', value: 'present_address' },
+			{ text: 'Permanent Address', value: 'permanent_address' },
+            { text: 'Active', value: 'is_active' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
@@ -175,6 +179,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_AGENTS');
     },
 
     methods: {
@@ -206,9 +211,33 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.agents[this.editedIndex], this.editedItem)
+            let agent = {
+                    pk: this.editedItem.id,
+                    data: {
+                        username: this.editedItem.username,
+                        email: this.editedItem.email,
+                        first_name: this.editedItem.first_name,
+                        last_name: this.editedItem.last_name,
+                        password: this.editedItem.password,
+                        station: this.editedItem.station,
+                        present_address: this.editedItem.present_address,
+                        permanent_address: this.editedItem.permanent_address
+                    }
+                };
+                this.$store.dispatch('SAVE_AGENT', agent)
 			} else {
-			this.users.push(this.editedItem)
+                let data = {
+                        mobile: this.editedItem.mobile,
+                        username: this.editedItem.username,
+                        email: this.editedItem.email,
+                        first_name: this.editedItem.first_name,
+                        last_name: this.editedItem.last_name,
+                        password: this.editedItem.password,
+                        station: this.editedItem.station,
+                        present_address: this.editedItem.present_address,
+                        permanent_address: this.editedItem.permanent_address
+                    };
+                this.$store.dispatch('SAVE_AGENT', data)
 			}
 			this.close()
 		},

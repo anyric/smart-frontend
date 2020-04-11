@@ -51,10 +51,10 @@ export default {
     },
     actions: {
         GET_ROUTES: async ({commit}) => {
-            await Api().get('/routes')
+            await Api().get('/routes/')
             .then((response) => {
                 let data = response.data.results;
-                if(data.length >0){
+                if(data.length > 0){
                     commit('SET_ROUTES', response.data.results);
                 }
             })
@@ -64,7 +64,7 @@ export default {
         },
         SAVE_ROUTE: async ({dispatch}, route) => {
             if(route.pk){
-                await Api().put('/routes', route)
+                await Api().patch('/routes/', route)
                 .then((response) => {
                     dispatch("GET_ROUTES", response.data);
                     Router.push({name: 'routes'});
@@ -73,7 +73,7 @@ export default {
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/routes', route)
+                await Api().post('/routes/', route)
                 .then((response) => {
                     dispatch("GET_ROUTES", response.data);
                     Router.push({name: 'routes'});
