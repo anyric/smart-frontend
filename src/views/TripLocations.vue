@@ -28,7 +28,7 @@
                       </template>
                       <span>Add New Location</span>
                     </v-tooltip>
-                    <v-dialog v-model="dialog" persistent max-width="800px" max-height="300px">
+                    <v-dialog v-model="dialog" persistent max-width="600px" max-height="200px">
                         <v-card>
                             <v-card-title>
                                 <span class="headline">{{ formTitle }}</span>
@@ -37,18 +37,16 @@
                             <v-card-text>
                                 <v-container>
                                     <v-row>
-                                        <v-col class="sm12">
-                                            <v-text-field required v-model="editedItem.name" label="Name"></v-text-field>
+                                        <v-col cols="10" class="sm12">
+                                            <v-text-field required v-model="editedItem.name" label="Name *"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="2" class="sm12">
+                                            <v-checkbox required v-model="editedItem.status" label="Active *"></v-checkbox>
                                         </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col class="sm12">
-                                            <v-textarea required v-model="editedItem.description" label="Description"></v-textarea>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col class="sm12">
-                                            <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
+                                            <v-textarea required v-model="editedItem.description" label="Description *"></v-textarea>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -113,7 +111,7 @@ export default {
 			value: 'name',
 			},
 			{ text: 'Description', value: 'description' },
-			{ text: 'Status', value: 'status' },
+			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
@@ -169,9 +167,23 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.locations[this.editedIndex], this.editedItem)
+                let location = {
+                    pk: this.editedItem.id,
+                    data: {
+                        name: this.editedItem.name,
+                        description: this.editedItem.description,
+                        status: this.editedItem.status
+                    }
+                };
+                this.$store.dispatch('SAVE_LOCATION', location)
 			} else {
-			this.users.push(this.editedItem)
+                let location = {
+                    name: this.editedItem.name,
+                    description: this.editedItem.description,
+                    status: this.editedItem.status,
+                    created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+                };
+                this.$store.dispatch('SAVE_LOCATION', location)
 			}
 			this.close()
 		},

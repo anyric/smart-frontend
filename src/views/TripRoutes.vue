@@ -37,29 +37,59 @@
                             <v-card-text>
                                 <v-container>
                                     <v-row>
-                                        <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.name" label="Name"></v-text-field>
+                                        <v-col cols="6" class="sm12">
+                                            <v-text-field required v-model="editedItem.name" label="Name *"></v-text-field>
                                         </v-col>
-                                        <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.description" label="Description"></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.start_point" label="Start Point"></v-text-field>
-                                        </v-col>
-                                        <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.end_point" label="End Point"></v-text-field>
+                                        <v-col cols="6" class="sm12">
+                                            <v-text-field required v-model="editedItem.description" label="Description *"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.stopage_points" label="Stopage Points"></v-text-field>
+                                        <v-col cols="6" class="sm12">
+											<v-select
+												:items="locations"
+												label="Start Point *"
+												item-text="name"
+												item-value="id"
+												v-model="editedItem.start_point"
+												required
+											></v-select>
+										</v-col>
+                                        <v-col cols="6" class="sm12">
+											<v-select
+												:items="locations"
+												label="End Point *"
+												item-text="name"
+												item-value="id"
+												v-model="editedItem.end_point"
+												required
+											></v-select>
                                         </v-col>
+                                    </v-row>
+                                    <v-row>
                                         <v-col class="sm12">
-                                            <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
+											<v-select
+												multiple
+												:items="locations"
+												label="Stopage Points *"
+												item-text="name"
+												item-value="id"
+												v-model="editedItem.stopage_points"
+												required
+											></v-select>
                                         </v-col>
                                     </v-row>
+									<v-row>
+										<v-col cols="5" class="sm12">
+                                            <v-text-field required v-model="editedItem.distance" label="Distance (KMs) *"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="5" class="sm12">
+                                            <v-text-field required v-model="editedItem.approximate_time" label="Approximate Time (Hrs) *"></v-text-field>
+                                        </v-col>
+										<v-col cols="2" class="sm12">
+                                            <v-checkbox required v-model="editedItem.status" label="Active *"></v-checkbox>
+                                        </v-col>
+									</v-row>
                                 </v-container>
                             </v-card-text>
 
@@ -104,11 +134,14 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
 		editedItem: {
+			id: 0,
 			name: '',
-			start_point: '',
-			end_point: '',
-			stopage_points: '',
+			start_point: 0,
+			end_point: 0,
+			stopage_points: [],
 			description: '',
+			distance: 0.0,
+			approximate_time: 0.0,
 			status: ''
 		},
 		isOpen: false,
@@ -126,18 +159,21 @@ export default {
 			},
 			{ text: 'Start Point', value: 'start_point' },
 			{ text: 'End Point', value: 'end_point' },
-			{ text: 'Stopage Point', value: 'stopage_points' },
+			{ text: 'Stopage Points', value: 'stopage_points' },
 			{ text: 'Description', value: 'description' },
-			{ text: 'Status', value: 'status' },
+			{ text: 'Distance', value: 'distance' },
+			{ text: 'Duration', value: 'approximate_time' },
+			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
-        routes: 'ROUTES',
-        isLoggedIn: "IS_LOGGED_IN"
-			}),
+			locations: 'LOCATIONS',
+			routes: 'ROUTES',
+			isLoggedIn: "IS_LOGGED_IN"
+		}),
 		formTitle () {
 			return this.editedIndex === -1 ? 'Add Route' : 'Edit Route'
 		},
@@ -152,7 +188,8 @@ export default {
 	mounted() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
-        }
+		}
+		this.$store.dispatch('GET_LOCATIONS');
         this.$store.dispatch('GET_ROUTES');
 	},
 
@@ -170,25 +207,51 @@ export default {
 		openDialog(item){
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.routes
+			this.dialogItems = this.routes;
 			this.isOpen = true;
 		},
 
 		close () {
-			this.dialog = false
+			this.dialog = false;
 			setTimeout(() => {
-			this.editedItem = Object.assign({}, this.defaultItem)
-			this.editedIndex = -1
+			this.editedItem = Object.assign({}, this.defaultItem);
+			this.editedIndex = -1;
 			}, 300)
 		},
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.routes[this.editedIndex], this.editedItem)
+				let route = {
+					pk : this.editedItem.id,
+					data: {
+						name: this.editedItem.name,
+						start_point: parseInt(this.editedItem.start_point),
+						end_point: parseInt(this.editedItem.end_point),
+						stopage_points: this.editedItem.stopage_points.toString(),
+						description: this.editedItem.description,
+						distance: parseInt(this.editedItem.distance),
+						approximate_time: this.editedItem.approximate_time,
+						status: this.editedItem.status
+					}
+				};
+				console.log(route);
+				this.$store.dispatch('SAVE_ROUTE', route);
 			} else {
-			this.users.push(this.editedItem)
+				let route = {
+					name: this.editedItem.name,
+					start_point: parseInt(this.editedItem.start_point),
+					end_point: parseInt(this.editedItem.end_point),
+					stopage_points: this.editedItem.stopage_points.toString(),
+					description: this.editedItem.description,
+					distance: parseInt(this.editedItem.distance),
+					approximate_time: this.editedItem.approximate_time,
+					status: this.editedItem.status,
+					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+				};
+				console.log(route);
+				this.$store.dispatch('SAVE_ROUTE', route);
 			}
-			this.close()
+			this.close();
 		},
     },
 }

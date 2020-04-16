@@ -17,7 +17,7 @@ export default {
                 end_point: 'Moyo universal lodge',
                 stopage_points: 'Kigumba, Karuma, Gulu, Adjumani',
                 description: 'The route from Kampala to Moyo',
-                status: 'active',
+                status: true,
             },
             {
                 id: 2,
@@ -26,7 +26,7 @@ export default {
                 end_point: 'Arua Idi Amin Road',
                 stopage_points: 'Kigumba, Karuma, Pakwach, Nebbi',
                 description: 'The route from Kampala to Arua',
-                status: 'active',
+                status: true,
             },
             {
                 id: 3,
@@ -35,7 +35,7 @@ export default {
                 end_point: 'Lira Town',
                 stopage_points: 'Kigumba, Karuma, Kamdin, Lira',
                 description: 'The route from Kampala to Lira',
-                status: 'active',
+                status: true,
             }
         ],
     },
@@ -55,7 +55,12 @@ export default {
             .then((response) => {
                 let data = response.data.results;
                 if(data.length > 0){
-                    commit('SET_ROUTES', response.data.results);
+                    data[0].start_point = parseInt(data[0].start_point);
+                    data[0].end_point = parseInt(data[0].end_point);
+                    data[0].stopage_points = data[0].stopage_points.split(',').map(el => {
+                        return parseInt(el);
+                    })
+                    commit('SET_ROUTES', data);
                 }
             })
             .catch(error=>{
@@ -64,19 +69,19 @@ export default {
         },
         SAVE_ROUTE: async ({dispatch}, route) => {
             if(route.pk){
-                await Api().patch('/routes/', route)
-                .then((response) => {
-                    dispatch("GET_ROUTES", response.data);
-                    Router.push({name: 'routes'});
+                await Api().patch('/routes/' + route.pk + '/', route.data)
+                .then(() => {
+                    dispatch("GET_ROUTES");
+                    Router.push({name: 'trip-routes'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
             }else{
                 await Api().post('/routes/', route)
-                .then((response) => {
-                    dispatch("GET_ROUTES", response.data);
-                    Router.push({name: 'routes'});
+                .then(() => {
+                    dispatch("GET_ROUTES");
+                    Router.push({name: 'trip-routes'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")

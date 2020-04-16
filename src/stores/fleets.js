@@ -19,7 +19,7 @@ export default {
                 fleet_type: 'Universal',
                 layout: '2 - 3',
                 seat_nos: 69,
-                status: 'active',
+                status: 'true',
             },
             {
                 id: 2,
@@ -30,7 +30,7 @@ export default {
                 fleet_type: 'Premium',
                 layout: '2 - 2',
                 seat_nos: 49,
-                status: 'active',
+                status: 'true',
             }
         ],
     },
@@ -57,21 +57,21 @@ export default {
                 console.log(error.message + " get error");
             })
         },
-        SAVE_FLEET: async ({dispatch}, fleets) => {
-            if(fleets.pk){
-                await Api().put('/fleets/', fleets)
-                .then((response) => {
-                    dispatch("GET_FLEETS", response.data);
-                    Router.push({name: 'fleets'});
+        SAVE_FLEET: async ({dispatch}, fleet) => {
+            if(fleet.pk){
+                await Api().patch('/fleets/' + fleet.pk + '/', fleet.data)
+                .then(() => {
+                    dispatch("GET_FLEETS");
+                    Router.push({name: 'fleet-register'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/fleets/', fleets)
-                .then((response) => {
-                    dispatch("GET_FLEETS", response.data);
-                    Router.push({name: 'fleets'});
+                await Api().post('/fleets/', fleet)
+                .then(() => {
+                    dispatch("GET_FLEETS");
+                    Router.push({name: 'fleet-register'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")

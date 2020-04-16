@@ -38,34 +38,41 @@
 										<v-container>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.registration_no" label="Registration No"></v-text-field>
+													<v-text-field required v-model="editedItem.registration_no" label="Registration No *"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.engine_no" label="Engine No"></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.chasis_no" label="Chasis No"></v-text-field>
-												</v-col>
-												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.model_no" label="Model No"></v-text-field>
+													<v-text-field required v-model="editedItem.engine_no" label="Engine No *"></v-text-field>
 												</v-col>
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.fleet_type" label="Fleet Type"></v-text-field>
+													<v-text-field required v-model="editedItem.chasis_no" label="Chasis No *"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.layout" label="Layout"></v-text-field>
+													<v-text-field required v-model="editedItem.model_no" label="Model No *"></v-text-field>
+												</v-col>
+											</v-row>
+											<v-row>
+												<v-col cols="6" class="sm12">
+													<v-select
+														:items="fleetTypes"
+														label="Fleet Type *"
+														item-text="name"
+														item-value="id"
+														v-model="editedItem.fleet_type"
+														required
+													></v-select>
+                                                </v-col>
+												<v-col col="6" class="sm12">
+													<v-text-field required v-model="editedItem.layout" label="Layout *"></v-text-field>
 												</v-col>
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.seat_nos" label="Seat No"></v-text-field>
+													<v-text-field required v-model="editedItem.seat_nos" label="Seat No *"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
+													<v-checkbox required v-model="editedItem.status" label="Active *"></v-checkbox>
 												</v-col>
 											</v-row>
 										</v-container>
@@ -118,7 +125,7 @@ export default {
 			engine_no: '',
 			chasis_no: '',
 			model_no: '',
-			fleet_type: '',
+			fleet_type: 0,
 			layout: '',
 			seat_nos: 0,
 			status: true,
@@ -144,13 +151,14 @@ export default {
 			{ text: 'Fleet Type', value: 'fleet_type' },
 			{ text: 'Layout', value: 'layout' },
 			{ text: 'Total Seat', value: 'seat_nos' },
-			{ text: 'Status', value: 'status' },
+			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
+				fleetTypes: 'FLEET_TYPES',
 				fleets: 'FLEETS',
 				isLoggedIn: "IS_LOGGED_IN"
 			}),
@@ -169,6 +177,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
+		this.$store.dispatch('GET_FLEET_TYPES');
 		this.$store.dispatch('GET_FLEETS');
 	},
 
@@ -200,9 +209,33 @@ export default {
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.fleets[this.editedIndex], this.editedItem)
+				let fleet = {
+					pk : this.editedItem.id,
+					data: {
+						registration_no: this.editedItem.registration_no,
+						engine_no: this.editedItem.engine_no,
+						chasis_no: this.editedItem.chasis_no,
+						model_no: this.editedItem.model_no,
+						fleet_type: this.editedItem.fleet_type,
+						layout: this.editedItem.layout,
+						seat_nos: this.editedItem.seat_nos,
+						status: this.editedItem.status
+					}
+				};
+				this.$store.dispatch('SAVE_FLEET', fleet);
 			} else {
-			this.users.push(this.editedItem)
+				let data = {
+                    registration_no: this.editedItem.registration_no,
+                    engine_no: this.editedItem.engine_no,
+                    chasis_no: this.editedItem.chasis_no,
+                    model_no: this.editedItem.model_no,
+                    fleet_type: this.editedItem.fleet_type,
+                    layout: this.editedItem.layout,
+                    seat_nos: this.editedItem.seat_nos,
+					status: this.editedItem.status,
+					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+                };
+				this.$store.dispatch('SAVE_FLEET', data)
 			}
 			this.close()
 		},

@@ -44,6 +44,7 @@
 
 <script>
     import Form from "@/service/Form";
+    import {mapGetters} from 'vuex';
 
     export default {
         data() {
@@ -56,6 +57,17 @@
                 loginError: '',
             };
         },
+
+        computed: {
+            ...mapGetters({isLoggedIn: "IS_LOGGED_IN"}),
+        },
+
+        mounted() {
+            if(this.isLoggedIn){
+                this.$router.push({name: 'dashboard'});
+            }
+        },
+
         methods: {
             async loginUser() {
                 await this.$store.dispatch('LOGIN', {
@@ -66,7 +78,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

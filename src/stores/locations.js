@@ -14,19 +14,19 @@ export default {
                 id: 1,
                 name: "Kampala",
                 description: 'The booking office in Kampala',
-                status: 'active',
+                status: true,
             },
             {
                 id: 2,
                 name: "Moyo",
                 description: 'The booking office in Moyo',
-                status: 'active',
+                status: true,
             },
             {
                 id: 3,
                 name: "Arua",
                 description: 'The booking office in Arua',
-                status: 'active',
+                status: true,
             }
         ],
     },
@@ -55,19 +55,19 @@ export default {
         },
         SAVE_LOCATION: async ({dispatch}, location) => {
             if(location.pk){
-                await Api().put('/locations/', location)
-                .then((response) => {
-                    dispatch("GET_LOCATIONS", response.data);
-                    Router.push({name: 'locations'});
+                await Api().patch('/locations/' + location.pk + '/', location.data)
+                .then(() => {
+                    dispatch("GET_LOCATIONS");
+                    Router.push({name: 'trip-locations'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
             }else{
                 await Api().post('/locations/', location)
-                .then((response) => {
-                    dispatch("GET_LOCATIONS", response.data);
-                    Router.push({name: 'locations'});
+                .then(() => {
+                    dispatch("GET_LOCATIONS");
+                    Router.push({name: 'trip-locations'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")

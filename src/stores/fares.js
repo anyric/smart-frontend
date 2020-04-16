@@ -15,42 +15,42 @@ export default {
                 fleet_type: "Universal",
                 trip_route: "Kampala - Arua",
                 price_per_person: '35,000',
-                status: 'active',
+                status: true,
             },
             {
                 id: 2,
                 fleet_type: "Premium",
                 trip_route: "Kampala - Arua",
                 price_per_person: '50,000',
-                status: 'active',
+                status: true,
             },
             {
                 id: 3,
                 fleet_type: "Universal",
                 trip_route: "Kampala - Moyo",
                 price_per_person: '40,000',
-                status: 'active',
+                status: true,
             },
             {
                 id: 4,
                 fleet_type: "Premium",
                 trip_route: "Kampala - Moyo",
                 price_per_person: '50,000',
-                status: 'active',
+                status: true,
             },
             {
                 id: 5,
                 fleet_type: "Universal",
                 trip_route: "Kampala - Lira",
                 price_per_person: '30,000',
-                status: 'active',
+                status: true,
             },
             {
                 id: 6,
                 fleet_type: "Premium",
                 trip_route: "Kampala - Lira",
                 price_per_person: '40,000',
-                status: 'active',
+                status: true,
             }
         ],
     },
@@ -79,9 +79,9 @@ export default {
         },
         SAVE_FARE: async ({dispatch}, fare) => {
             if(fare.pk){
-                await Api().patch('/trip-prices/', fare)
-                .then((response) => {
-                    dispatch("GET_FARES", response.data);
+                await Api().patch('/trip-prices/' + fare.pk + '/', fare.data)
+                .then(() => {
+                    dispatch("GET_FARES");
                     Router.push({name: 'trip-fares'});
                 })
                 .catch(error=>{
@@ -89,8 +89,8 @@ export default {
                 })
             }else{
                 await Api().post('/trip-prices/', fare)
-                .then((response) => {
-                    dispatch("GET_FARES", response.data);
+                .then(() => {
+                    dispatch("GET_FARES");
                     Router.push({name: 'trip-fares'});
                 })
                 .catch(error=>{
