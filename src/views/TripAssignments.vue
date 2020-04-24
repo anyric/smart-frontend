@@ -28,7 +28,7 @@
                       </template>
                       <span>Assign Fleet</span>
                     </v-tooltip>
-                    <v-dialog v-model="dialog" persistent max-width="800px" max-height="300px">
+                    <v-dialog v-model="dialog" persistent max-width="600px" max-height="300px">
                         <v-card>
                             <v-card-title>
                                 <span class="headline">{{ formTitle }}</span>
@@ -38,21 +38,79 @@
                                 <v-container>
                                     <v-row>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.fleet_registration_no" label="Registration No"></v-text-field>
+                                            <v-select
+                                                :items="fleets"
+                                                label="Registration No *"
+                                                item-text="registration_no"
+                                                item-value="id"
+                                                v-model="editedItem.fleet_registration_no"
+                                                required
+                                            ></v-select>
                                         </v-col>
                                         <v-col col="6" class="sm12">
-                                            <v-text-field required v-model="editedItem.route_name" label="Route"></v-text-field>
+                                            <v-select
+                                                :items="routes"
+                                                label="Route *"
+                                                item-text="name"
+                                                item-value="id"
+                                                v-model="editedItem.route_name"
+                                                required
+                                            ></v-select>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col col="4" class="sm12">
-                                            <v-text-field required v-model="editedItem.trip_start_date" label="Start Date"></v-text-field>
+                                        <v-col cols="5" class="sm12">
+                                            <v-menu
+                                                v-model="start_date"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                transition="scale-transition"
+                                                offset-y
+                                                min-width="290px"
+                                            >
+                                                <template v-slot:activator="{ on }">
+                                                    <v-text-field
+                                                        required
+                                                        v-model="editedItem.trip_start_date"
+                                                        label="Start Date"
+                                                        prepend-icon="fa fa-calendar"
+                                                        readonly
+                                                        v-on="on"
+                                                    ></v-text-field>
+                                                </template>
+                                                <v-date-picker
+                                                    v-model="editedItem.trip_start_date"
+                                                    @input="start_date = false"
+                                                ></v-date-picker>
+                                            </v-menu>
                                         </v-col>
-                                        <v-col col="4" class="sm12">
-                                            <v-text-field required v-model="editedItem.trip_end_date" label="End Date"></v-text-field>
+                                        <v-col cols="5" class="sm12">
+                                            <v-menu
+                                                v-model="end_date"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                transition="scale-transition"
+                                                offset-y
+                                                min-width="290px"
+                                            >
+                                                <template v-slot:activator="{ on }">
+                                                <v-text-field
+                                                    required
+                                                    v-model="editedItem.trip_end_date"
+                                                    label="End Date"
+                                                    prepend-icon="fa fa-calendar"
+                                                    readonly
+                                                    v-on="on"
+                                                ></v-text-field>
+                                                </template>
+                                                <v-date-picker
+                                                    v-model="editedItem.trip_end_date"
+                                                    @input="end_date = false"
+                                                ></v-date-picker>
+                                            </v-menu>
                                         </v-col>
-                                        <v-col col="4" class="sm12">
-                                            <v-text-field required v-model="editedItem.status" label="Status"></v-text-field>
+                                        <v-col cols="2" class="sm12">
+                                            <v-checkbox required v-model="editedItem.status" label="Active"></v-checkbox>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -100,11 +158,13 @@ export default {
     data: () => ({
 		editedItem: {
 			fleet_registration_no: '',
-			route_name: "",
+			route_name: '',
 			trip_start_date: '',
 			trip_end_date: '',
 			status: '',
-		},
+        },
+        start_date: false,
+        end_date: false,
 		isOpen: false,
 		dialogId: 0,
 		dialogItems: null,
@@ -121,13 +181,15 @@ export default {
 			{ text: 'Route Name', value: 'route_name' },
 			{ text: 'Start Date', value: 'trip_start_date' },
 			{ text: 'End Date', value: 'trip_end_date' },
-			{ text: 'Status', value: 'status' },
+			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
+                fleets: 'FLEETS',
+                routes: 'ROUTES',
                 assignTrips: 'ASSIGNED_TRIPS',
                 isLoggedIn: "IS_LOGGED_IN"
 			}),
@@ -146,14 +208,26 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_FLEETS');
+        this.$store.dispatch('GET_ROUTES');
         this.$store.dispatch('GET_ASSIGNED_TRIPS');
+    },
+
+    updated() {
+		this.mapIdToName();
     },
 
     methods: {
 		editItem (item) {
+            if (item){
+				let assignFleet = this.mapNameToId(item);
+				this.editedItem = Object.assign({}, assignFleet)
+			}else{
+				this.editedItem = Object.assign({}, item)
+			}
 			this.editedIndex = this.assignTrips.indexOf(item)
-			this.editedItem = Object.assign({}, item)
-			this.dialog = true
+            this.dialog = true
+            this.mapIdToName()
 		},
 
         closeDialog() {
@@ -172,14 +246,82 @@ export default {
 			setTimeout(() => {
 			this.editedItem = Object.assign({}, this.defaultItem)
 			this.editedIndex = -1
-			}, 300)
+            }, 300)
+            this.mapIdToName()
+		},
+
+        formatDate (date) {
+            if (!date) return null
+
+            const [year, month, day] = date.split('-')
+            return `${day}-${month}-${year}`
+        },
+
+        mapIdToName(){
+			this.assignTrips.forEach(element => {
+				this.routes.forEach( el => {
+					if (element.route_name == parseInt(el.id)){
+						element.route_name = el.name
+					}
+                });
+
+                this.fleets.forEach( els => {
+					if (element.fleet_registration_no === els.id){
+						element.fleet_registration_no = els.registration_no
+					}
+				});
+			});
+        },
+
+        mapNameToId(assignedFleet) {
+			let editedAssignedFleet = {
+                'trip_start_date': assignedFleet.trip_start_date,
+                'trip_end_date': assignedFleet.trip_end_date,
+                'status': assignedFleet.status
+			};
+			this.assignTrips.forEach( element => {
+                this.routes.forEach( el => {
+					if (element.route_name == el.name){
+                        element.route_name = parseInt(el.id);
+                        editedAssignedFleet['route_name'] = parseInt(el.id);
+					}
+                });
+
+                this.fleets.forEach( els => {
+					if (element.fleet_registration_no === els.registration_no){
+                        element.fleet_registration_no = parseInt(els.id);
+                        editedAssignedFleet['fleet_registration_no'] = parseInt(els.id);
+					}
+				});
+			});
+			return editedAssignedFleet;
 		},
 
 		save () {
 			if (this.editedIndex > -1) {
-			Object.assign(this.assignTrips[this.editedIndex], this.editedItem)
+                let assignedTrip = {
+					pk : this.editedItem.id,
+					data: {
+                        fleet_registration_no: this.editedItem.fleet_registration_no,
+                        route_name: this.editedItem.route_name,
+						trip_start_date: this.editedItem.trip_start_date,
+						trip_end_date: this.editedItem.trip_end_date,
+						status: this.editedItem.status
+					}
+				};
+				console.log(assignedTrip);
+				this.$store.dispatch('SAVE_ASSIGNED_TRIP', assignedTrip);
 			} else {
-			this.users.push(this.editedItem)
+                let assignedTrip = {
+                        fleet_registration_no: this.editedItem.fleet_registration_no,
+                        route_name: this.editedItem.route_name,
+						trip_start_date: this.editedItem.trip_start_date,
+						trip_end_date: this.editedItem.trip_end_date,
+                        status: this.editedItem.status,
+                        created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+				};
+				console.log(assignedTrip);
+				this.$store.dispatch('SAVE_ASSIGNED_TRIP', assignedTrip);
 			}
 			this.close()
 		},

@@ -181,11 +181,21 @@ export default {
 		this.$store.dispatch('GET_FLEETS');
 	},
 
+	updated() {
+		this.mapIdToName();
+	},
+
     methods: {
 		editItem (item) {
+			if (item){
+				let fleet = this.mapNameToId(item);
+				this.editedItem = Object.assign({}, fleet)
+			}else{
+				this.editedItem = Object.assign({}, item)
+			}
 			this.editedIndex = this.fleets.indexOf(item)
-			this.editedItem = Object.assign({}, item)
 			this.dialog = true
+			this.mapIdToName();
 		},
 
 		closeDialog() {
@@ -205,6 +215,37 @@ export default {
 			this.editedItem = Object.assign({}, this.defaultItem)
 			this.editedIndex = -1
 			}, 300)
+			this.mapIdToName()
+		},
+
+		mapIdToName(){
+			this.fleets.forEach(element => {
+				this.fleetTypes.forEach( el => {
+					if (element.fleet_type == parseInt(el.id)){
+						element.fleet_type = el.name
+					}
+				})
+			});
+		},
+
+		mapNameToId(fleet) {
+			let editedFleet = {
+				'registration_no': fleet.registration_no,
+				'engine_no': fleet.engine_no,
+				'chasis_no': fleet.chasis_no,
+				'model_no': fleet.model_no,
+				'layout': fleet.layout,
+				'seat_nos': fleet.seat_nos,
+				'status': fleet.status
+			};
+			this.fleetTypes.forEach( el => {
+				if (fleet.fleet_type === el.name){
+					fleet.fleet_type = parseInt(el.id)
+					editedFleet['fleet_type'] = parseInt(el.id);
+                }
+			});
+
+			return editedFleet;
 		},
 
 		save () {

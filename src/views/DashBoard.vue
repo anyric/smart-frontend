@@ -29,7 +29,7 @@ import {mapGetters} from "vuex";
             {"name": "Total Fleet-Types", "url": "fleet-types"},
             {"name": "Total Locations", "url": "trip-locations"},
             {"name": "Total Routes", "url": "trip-routes"},
-            {"name": "Total Trips", "url": "trip-assign"},
+            {"name": "Total Trips", "url": "trip-assigned"},
             {"name": "Total Fares", "url": "trip-fares"},
         ],
         items: [

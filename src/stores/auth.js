@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VueCookie from 'vue-cookie';
 
 import Router from '../router'
-import Api from '@/service/api'
+import Api from '@/services/api'
 
 Vue.use(Vuex);
 

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import Router from '../router'
-import Api from '@/service/api'
+import Api from '@/services/api'
 
 Vue.use(Vuex);
 

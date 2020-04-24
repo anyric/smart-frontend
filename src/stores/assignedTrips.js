@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import Router from '../router'
-import Api from '@/service/api'
+import Api from '@/services/api'
 
 Vue.use(Vuex);
 
@@ -16,7 +16,7 @@ export default {
                 route_name: "Kampala - Moyo",
                 trip_start_date: '07-03-2020',
                 trip_end_date: '08-03-2020',
-                status: 'active',
+                status: 'true',
             },
             {
                 id: 2,
@@ -24,7 +24,7 @@ export default {
                 route_name: "Kampala - Arua",
                 trip_start_date: '07-03-2020',
                 trip_end_date: '08-03-2020',
-                status: 'active',
+                status: 'true',
             },
         ],
     },
@@ -44,6 +44,7 @@ export default {
             .then((response) => {
                 let data = response.data.results;
                 if (data.length > 0){
+                    
                     commit('SET_ASSIGNED_TRIPS', data);
                 }
             })
@@ -51,20 +52,20 @@ export default {
                 console.log(error.message + " get error");
             })
         },
-        SAVE_ASSIGNED_TRIPS: async ({dispatch}, trips_assigned) => {
-            if(trips_assigned.pk){
-                await Api().patch('/fleet-assignments/', trips_assigned)
-                .then((response) => {
-                    dispatch("GET_ASSIGNED_TRIPS", response.data);
+        SAVE_ASSIGNED_TRIP: async ({dispatch}, trip_assigned) => {
+            if(trip_assigned.pk){
+                await Api().patch('/fleet-assignments/' + trip_assigned.pk + '/', trip_assigned.data)
+                .then(() => {
+                    dispatch("GET_ASSIGNED_TRIPS");
                     Router.push({name: 'trip-assigned'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
             }else{
-                await Api().post('/fleet-assignments/', trips_assigned)
-                .then((response) => {
-                    dispatch("GET_ASSIGNED_TRIPS", response.data);
+                await Api().post('/fleet-assignments/', trip_assigned)
+                .then(() => {
+                    dispatch("GET_ASSIGNED_TRIPS");
                     Router.push({name: 'trip-assigned'});
                 })
                 .catch(error=>{

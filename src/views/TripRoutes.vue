@@ -131,6 +131,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+
 export default {
     data: () => ({
 		editedItem: {
@@ -161,8 +162,8 @@ export default {
 			{ text: 'End Point', value: 'end_point' },
 			{ text: 'Stopage Points', value: 'stopage_points' },
 			{ text: 'Description', value: 'description' },
-			{ text: 'Distance', value: 'distance' },
-			{ text: 'Duration', value: 'approximate_time' },
+			{ text: 'Distance (Kms)', value: 'distance' },
+			{ text: 'Duration (Hrs)', value: 'approximate_time' },
 			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
@@ -184,20 +185,30 @@ export default {
 			val || this.close()
 		},
     },
-
+	
 	mounted() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
 		this.$store.dispatch('GET_LOCATIONS');
-        this.$store.dispatch('GET_ROUTES');
+		this.$store.dispatch('GET_ROUTES');
+	},
+
+	updated() {
+		this.mapIdToName();
 	},
 
     methods: {
 		editItem (item) {
+			if (item){
+				let rout = this.mapNameToId(item);
+				this.editedItem = Object.assign({}, rout)
+			}else{
+				this.editedItem = Object.assign({}, item)
+			}
 			this.editedIndex = this.routes.indexOf(item)
-			this.editedItem = Object.assign({}, item)
 			this.dialog = true
+			this.mapIdToName()
 		},
 
 		closeDialog() {
@@ -217,6 +228,57 @@ export default {
 			this.editedItem = Object.assign({}, this.defaultItem);
 			this.editedIndex = -1;
 			}, 300)
+			this.mapIdToName();
+		},
+
+		mapIdToName(){
+			this.routes.forEach(element => {
+				this.locations.forEach( el => {
+					if (element.start_point == parseInt(el.id)){
+						element.start_point = el.name
+					}
+					if (element.end_point == parseInt(el.id)){
+						element.end_point = el.name
+					}
+					if (typeof element.stopage_points === 'string'){
+						element.stopage_points = element.stopage_points.split(',').map(elem => {
+						return parseInt(elem);
+					});
+					}
+					if (element.stopage_points.includes(el.id)){
+						let i = element.stopage_points.indexOf(el.id);
+						element.stopage_points[i] = el.name;
+					}
+				})
+			});
+		},
+
+		mapNameToId(route) {
+			let stopage = [];
+			let rout = {
+				'id': route.id,
+				'name': route.name,
+				'description': route.description,
+				'distance': route.distance,
+				'approximate_time': route.approximate_time,
+				'status': route.status
+			};
+			this.locations.forEach( el => {
+				if (route.start_point === el.name){
+					route.start_point = parseInt(el.id)
+					rout['start_point'] = parseInt(el.id);
+                }
+                if (route.end_point === el.name ){
+					route.end_point = parseInt(el.id)
+					rout['end_point'] = parseInt(el.id);
+                }
+				if (route.stopage_points.includes(el.name)){
+					stopage.push(parseInt(el.id));
+				}
+			});
+			rout['stopage_points'] = stopage;
+
+			return rout;
 		},
 
 		save () {
@@ -235,7 +297,7 @@ export default {
 					}
 				};
 				console.log(route);
-				this.$store.dispatch('SAVE_ROUTE', route);
+				// this.$store.dispatch('SAVE_ROUTE', route);
 			} else {
 				let route = {
 					name: this.editedItem.name,
@@ -249,7 +311,7 @@ export default {
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
 				console.log(route);
-				this.$store.dispatch('SAVE_ROUTE', route);
+				// this.$store.dispatch('SAVE_ROUTE', route);
 			}
 			this.close();
 		},

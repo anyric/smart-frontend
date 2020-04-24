@@ -43,7 +43,7 @@
 </template>
 
 <script>
-    import Form from "@/service/Form";
+    import Form from "@/services/Form";
     import {mapGetters} from 'vuex';
 
     export default {
