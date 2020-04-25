@@ -51,8 +51,9 @@ export default {
             await Api().post('/auth/logout/')
             .then(() => {
                 commit('SET_LOGGED_OUT_USER');
-                VueCookie.delete('currentUser');
+                Router.push({name: 'login'});
                 location.reload(true);
+                VueCookie.delete('currentUser');
             })
             .catch(error=>{
                 console.log(error.message, "logout error")

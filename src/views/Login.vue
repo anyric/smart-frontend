@@ -6,7 +6,7 @@
                     <v-flex xs12 sm8 md4>
                         <v-card class="elevation-12">
                             <v-toolbar color="teal darken-1" dark flat>
-                                <v-toolbar-title>Account Login</v-toolbar-title>
+                                <v-toolbar-title>User Login</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
                                 <v-alert dense outlined text v-if="loginError" type="error">{{loginError}}</v-alert>
@@ -38,17 +38,21 @@
                     </v-flex>
                 </v-layout>
             </v-container>
+            <v-overlay :value="overlay">
+				<v-progress-circular indeterminate size="64"></v-progress-circular>
+			</v-overlay>
         </v-content>
     </v-app>
 </template>
 
 <script>
-    import Form from "@/services/Form";
-    import {mapGetters} from 'vuex';
+import Form from "@/services/Form";
+import {mapGetters} from 'vuex';
 
     export default {
         data() {
             return {
+                overlay: false,
                 showPassword: false,
                 form: new Form({
                     mobile: '',
@@ -68,8 +72,17 @@
             }
         },
 
+        watch: {
+            overlay (val) {
+                val && setTimeout(() => {
+                    this.overlay = false
+                }, 3000)
+            },
+        },
+
         methods: {
             async loginUser() {
+                this.overlay = true;
                 await this.$store.dispatch('LOGIN', {
                     username: this.form.mobile,
                     password: this.form.password,
