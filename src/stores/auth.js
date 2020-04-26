@@ -59,5 +59,15 @@ export default {
                 console.log(error.message, "logout error")
             })
         },
+        CHANGE_PASSWORD: async (password) => {
+            await Api().post('/auth/password/change/', password)
+            .then((response) => {
+                console.log(response.data)
+                location.reload(true);
+            })
+            .catch(error=>{
+                console.log(error.message, "login error")
+            })
+        }
     },
 }

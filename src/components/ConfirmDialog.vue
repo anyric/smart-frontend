@@ -31,8 +31,6 @@ export default {
 			default: null
         },
     },
-	computed: {
-	},
 	methods: {
 		closeModal() {
 			this.$emit("close-modal");

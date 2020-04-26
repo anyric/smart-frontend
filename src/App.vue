@@ -2,11 +2,11 @@
 	<v-app id="inspire">
 		<!-- Start of Right vertical menu -->
 		<v-navigation-drawer
-		v-model="drawer"
-		:clipped="$vuetify.breakpoint.lgAndUp"
-		app
-		color="blue-grey darken-2"
-		v-if="isLoggedIn"
+			v-model="drawer"
+			:clipped="$vuetify.breakpoint.lgAndUp"
+			app
+			color="blue-grey darken-2"
+			v-if="isLoggedIn"
 		>
 			<!-- Menu List Container -->
 			<template>
@@ -45,11 +45,11 @@
 		<!-- End of Right vertical Menu -->
 		<!-- Start of Top Horizontal bar -->
 		<v-app-bar
-		:clipped-left="$vuetify.breakpoint.lgAndUp"
-		app
-		color="teal darken-1"
-		dark
-		v-if="isLoggedIn"
+			:clipped-left="$vuetify.breakpoint.lgAndUp"
+			app
+			color="teal darken-1"
+			dark
+			v-if="isLoggedIn"
 		>
 			<v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 			<v-toolbar-title style="width: 300px" class="ml-0 pl-4">
@@ -63,7 +63,7 @@
 							<img src="@/assets/images/avatar1.png"/>
 						</v-avatar>
 						<v-btn
-							text="true"
+							text
 							dark
 							v-on="on"
 						>
@@ -73,16 +73,17 @@
 					</template>
 					<v-list>
 						<v-list-item-group>
-							<v-list-item
-							v-for="(item, i) in items"
-							:key="i"
-							>
+							<v-list-item @click="logout">
 								<v-list-item-icon>
-									<v-icon small color="teal darken-1" v-text="item.icon"></v-icon>
+									<v-icon small color="teal darken-1">fas fa-user-edit</v-icon>
 								</v-list-item-icon>
-								<v-list-item-content>
-									{{ item.text}}
-								</v-list-item-content>
+								<v-list-item-content>Edit Profile</v-list-item-content>
+							</v-list-item>
+							<v-list-item @click="openDialog">
+								<v-list-item-icon>
+									<v-icon small color="teal darken-1">fas fa-edit</v-icon>
+								</v-list-item-icon>
+								<v-list-item-content>Change Password</v-list-item-content>
 							</v-list-item>
 							<v-divider></v-divider>
 							<v-list-item @click="logout">
@@ -104,6 +105,10 @@
 			<v-overlay :value="overlay">
 				<v-progress-circular indeterminate size="64"></v-progress-circular>
 			</v-overlay>
+			<main-password-dialog
+				:open="isOpen"
+				@close-modal="closeDialog"
+			></main-password-dialog>
 		</v-content>
 	</v-app>
 </template>
@@ -128,6 +133,7 @@ export default {
 		currentUser: null,
 		dialog: false,
 		drawer: null,
+		isOpen: false,
 		menus: [
 		{ route: "/dashboard", icon: "fas fa-tachometer-alt", text: "Dashboard" },
 		{ route: "/users", icon: "fas fa-users", text: "Manage Users" },
@@ -188,9 +194,24 @@ export default {
 	},
 
 	methods: {
+		closeDialog() {
+			this.isOpen = false;
+		},
+
+		openDialog(){
+			this.isOpen = true;
+		},
+
+		close () {
+			this.dialog = false
+			setTimeout(() => {
+			}, 3000)
+		},
+
 		async logout() {
 			this.overlay = true;
 			this.$store.dispatch("LOGOUT");
+			this.close()
 		}
 	}
 };
