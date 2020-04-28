@@ -73,7 +73,7 @@
 					</template>
 					<v-list>
 						<v-list-item-group>
-							<v-list-item @click="logout">
+							<v-list-item @click="openProfile">
 								<v-list-item-icon>
 									<v-icon small color="teal darken-1">fas fa-user-edit</v-icon>
 								</v-list-item-icon>
@@ -109,6 +109,11 @@
 				:open="isOpen"
 				@close-modal="closeDialog"
 			></main-password-dialog>
+			<main-profile-dialog
+				:open="isOpen1"
+				:userData="currentUser.user"
+				@close-modal="closeDialog"
+			></main-profile-dialog>
 		</v-content>
 	</v-app>
 </template>
@@ -134,6 +139,10 @@ export default {
 		dialog: false,
 		drawer: null,
 		isOpen: false,
+		isOpen1: false,
+		dialogId: 0,
+		dialogItem: null,
+		dialogItems: null,
 		menus: [
 		{ route: "/dashboard", icon: "fas fa-tachometer-alt", text: "Dashboard" },
 		{ route: "/users", icon: "fas fa-users", text: "Manage Users" },
@@ -176,7 +185,6 @@ export default {
 			this.$store.dispatch("SET_CURRENT_USER",JSON.parse(user));
 			this.currentUser = JSON.parse(user);
 		}
-		
 	},
 
 	updated() {
@@ -186,16 +194,17 @@ export default {
 	},
 
 	watch: {
-      overlay (val) {
-        val && setTimeout(() => {
-          this.overlay = false
-        }, 3000)
-      },
+		overlay (val) {
+			val && setTimeout(() => {
+			this.overlay = false
+		}, 3000)
+		},
 	},
 
 	methods: {
 		closeDialog() {
 			this.isOpen = false;
+			this.isOpen1 = false;
 		},
 
 		openDialog(){
@@ -206,6 +215,10 @@ export default {
 			this.dialog = false
 			setTimeout(() => {
 			}, 3000)
+		},
+
+		openProfile() {
+			this.isOpen1 = true;
 		},
 
 		async logout() {

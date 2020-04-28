@@ -25,13 +25,13 @@
                         v-model="form.new_password2"
                         :append-icon="showNewPassword2 ? 'fas fa-eye' : 'fas fa-eye-slash'"
                         @click:append="showNewPassword2 = !showNewPassword2"
-                        @keyup.enter="changePassword()"
+                        @keyup.enter="changePassword"
                     ></v-text-field>
                 </v-form>
             </v-card-text>
 			<v-card-actions>
 				<v-spacer></v-spacer>
-				<v-btn color="white" class="red" dark text @click="closeModal">Cancel</v-btn>
+				<v-btn color="white" class="red mr-5" dark text @click="closeModal">Cancel</v-btn>
 				<v-btn
                     color="white"
                     class="teal darken-1"

@@ -66,7 +66,17 @@ export default {
                 location.reload(true);
             })
             .catch(error=>{
-                console.log(error.message, "login error")
+                console.log(error.message, "change password error")
+            })
+        },
+        EDIT_PROFILE: async (user) => {
+            await Api().patch('/auth/user/', user)
+            .then((response) => {
+                console.log(response.data)
+                location.reload(true);
+            })
+            .catch(error=>{
+                console.log(error.message, "edit profile error")
             })
         }
     },
