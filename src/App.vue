@@ -111,15 +111,26 @@
 			></main-password-dialog>
 			<main-profile-dialog
 				:open="isOpen1"
-				:userData="currentUser.user"
 				@close-modal="closeDialog"
 			></main-profile-dialog>
 		</v-content>
+		<v-snackbar
+			@show-snackbar="showSnackbar"
+			v-model="isShowing"
+			:color="snackBarColor"
+			top
+			:timeout="timeout">
+			{{ snackBarText }}
+			<v-btn text @click="close">
+				<v-icon small>fa fa-times</v-icon>
+			</v-btn>
+		</v-snackbar>
 	</v-app>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
 	data: () => ({
 		overlay: false,
@@ -135,6 +146,10 @@ export default {
 				route: ''
 			},
 		],
+		isShowing: false,
+		snackBarText: "You've successfully logged out!",
+		snackBarColor: 'success',
+		timeout: 0,
 		currentUser: null,
 		dialog: false,
 		drawer: null,
@@ -185,19 +200,23 @@ export default {
 			this.$store.dispatch("SET_CURRENT_USER",JSON.parse(user));
 			this.currentUser = JSON.parse(user);
 		}
+
+		EventBus.$on('show-snackbar', data => {
+			this.showSnackbar(data);
+		})
 	},
 
 	updated() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
-        }
+		}
 	},
 
 	watch: {
 		overlay (val) {
 			val && setTimeout(() => {
 			this.overlay = false
-		}, 3000)
+			}, 5000)
 		},
 	},
 
@@ -207,24 +226,30 @@ export default {
 			this.isOpen1 = false;
 		},
 
+		showSnackbar(data) {
+			this.snackBarText = data.text;
+			this.snackBarColor = data.color;
+			this.isShowing = true;
+		},
+
 		openDialog(){
 			this.isOpen = true;
 		},
 
 		close () {
 			this.dialog = false
-			setTimeout(() => {
-			}, 3000)
 		},
 
 		openProfile() {
 			this.isOpen1 = true;
 		},
 
+
 		async logout() {
 			this.overlay = true;
 			this.$store.dispatch("LOGOUT");
 			this.close()
+			this.isShowing = true;
 		}
 	}
 };

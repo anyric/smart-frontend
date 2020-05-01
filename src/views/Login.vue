@@ -47,6 +47,7 @@
 
 <script>
 import Form from "@/services/Form";
+import { EventBus } from "@/services/bus";
 import {mapGetters} from 'vuex';
 
     export default {
@@ -76,16 +77,21 @@ import {mapGetters} from 'vuex';
             overlay (val) {
                 val && setTimeout(() => {
                     this.overlay = false
-                }, 3000)
+                }, 5000)
             },
         },
 
         methods: {
-            async loginUser() {
+            loginUser() {
                 this.overlay = true;
-                await this.$store.dispatch('LOGIN', {
+                this.$store.dispatch('LOGIN', {
                     username: this.form.mobile,
                     password: this.form.password,
+                });
+
+                EventBus.$emit("show-snackbar", {
+                    text: "You've successfully logged in!",
+                    color: "success",
                 });
             }
         }

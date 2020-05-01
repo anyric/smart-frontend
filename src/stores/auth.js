@@ -41,7 +41,9 @@ export default {
                 commit('SET_LOGGED_IN_USER', user);
                 VueCookie.set('currentUser', JSON.stringify(user), 1);
                 Router.push({name: 'dashboard'});
-                location.reload(true);
+                setTimeout(() => {
+                    location.reload(true);
+                }, 3000)
             })
             .catch(error=>{
                 console.log(error.message, "login error")
@@ -51,9 +53,11 @@ export default {
             await Api().post('/auth/logout/')
             .then(() => {
                 commit('SET_LOGGED_OUT_USER');
-                Router.push({name: 'login'});
-                location.reload(true);
-                VueCookie.delete('currentUser');
+                setTimeout(() => {
+                    Router.push({name: 'login'});
+                    location.reload(true);
+                    VueCookie.delete('currentUser');
+                }, 2000)
             })
             .catch(error=>{
                 console.log(error.message, "logout error")

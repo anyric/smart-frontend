@@ -79,8 +79,6 @@
                 };
                 this.$store.dispatch('EDIT_PROFILE', user)
                 this.$emit("close-modal");
-                // alert("Edit Successful!");
-                // console.log(user)
             },
         },
     }
