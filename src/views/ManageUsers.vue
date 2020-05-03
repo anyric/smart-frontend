@@ -48,7 +48,6 @@
                                         <v-col cols="6" class="sm12">
                                             <v-text-field
                                                 required
-                                                :disabled="!(editedIndex <= -1)"
                                                 v-model="editedItem.mobile"
                                                 label="Mobile"
                                             ></v-text-field>
@@ -211,11 +210,12 @@ export default {
                 let user = {
                     pk: this.editedItem.id,
                     data: {
+                        mobile: this.editedItem.mobile,
                         username: this.editedItem.username,
                         email: this.editedItem.email,
                         first_name: this.editedItem.first_name,
                         last_name: this.editedItem.last_name,
-                        is_active: this.editedItem.is_ative,
+                        is_active: this.editedItem.is_active,
                         is_staff: this.editedItem.is_staff,
                         is_admin: this.editedItem.is_admin
                     }

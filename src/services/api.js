@@ -6,14 +6,18 @@ export default () =>{
     if(currentUser){
         currentUser = JSON.parse(currentUser);
     }
-    
+
     return axios.create({
         baseURL: 'http://localhost:8000/api/v1',
-        withCredentials: false,
+        xhrFields: {
+            withCredentials: true
+        },
+        xsrfCookieName: 'csrftoken',
+        xsrfHeaderName: 'X-CSRFToken',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            'Authorization': (currentUser) ? currentUser.token : ''
+            'Authorization': (currentUser) ? 'Bearer ' + currentUser.token : ''
         }
     });
 }

@@ -53,7 +53,7 @@ export default {
                     commit('SET_USERS', response.data.results);
                 }
             })
-            .catch(error=>{
+            .catch(error =>{
                 console.log(error.message + " get error");
             })
         },
@@ -61,21 +61,19 @@ export default {
             if(user.pk){
                 await Api().patch('/users/'+ user.pk +'/', user.data)
                 .then(() => {
-                    // console.log(response.data);
                     dispatch("GET_USERS");
                     Router.push({name: 'users'});
                 })
-                .catch(error=>{
+                .catch(error =>{
                     console.log(error.message + " edit error")
                 })
             }else{
                 await Api().post('/users/', user)
                 .then(() => {
-                    // console.log(response.data)
                     dispatch("GET_USERS");
                     Router.push({name: 'users'});
                 })
-                .catch(error=>{
+                .catch(error =>{
                     console.log(error.message + " post error")
                 })
             }
