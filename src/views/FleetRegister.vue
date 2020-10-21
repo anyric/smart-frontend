@@ -69,7 +69,7 @@
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.seat_nos" label="Seat No *"></v-text-field>
+													<v-text-field required v-model="editedItem.seat_nos" label="Total Seat No *"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
 													<v-checkbox required v-model="editedItem.status" label="Active *"></v-checkbox>
@@ -79,8 +79,8 @@
 									</v-card-text>
 
 									<v-card-actions>
-										<v-btn color="red" dark class="mb-2" @click="close">Cancel</v-btn>
 										<v-spacer></v-spacer>
+										<v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
 										<v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
 									</v-card-actions>
 								</v-card>

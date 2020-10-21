@@ -11,34 +11,34 @@
 			<!-- Menu List Container -->
 			<template>
 				<v-list>
-				<v-list-item v-for="(menu, i) in menus" :key="i" :to="menu.route">
-					<v-list-group v-if="menu.children && menu.children.length" :key="menu.text">
-					<template v-slot:activator>
-						<v-list-item-action>
-						<v-icon small color="white darken-2">{{menu.icon}}</v-icon>
-						</v-list-item-action>
+					<v-list-item v-for="(menu, i) in menus" :key="i" :to="menu.route">
+						<v-list-group v-if="menu.children && menu.children.length" :key="menu.text">
+							<template v-slot:activator>
+								<v-list-item-icon>
+									<v-icon small color="white darken-2">{{menu.icon}}</v-icon>
+								</v-list-item-icon>
+								<v-list-item-content>
+								<v-list-item-title>{{ menu.text }}</v-list-item-title>
+								</v-list-item-content>
+							</template>
+							<!-- children list -->
+							<v-list-item v-for="(child, i) in menu.children" :to="child.route" :key="i" link>
+								<v-list-item-action></v-list-item-action>
+								<v-list-item-content class="colored-text">
+								<v-list-item-title>{{ child.text }}</v-list-item-title>
+								</v-list-item-content>
+							</v-list-item>
+							<!-- end of children list -->
+						</v-list-group>
+						<v-list-item v-else :key="menu.text" link>
+						<v-list-item-icon>
+							<v-icon small color="white darken-2 mr-1">{{ menu.icon }}</v-icon>
+						</v-list-item-icon>
 						<v-list-item-content>
-						<v-list-item-title>{{ menu.text }}</v-list-item-title>
+							<v-list-item-title>{{ menu.text }}</v-list-item-title>
 						</v-list-item-content>
-					</template>
-					<!-- children list -->
-					<v-list-item v-for="(child, i) in menu.children" :to="child.route" :key="i" link>
-						<v-list-item-action></v-list-item-action>
-						<v-list-item-content class="colored-text">
-						<v-list-item-title>{{ child.text }}</v-list-item-title>
-						</v-list-item-content>
+						</v-list-item>
 					</v-list-item>
-					<!-- end of children list -->
-					</v-list-group>
-					<v-list-item v-else :key="menu.text" link>
-					<v-list-item-action>
-						<v-icon small color="white darken-2 mr-1">{{ menu.icon }}</v-icon>
-					</v-list-item-action>
-					<v-list-item-content>
-						<v-list-item-title>{{ menu.text }}</v-list-item-title>
-					</v-list-item-content>
-					</v-list-item>
-				</v-list-item>
 				</v-list>
 			</template>
 		</v-navigation-drawer>
@@ -164,7 +164,6 @@ export default {
 		{ route: "/agents", icon: "fas fa-handshake", text: "Manage Agents" },
 		{
 			icon: "fas fa-bus-alt",
-			"icon-alt": "fas fa-chevron-down",
 			text: "Manage Fleet",
 			children: [
 			{ route: "/fleets/types", text: "Types" },
@@ -173,13 +172,13 @@ export default {
 		},
 		{
 			icon: "fas fa-road",
-			"icon-alt": "fas fa-chevron-down",
 			text: "Manage Trips",
 			children: [
 			{ route: "/trips/locations", text: "Locations" },
 			{ route: "/trips/routes", text: "Routes" },
 			{ route: "/trips/assignments", text: "Assign Fleets" },
-			{ route: "/trips/fares", text: "Ticket Fares" }
+			{ route: "/trips/fares", text: "Ticket Fares" },
+			{ route: "/trips/tickets", text: "Tickets" }
 			]
 		},
 		{ route: "/settings", icon: "mdi-settings", text: "Settings" }
@@ -260,5 +259,8 @@ export default {
 }
 .v-list-item__title {
   color: white;
+}
+.theme--light.v-icon {
+	color: white;
 }
 </style>

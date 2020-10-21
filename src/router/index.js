@@ -1,19 +1,20 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Login from '../views/Login'
+import Login from '../views/Login';
 import DashBoard from '../views/DashBoard';
-import ManageUsers from '../views/ManageUsers'
-import ManageAgents from '../views/ManageAgents'
+import ManageUsers from '../views/ManageUsers';
+import ManageAgents from '../views/ManageAgents';
 import FleetTypes from '../views/FleetTypes';
-import FleetRegister from '../views/FleetRegister'
-import TripLocations from '../views/TripLocations'
+import FleetRegister from '../views/FleetRegister';
+import TripLocations from '../views/TripLocations';
 import TripRoutes from '../views/TripRoutes';
-import TripAssignments from '../views/TripAssignments'
+import TripAssignments from '../views/TripAssignments';
 import TripFares from '../views/TripFares';
-import Settings from '../views/Settings'
+import TripTicket from '../views/TripTicket';
+import Settings from '../views/Settings';
 import Store from '../store';
-import Container from '../components/Container'
+import Container from '../components/Container';
 
 
 Vue.use(VueRouter);
@@ -91,6 +92,11 @@ const routes = [
                 path: 'trips/fares',
                 name: 'trip-fares',
                 component: TripFares
+            },
+            {
+                path: 'trips/tickets',
+                name: 'trip-ticket',
+                component: TripTicket
             },
             {
                 path: 'settings',

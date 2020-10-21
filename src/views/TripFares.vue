@@ -81,8 +81,8 @@
 								</v-card-text>
 
 								<v-card-actions>
-									<v-btn color="red" dark class="mb-2" @click="close">Cancel</v-btn>
 									<v-spacer></v-spacer>
+									<v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
 									<v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
 								</v-card-actions>
 								</v-card>

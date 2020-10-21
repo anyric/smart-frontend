@@ -59,7 +59,7 @@
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col cols="5" class="sm12">
+                                        <v-col cols="6" class="sm12">
                                             <v-menu
                                                 v-model="start_date"
                                                 :close-on-content-click="false"
@@ -84,7 +84,7 @@
                                                 ></v-date-picker>
                                             </v-menu>
                                         </v-col>
-                                        <v-col cols="5" class="sm12">
+                                        <v-col cols="6" class="sm12">
                                             <v-menu
                                                 v-model="end_date"
                                                 :close-on-content-click="false"
@@ -109,7 +109,39 @@
                                                 ></v-date-picker>
                                             </v-menu>
                                         </v-col>
-                                        <v-col cols="2" class="sm12">
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="11" sm="5">
+                                            <v-menu
+                                                ref="menu"
+                                                v-model="departure_time"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                :return-value.sync="editedItem.departure_time"
+                                                transition="scale-transition"
+                                                offset-y
+                                                max-width="290px"
+                                                min-width="290px"
+                                            >
+                                                <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field
+                                                    v-model="editedItem.departure_time"
+                                                    label="Departure Time"
+                                                    prepend-icon="fa fa-clock"
+                                                    readonly
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                ></v-text-field>
+                                                </template>
+                                                <v-time-picker
+                                                    v-if="departure_time"
+                                                    v-model="editedItem.departure_time"
+                                                    full-width
+                                                    @click:minute="$refs.menu.save(editedItem.departure_time)"
+                                                ></v-time-picker>
+                                            </v-menu>
+                                        </v-col>
+                                        <v-col cols="1" class="sm12">
                                             <v-checkbox required v-model="editedItem.status" label="Active"></v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -117,8 +149,8 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="red" dark class="mb-2" @click="close">Cancel</v-btn>
                                 <v-spacer></v-spacer>
+                                <v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
                                 <v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
                             </v-card-actions>
                         </v-card>
@@ -161,8 +193,11 @@ export default {
 			route_name: '',
 			trip_start_date: '',
 			trip_end_date: '',
+            departure_time: '',
 			status: '',
         },
+        departure_time: false,
+        modal2: false,
         start_date: false,
         end_date: false,
 		isOpen: false,
@@ -180,7 +215,8 @@ export default {
 			},
 			{ text: 'Route Name', value: 'route_name' },
 			{ text: 'Start Date', value: 'trip_start_date' },
-			{ text: 'End Date', value: 'trip_end_date' },
+            { text: 'End Date', value: 'trip_end_date' },
+            { text: 'Departure Time', value: 'departure_time' },
 			{ text: 'Active', value: 'status' },
 			{ text: 'Actions', value: 'action', sortable: false },
 		],
@@ -277,6 +313,7 @@ export default {
 			let editedAssignedFleet = {
                 'trip_start_date': assignedFleet.trip_start_date,
                 'trip_end_date': assignedFleet.trip_end_date,
+                'departure_time': assignedFleet.departure_time,
                 'status': assignedFleet.status
 			};
 			this.assignTrips.forEach( element => {
@@ -306,6 +343,7 @@ export default {
                         route_name: this.editedItem.route_name,
 						trip_start_date: this.editedItem.trip_start_date,
 						trip_end_date: this.editedItem.trip_end_date,
+                        departure_time: this.editedItem.departure_time,
 						status: this.editedItem.status
 					}
 				};
@@ -317,6 +355,7 @@ export default {
                         route_name: this.editedItem.route_name,
 						trip_start_date: this.editedItem.trip_start_date,
 						trip_end_date: this.editedItem.trip_end_date,
+                        departure_time: this.editedItem.departure_time,
                         status: this.editedItem.status,
                         created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};

@@ -94,8 +94,8 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="red" dark class="mb-2" @click="close">Cancel</v-btn>
-                                <v-spacer></v-spacer>
+								<v-spacer></v-spacer>
+                                <v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
                                 <v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
                             </v-card-actions>
                         </v-card>
@@ -296,8 +296,8 @@ export default {
 						status: this.editedItem.status
 					}
 				};
-				console.log(route);
-				// this.$store.dispatch('SAVE_ROUTE', route);
+				// console.log(route);
+				this.$store.dispatch('SAVE_ROUTE', route);
 			} else {
 				let route = {
 					name: this.editedItem.name,
@@ -310,8 +310,8 @@ export default {
 					status: this.editedItem.status,
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				console.log(route);
-				// this.$store.dispatch('SAVE_ROUTE', route);
+				// console.log(route);
+				this.$store.dispatch('SAVE_ROUTE', route);
 			}
 			this.close();
 		},

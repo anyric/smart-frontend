@@ -10,6 +10,7 @@ import locationsStore from './stores/locations';
 import routesStore from './stores/routes';
 import assignedTripsStore from './stores/assignedTrips';
 import faresStore from './stores/fares';
+import ticketStore from './stores/tickets';
 
 Vue.use(Vuex);
 
@@ -23,7 +24,8 @@ export default new Vuex.Store({
         locations : locationsStore,
         routes: routesStore,
         assignedTrips: assignedTripsStore,
-        fares: faresStore
+        fares: faresStore,
+        tickets: ticketStore
     },
     state: {},
     getters: {},
