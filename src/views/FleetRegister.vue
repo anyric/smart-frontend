@@ -139,11 +139,6 @@ export default {
 		search: '',
 		editedIndex: -1,
 		headers: [
-			// {
-			// 	text: 'Id',
-			// 	align: 'start',
-			// 	value: 'id',
-			// },
 			{ text: 'Registration No', align: 'start', value: 'registration_no',},
 			{ text: 'Engine No', value: 'engine_no' },
 			{ text: 'Chasis No', value: 'chasis_no' },

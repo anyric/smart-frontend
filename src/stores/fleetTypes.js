@@ -9,22 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         fleetTypes: null,
-        defaultFleetTypes: [
-            {
-                id: 1,
-                name: "Universal",
-                status: 'active',
-            },
-            {
-                id: 2,
-                name: "Premium",
-                status: 'active',
-            }
-        ],
     },
     getters: {
         FLEET_TYPES: (state) => {
-            return state.fleetTypes || state.defaultFleetTypes;
+            return state.fleetTypes || []
         },
     },
     mutations: {

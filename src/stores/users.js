@@ -9,34 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         users: null,
-        defaultUsers: [
-            {
-                id: 1,
-                mobile: "+256700000000",
-                username: "anyric",
-                email: 'anyric@smart.com',
-                firstName: 'Ric',
-                lastName: 'Any',
-                is_staff: false,
-                is_active: true,
-                is_admin: false
-            },
-            {
-                id: 2,
-                mobile: "+256701111111",
-                username: "smart",
-                email: 'info@smart.com',
-                firstName: 'smart',
-                lastName: 'info',
-                is_staff: true,
-                is_active: true,
-                is_admin: false
-            }
-        ],
     },
     getters: {
         USERS: (state) => {
-            return state.users || state.defaultUsers;
+            return state.users || []
         },
     },
     mutations: {

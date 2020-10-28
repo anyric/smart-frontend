@@ -9,30 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         locations: null,
-        defaultLocations: [
-            {
-                id: 1,
-                name: "Kampala",
-                description: 'The booking office in Kampala',
-                status: true,
-            },
-            {
-                id: 2,
-                name: "Moyo",
-                description: 'The booking office in Moyo',
-                status: true,
-            },
-            {
-                id: 3,
-                name: "Arua",
-                description: 'The booking office in Arua',
-                status: true,
-            }
-        ],
     },
     getters: {
         LOCATIONS: (state) => {
-            return state.locations || state.defaultLocations;
+            return state.locations || []
         },
     },
     mutations: {

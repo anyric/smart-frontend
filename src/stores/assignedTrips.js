@@ -9,30 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         assignedTrips: null,
-        defaultAssignedTrips: [
-            {
-                id: 1,
-                fleet_registration_no: 'UAC022F',
-                route_name: "Kampala - Moyo",
-                trip_start_date: '07-03-2020',
-                trip_end_date: '08-03-2020',
-                departure_time: "08:30:00",
-                status: 'true',
-            },
-            {
-                id: 2,
-                fleet_registration_no: 'UAJ024F',
-                route_name: "Kampala - Arua",
-                trip_start_date: '07-03-2020',
-                trip_end_date: '08-03-2020',
-                departure_time: "08:30:00",
-                status: 'true',
-            },
-        ],
     },
     getters: {
         ASSIGNED_TRIPS: (state) => {
-            return state.defaultAssignedTrips;
+            return state.assignedTrips || [];
         },
     },
     mutations: {

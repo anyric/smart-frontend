@@ -3,11 +3,11 @@
 		<v-row class="container mx-auto">
 			<v-col cols="12" class="sm12">
 				<v-data-table
-				:headers="headers"
-				:items="ticketList"
-				:search="search"
-				sort-by="ticket_no"
-				class="elevation-1"
+					:headers="headers"
+					:items="tickets"
+					:search="search"
+					sort-by="ticket_no"
+					class="elevation-1"
 				>
 					<template v-slot:top>
 						<v-toolbar color="white">
@@ -36,6 +36,19 @@
 								</template>
 								<span>Create New Ticket</span>
 							</v-tooltip>
+							<v-tooltip bottom color="green">
+								<template v-slot:activator="{ on }">
+									<v-btn
+										color="teal darken-1"
+										dark
+										v-on="on"
+										class="mb-2 ml-2 button-small"
+										@click="printReport()">
+										<i class="fa fa-file-pdf mr-1"></i> View PDF
+									</v-btn>
+								</template>
+								<span>View PDF Report</span>
+							</v-tooltip>
 							<v-dialog v-model="dialog" persistent max-width="500px" max-height="300px">
 								<v-card>
 								<v-card-title>
@@ -46,15 +59,11 @@
 									<v-container>
 										<v-row>
 											<v-col cols="6" class="sm12">
-                                                <v-select
-                                                    :items="users"
-                                                    label="Passenger *"
-                                                    item-text="last_name"
-                                                    item-value="id"
-                                                    v-model="editedItem.id"
+												<v-text-field
                                                     required
-                                                    @select="setUser"
-                                                ></v-select>
+                                                    v-model="editedItem.passenger_name"
+                                                    label="Passenger Name *"
+												></v-text-field>
 											</v-col>
                                             <v-col cols="6" class="sm12">
                                                 <v-text-field
@@ -65,32 +74,79 @@
                                             </v-col>
 										</v-row>
 										<v-row>
-											<v-col cols="6" class="sm12">
-                                                <v-select
-                                                    :items="assignTrips"
-                                                    label="Route *"
-                                                    item-text="start_point"
-                                                    item-value="id"
-                                                    v-model="editedItem.route_name"
-                                                    required
-                                                ></v-select>
+											<v-col col="6" class="sm12">
+												<v-select
+													:items="routes"
+													label="Trip Route *"
+													item-text="name"
+													item-value="id"
+													v-model="editedItem.ticket_trip"
+													required
+												></v-select>
 											</v-col>
-                                            <v-col cols="6" class="sm12">
+											<v-col col="6" class="sm12">
+												<v-select
+													:items="fleets"
+													label="Trip Fleet *"
+													item-text="registration_no"
+													item-value="id"
+													v-model="editedItem.fleet_registration_no"
+													required
+												></v-select>
+											</v-col>
+										</v-row>
+										<v-row>
+											<v-col col="5" class="sm12">
+												<v-select
+													:items="fleetTypes"
+													label="Trip Type *"
+													item-text="name"
+													item-value="id"
+													v-model="editedItem.fleet_type"
+													required
+												></v-select>
+											</v-col>
+											<v-col cols="3" class="sm12">
                                                 <v-text-field
                                                     required
-                                                    v-model="editedItem.price_per_person"
-                                                    label="Ticket Price *"
-                                                ></v-text-field>
+                                                    v-model="editedItem.seat"
+                                                    label="Seat No *"
+												></v-text-field>
+                                            </v-col>
+                                            <v-col cols="4" class="sm12">
+												<v-text-field
+													required
+													v-model="editedItem.price"
+													label="Ticket Price *"
+												></v-text-field>
                                             </v-col>
 										</v-row>
 										<v-row>
-                                            <v-col cols="6" class="sm12">
-                                                <v-text-field
-                                                    required
-                                                    v-model="editedItem.trip_start_date"
-                                                    label="Date *"
-                                                ></v-text-field>
-                                            </v-col>
+											<v-col cols="6" class="sm12">
+												<v-menu
+													v-model="start_date"
+													:close-on-content-click="false"
+													:nudge-right="40"
+													transition="scale-transition"
+													offset-y
+													min-width="290px"
+												>
+													<template v-slot:activator="{ on }">
+														<v-text-field
+															required
+															v-model="editedItem.trip_start_date"
+															label="Travel Date"
+															prepend-icon="fa fa-calendar"
+															readonly
+															v-on="on"
+														></v-text-field>
+													</template>
+													<v-date-picker
+														v-model="editedItem.trip_start_date"
+														@input="start_date = false"
+													></v-date-picker>
+												</v-menu>
+											</v-col>
 											<v-col cols="6" class="sm12">
 												<v-menu
 													ref="menu"
@@ -127,20 +183,32 @@
 								<v-card-actions>
 									<v-spacer></v-spacer>
 									<v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
-									<v-btn color="teal darken-1" dark class="mb-2" @click="save">Create</v-btn>
+									<v-btn color="teal darken-1" dark class="mb-2" @click="save">{{ actionButton }}</v-btn>
 								</v-card-actions>
 								</v-card>
 							</v-dialog>
 						</v-toolbar>
 					</template>
 					<template v-slot:item.action="{ item }">
+						<v-tooltip bottom color="green">
+							<template v-slot:activator="{ on }">
+								<v-icon
+									color="green"
+									small
+									v-on="on"
+
+									@click="viewItem(item)"
+								>mdi-eye</v-icon>
+							</template>
+							<span>View Ticket</span>
+						</v-tooltip>
 						<v-tooltip bottom color="primary">
 							<template v-slot:activator="{ on }">
 								<v-icon
 									color="primary"
 									small
 									v-on="on"
-									class="mr-2"
+									
 									@click="editItem(item)"
 								>mdi-pencil</v-icon>
 							</template>
@@ -160,6 +228,128 @@
 				</v-data-table>
 			</v-col>
 		</v-row>
+		<div class="text-center">
+			<v-dialog
+				v-model="viewDialog"
+				width="500"
+			>
+				<v-card id="ticket">
+					<div class="mt-0 pt-0 text-right">
+							<v-btn
+								
+								color="red"
+								text
+								@click="viewDialog = false"
+							>
+								<i class="fa fa-times" aria-hidden="true"></i>
+							</v-btn>
+					</div>
+					<v-card-subtitle>
+						<v-row>
+							<v-col cols="9" class="sm12 font-weight-bold py-1">
+								<i class="fas fa-bus-alt mr-1"></i>ZAWADI BUS SERVICES
+							</v-col>
+							<v-col cols="3" class="sm12 py-1 text-right ">
+								SEAT NO. <strong> {{ viewTicket.seat}} </strong>
+							</v-col>
+						</v-row>
+						<v-row class="mt-0">
+							<v-col cols="5" class="sm12 py-1">
+								<div class="ml-5 pl-0">P.O.Box 770 Arua</div>
+								<!-- SEAT NO.<br> <strong> {{ viewTicket.seat}} </strong> -->
+							</v-col>
+							<v-col cols="7" class="sm12 pb-1 pt-1 text-right">
+								RECEIPT NO. <strong> {{ viewTicket.ticket_no }} </strong>
+							</v-col>
+						</v-row>
+					</v-card-subtitle>
+
+					<v-card-text class="mt-0 pt-0">
+						<v-row>
+							<v-col cols="5" class="mt-0 mb-0 pb-0 pt-0"> BUS NO.<strong> {{ viewTicket.fleet_registration_no }} </strong></v-col>
+							<v-col cols="7" class=" mt-0 mb-0 pb-0 pt-0">
+								<div><strong> Travel Ticket</strong></div>
+							</v-col>
+						</v-row>
+						<v-divider></v-divider>
+						<v-row>
+							<v-col cols="7" class="sm12 pt-2">
+								<strong> NAME OF PASSENGER </strong> <br />
+								{{ viewTicket.passenger_name }}
+							</v-col>
+							<v-col cols="5" class="sm12 pt-2">
+								<strong> JOURNEY: </strong>
+								<br />
+								{{ viewTicket.ticket_trip }}
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col cols="4" class="sm12 pt-0">
+								<strong> BOOKING DATE: </strong>
+							</v-col>
+							<v-col cols="3" class="sm12 pt-0">
+								{{  viewTicket.trip_start_date }}
+							</v-col>
+							<v-col cols="5" class="sm12 pt-0">
+								<strong> TRIP TYPE: </strong>
+								<br />
+								{{ viewTicket.fleet_type }}
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col cols="4" class="sm12 pt-0">
+								<strong> TRAVEL DATE: </strong> <br />
+							</v-col>
+							<v-col cols="3" class="sm12 pt-0">
+								{{  viewTicket.trip_start_date }}
+							</v-col>
+							<v-col cols="5" class="sm12 pt-0">
+								<strong> BOOKING CLERK: </strong>
+								<br />
+								{{ viewTicket.created_by }}
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col cols="4" class="sm12 pt-0">
+								<strong> REPORTING TIME: </strong> <br />
+							</v-col>
+							<v-col cols="3" class="sm12 pt-0">
+								{{  viewTicket.departure_time }}
+							</v-col>
+							<v-col cols="5" class="sm12 pt-0">
+								<strong> FARE: </strong>
+								<br />
+								{{ viewTicket.price }}
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col cols="4" class="sm12 pt-0">
+								<strong> DEPARTURE TIME: </strong>
+							</v-col>
+							<v-col cols="4" class="sm12 pt-0">
+								{{  viewTicket.departure_time }}
+							</v-col>
+						</v-row>
+					</v-card-text>
+
+					<v-divider></v-divider>
+
+					<v-card-actions>
+						<small><b> Valid Only For The Date of Travel</b></small>
+						<v-spacer></v-spacer>
+						<v-btn
+							outlined
+							text
+							rounded
+							small
+							@click="printTicket()"
+						>
+							<i class="fa fa-print" aria-hidden="true"></i> Print
+						</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+		</div>
 		<main-confirm-dialog
 		:open="isOpen"
 		:id="dialogId"
@@ -177,19 +367,36 @@ export default {
 		editedItem: {
 			id: 0,
 			ticket_no: '',
-            ticket_trip: '',
-            full_name: '',
-            mobile: '',
-			price_per_person: 0.0,
+            passenger_name: '',
+			mobile: '',
+			ticket_trip: '',
+			fleet_registration_no: '',
+			fleet_type: '',
+			seat: '',
+			price: 0.0,
+            trip_start_date: '',
+            departure_time: ''
+		},
+		ticketDetail: {
+			ticket_no: '',
+            passenger_name: '',
+			mobile: '',
+			ticket_trip: '',
+			fleet_registration_no: '',
+			fleet_type: '',
+			seat: '',
+			price: 0.0,
             trip_start_date: '',
             departure_time: ''
 		},
 		departure_time: false,
+		start_date: false,
 		isOpen: false,
 		dialogId: 0,
 		dialogItems: null,
 		dialogItem: null,
 		dialog: false,
+		viewDialog: false,
 		search: "",
 		editedIndex: -1,
 		headers: [
@@ -198,9 +405,9 @@ export default {
 			align: "start",
 			value: "ticket_no"
 		},
-		{ text: "Trip", value: "route" },
-		{ text: "Type", value: "fleet"},
-        { text: "Passenger", value: "last_name" },
+		{ text: "Trip Route", value: "ticket_trip" },
+		{ text: "Trip Type", value: "fleet_type"},
+        { text: "Passenger", value: "passenger_name" },
         { text: "Mobile", value: "mobile" },
         { text: "Travel Date", value: "trip_start_date" },
         { text: 'Departure Time', value: 'departure_time' },
@@ -212,14 +419,26 @@ export default {
 	computed: {
 		...mapGetters({
 			users: "USERS",
+			// ticketList: 'TICKET_LIST',
 			assignTrips: 'ASSIGNED_TRIPS',
-			ticketList: 'TICKET_LIST',
+			fleets: 'FLEETS',
+			fleetTypes: 'FLEET_TYPES',
+			routes: 'ROUTES',
 			tickets: 'TICKETS',
 			fares: "FARES",
 			isLoggedIn: "IS_LOGGED_IN"
 		}),
+
 		formTitle() {
 			return this.editedIndex === -1 ? "Create Ticket" : "Edit Ticket";
+		},
+
+		actionButton() {
+			return this.editedIndex === -1 ? "Create" : "Update";
+		},
+
+		viewTicket() {
+			return this.ticketDetail
 		}
 	},
 
@@ -233,10 +452,14 @@ export default {
 		if (!this.isLoggedIn) {
 			this.$router.push({ name: "login" });
 		}
+		// this.$store.dispatch("GET_TICKET_LIST")
 		this.$store.dispatch("GET_ASSIGNED_TRIPS");
 		this.$store.dispatch("GET_USERS");
+		this.$store.dispatch('GET_ROUTES');
+		this.$store.dispatch('GET_FLEETS');
+		this.$store.dispatch('GET_FLEET_TYPES');
+		this.$store.dispatch("GET_FARES");
 		this.$store.dispatch("GET_TICKETS");
-		this.$store.dispatch("GET_TICKET_LIST")
 		
 	},
 
@@ -245,6 +468,11 @@ export default {
 	},
 
 	methods: {
+		viewItem(item) {
+			this.viewDialog = true
+			console.log(item)
+			this.ticketDetail = item
+		},
 		editItem(item) {
 			if (item){
 				let ticket = this.mapNameToId(item);
@@ -264,7 +492,7 @@ export default {
 		openDialog(item) {
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.fares;
+			this.dialogItems = this.tickets;
 			this.isOpen = true;
 		},
 
@@ -284,84 +512,180 @@ export default {
 						element.trip_route = el.name
 					}
                 });
+			});
 
-                this.fleetTypes.forEach( els => {
-					if (element.fleet_type === els.id){
-						element.fleet_type = els.name
+			this.tickets.forEach(el => {
+				this.fleets.forEach(li => {
+					if (el.fleet_registration_no == li.id){
+						el.fleet_registration_no = li.registration_no
+					}
+				});
+
+				this.fleetTypes.forEach(li => {
+					if (el.fleet_type == li.id){
+						el.fleet_type = li.name
+					}
+				});
+
+				this.routes.forEach( le => {
+					if (el.ticket_trip == le.id){
+						el.ticket_trip = le.name
+					}
+				});
+				
+				this.fares.forEach( le => {
+					if (el.price == le.id){
+						el.price = le.price_per_person
+					}
+				});
+				
+				this.users.forEach( le => {
+					if (el.created_by == le.id){
+						el.created_by = le.first_name + ' ' + le.last_name
 					}
 				});
 			});
 		},
 
-		mapNameToId(fare) {
-			let editedFare = {
-                'price_per_person': fare.price_per_person
-			};
+		mapNameToId(ticket) {
 			this.routes.forEach( el => {
-				if (fare.trip_route == el.name){
-					fare.trip_route = parseInt(el.id);
-					editedFare['trip_route'] = parseInt(el.id);
+				if (ticket.ticket_trip == el.name){
+					ticket.ticket_trip = parseInt(el.id);
 				}
 			});
 
 			this.fleetTypes.forEach( els => {
-				if (fare.fleet_type == els.name){
-					fare.fleet_type = parseInt(els.id);
-					editedFare['fleet_type'] = parseInt(els.id);
+				if (ticket.fleet_type == els.name){
+					ticket.fleet_type = parseInt(els.id);
 				}
 			});
-			return editedFare;
-		},
-
-		createTicketList(){
-			// console.log(this.tickets)
-			this.tickets.forEach(els => {
-				this.assignTrips.forEach(item => {
-					if (els.ticket_trip == item.id){
-						// console.log(els.ticket_trip + " == " + item.id)
-						// console.log(item)
-						// console.log(item.departure_time)
-						els["trip_start_date"] = item.trip_start_date
-						els["departure_time"] = item.departure_time
+			this.tickets.forEach(el => {
+				this.fares.forEach(li => {
+					if (el.price == li.price_per_person){
+						el.price = parseInt(li.id)
 					}
 				});
-				this.users.forEach(user => {
-					if (els.passenger == user.id){
-						// console.log(els.passenger + "==" + user.id)
-						// console.log(user)
-						els["mobile"] = user.mobile
+				this.fleets.forEach(li => {
+					if (el.fleet_registration_no == li.registration_no){
+						el.fleet_registration_no = parseInt(li.id)
 					}
-				})
+				});
+
+				this.fleetTypes.forEach(li => {
+					if (el.fleet_type == li.name){
+						el.fleet_type = parseInt(li.id)
+					}
+				});
+
+				this.fares.forEach( le => {
+					if (el.price == parseInt(le.id)){
+						el.price = le.price_per_person
+					}
+                });
 			});
-			// console.log("ticket list")
-			// console.log(this.ticket_list)
+			return ticket;
 		},
 
-		setUser() {},
 		save() {
 			if (this.editedIndex > -1) {
-				let fare = {
+				let ticket = {
 					pk: this.editedItem.id,
 					data:{
+						passenger_name: this.editedItem.passenger_name,	
+						mobile: this.editedItem.mobile,
+						ticket_trip: this.editedItem.ticket_trip,
+						fleet_registration_no: this.editedItem.fleet_registration_no,
 						fleet_type: this.editedItem.fleet_type,
-						trip_route: this.editedItem.trip_route,
-						price_per_person: this.editedItem.price_per_person
+						seat: this.editedItem.seat,
+						price: this.editedItem.price,
+						trip_start_date: this.editedItem.trip_start_date,
+						departure_time: this.editedItem.departure_time,
+						status: 'travelling'
 					}
 				};
-				console.log(fare);
-				this.$store.dispatch('SAVE_TICKET', fare);
+				this.$store.dispatch('SAVE_TICKET', ticket);
 			} else {
 				let data = {
+					passenger_name: this.editedItem.passenger_name,	
+					mobile: this.editedItem.mobile,
+					ticket_trip: this.editedItem.ticket_trip,
+					fleet_registration_no: this.editedItem.fleet_registration_no,
 					fleet_type: this.editedItem.fleet_type,
-					trip_route: this.editedItem.trip_route,
-					price_per_person: this.editedItem.price_per_person,
+					seat: this.editedItem.seat,
+					price: this.editedItem.price,
+					trip_start_date: this.editedItem.trip_start_date,
+					departure_time: this.editedItem.departure_time,
+					status: 'travelling',
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				console.log(data);
+				console.log(data)
 				this.$store.dispatch('SAVE_TICKET', data)
 			}
 			this.close();
-		}
+		},
+
+		printReport() {
+			let timestamp = 'Print Time: '
+			timestamp += (new Date()).toLocaleTimeString();
+			let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150')
+
+			mywindow.document.write(`<html><head><title>Zawadi Smart Traveller Report</title>`)
+			mywindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
+			mywindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
+			mywindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
+			mywindow.document.write('th {border-top: 2px solid #dddddd;border-bottom: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
+			mywindow.document.write('</head><body>')
+			mywindow.document.write('<table style="width:100%; border-bottom: 2px solid #dddddd;" id="data">')
+			mywindow.document.write('<caption><span style="text-transform:uppercase"><strong>Ticket List<strong></span></caption>')
+			mywindow.document.write("<tr><th>S/N</th><th>Ticket Number</th><th>Trip Route</th>"+
+						"<th>Trip Type</th><th>Passenger</th><th>Mobile</th>"+
+						"<th>Travel Date</th><th>Departure Time</th><th>Ticket Cost</th></tr>")
+			
+			this.tickets.forEach((ticket,index) => {
+				index += 1;
+				mywindow.document.write("<tr><td>"+ index +"</td>")
+				mywindow.document.write("<td>"+ ticket.ticket_no +"</td>")
+				mywindow.document.write("<td>"+ ticket.ticket_trip +"</td>")
+				mywindow.document.write("<td>"+ ticket.fleet_type +"</td>")
+				mywindow.document.write("<td>"+ ticket.passenger_name +"</td>")
+				mywindow.document.write("<td>"+ ticket.mobile +"</td>")
+				mywindow.document.write("<td>"+ ticket.trip_start_date +"</td>")
+				mywindow.document.write("<td>"+ ticket.departure_time +"</td>")
+				mywindow.document.write("<td>"+ ticket.price +"</td></tr>")
+			})
+
+			mywindow.document.writeln(timestamp + '<br>')
+			mywindow.document.writeln('Printed by: ' +
+			JSON.parse(this.$cookie.get('currentUser')).user.first_name + ' ' +
+			JSON.parse(this.$cookie.get('currentUser')).user.last_name)
+			mywindow.document.write('</body></html>');
+
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10*/
+
+			mywindow.print();
+			mywindow.close();
+
+			return true;
+		},
+
+	printTicket() {
+		let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
+
+		mywindow.document.write('<html><head><title>Travel Ticket</title>');
+		mywindow.document.write('</head><body >');
+		mywindow.document.write(document.getElementById("ticket").innerHTML);
+		mywindow.document.write('</body></html>');
+
+		mywindow.document.close(); // necessary for IE >= 10
+		mywindow.focus(); // necessary for IE >= 10*/
+
+		mywindow.print();
+		mywindow.close();
+
+		return true;
+	}
+		
 	}
 };
 </script>

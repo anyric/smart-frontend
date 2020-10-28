@@ -10,36 +10,10 @@ export default {
     state: {
         tickets: null,
         ticket_list: null,
-        defaulttickets: [
-            {
-                id: 1,
-                ticket_no: "90029201920292039875",
-                passenger: 4,
-                ticket_trip: 1,
-                mobile: "+256783018864",
-                status: "Pending",
-            },
-            {
-                id: 2,
-                ticket_no: "56702923451920292039",
-                passenger: 2,
-                ticket_trip: 1,
-                mobile: "+256783018864",
-                status: "Pending",
-            },
-            {
-                id: 3,
-                ticket_no: "56538922929834851211",
-                passenger: 3,
-                ticket_trip: 1,
-                mobile: "+256783018864",
-                status: "Pending",
-            }
-        ],
     },
     getters: {
         TICKETS: (state) => {
-            return state.tickets || state.defaulttickets;
+            return state.tickets || [];
         },
         TICKET_LIST: (state) => {
             return state.ticket_list
@@ -70,8 +44,6 @@ export default {
             await Api().get('/ticket-list/')
             .then((response) => {
                 let data = response.data.results;
-                console.log("ticket list")
-                console.log(data)
                 if(data.length > 0){
                     commit('SET_TICKET_LIST', data);
                 }
@@ -86,6 +58,7 @@ export default {
                 .then(() => {
                     dispatch("GET_TICKETS");
                     Router.push({name: 'trip-ticket'});
+                    console.log('edited ticket' + ticket.pk)
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")

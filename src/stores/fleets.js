@@ -9,34 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         fleets: null,
-        defaultFleets: [
-            {
-                id: 1,
-                registration_no: 'UAC022F',
-                engine_no: 'UA013-01315490',
-                chasis_no: 'AE100-0121047',
-                model_no: 'AE065',
-                fleet_type: 'Universal',
-                layout: '2 - 3',
-                seat_nos: 69,
-                status: 'true',
-            },
-            {
-                id: 2,
-                registration_no: 'UAJ024F',
-                engine_no: 'UA089-01330990',
-                chasis_no: 'AE300-0193047',
-                model_no: 'PR087',
-                fleet_type: 'Premium',
-                layout: '2 - 2',
-                seat_nos: 49,
-                status: 'true',
-            }
-        ],
     },
     getters: {
         FLEETS: (state) => {
-            return state.fleets || state.defaultFleets;
+            return state.fleets || []
         },
     },
     mutations: {

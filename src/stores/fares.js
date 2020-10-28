@@ -9,54 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         fares: null,
-        defaultFares: [
-            {
-                id: 1,
-                fleet_type: "Universal",
-                trip_route: "Kampala - Arua",
-                price_per_person: '35,000',
-                status: true,
-            },
-            {
-                id: 2,
-                fleet_type: "Premium",
-                trip_route: "Kampala - Arua",
-                price_per_person: '50,000',
-                status: true,
-            },
-            {
-                id: 3,
-                fleet_type: "Universal",
-                trip_route: "Kampala - Moyo",
-                price_per_person: '40,000',
-                status: true,
-            },
-            {
-                id: 4,
-                fleet_type: "Premium",
-                trip_route: "Kampala - Moyo",
-                price_per_person: '50,000',
-                status: true,
-            },
-            {
-                id: 5,
-                fleet_type: "Universal",
-                trip_route: "Kampala - Lira",
-                price_per_person: '30,000',
-                status: true,
-            },
-            {
-                id: 6,
-                fleet_type: "Premium",
-                trip_route: "Kampala - Lira",
-                price_per_person: '40,000',
-                status: true,
-            }
-        ],
     },
     getters: {
         FARES: (state) => {
-            return state.fares || state.defaultFares;
+            return state.fares || [];
         },
     },
     mutations: {

@@ -9,39 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         routes: null,
-        defaultRoutes: [
-            {
-                id: 1,
-                name: "Kampala - Moyo",
-                start_point: 'Namayiba park',
-                end_point: 'Moyo universal lodge',
-                stopage_points: 'Kigumba, Karuma, Gulu, Adjumani',
-                description: 'The route from Kampala to Moyo',
-                status: true,
-            },
-            {
-                id: 2,
-                name: "Kampala - Arua",
-                start_point: 'Namayiba park',
-                end_point: 'Arua Idi Amin Road',
-                stopage_points: 'Kigumba, Karuma, Pakwach, Nebbi',
-                description: 'The route from Kampala to Arua',
-                status: true,
-            },
-            {
-                id: 3,
-                name: "Kampala - Lira",
-                start_point: 'Namayiba park',
-                end_point: 'Lira Town',
-                stopage_points: 'Kigumba, Karuma, Kamdin, Lira',
-                description: 'The route from Kampala to Lira',
-                status: true,
-            }
-        ],
     },
     getters: {
         ROUTES: (state) => {
-            return state.routes || state.defaultRoutes;
+            return state.routes || []
         },
     },
     mutations: {

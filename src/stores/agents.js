@@ -9,38 +9,10 @@ Vue.use(Vuex);
 export default {
     state: {
         agents: null,
-        defaultAgents: [
-            {
-                id: 1,
-                mobile: "+256700000000",
-                username: "anyric",
-                email: 'anyric@smart.com',
-                first_name: 'Ric',
-                last_name: 'Any',
-                station:'Moyo',
-                present_address: 'Elenderea',
-                permanent_address: 'Lefori',
-                is_staff: false,
-                is_active: true,
-            },
-            {
-                id: 2,
-                mobile: "+256701111111",
-                username: "smart",
-                email: 'info@smart.com',
-                first_name: 'info',
-                last_name: 'smart',
-                station:'Kampala',
-                present_address: 'Bukoto',
-                permanent_address: 'Wakiso',
-                is_staff: true,
-                is_active: true,
-            }
-        ],
     },
     getters: {
         AGENTS: (state) => {
-            return state.agents || state.defaultAgents;
+            return state.agents || []
         },
     },
     mutations: {
