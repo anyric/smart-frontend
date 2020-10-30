@@ -244,31 +244,32 @@
 								<i class="fa fa-times" aria-hidden="true"></i>
 							</v-btn>
 					</div>
-					<v-card-subtitle>
+					<v-card-subtitle class="mb-0 pb-0">
 						<v-row>
 							<v-col cols="9" class="sm12 font-weight-bold py-1">
 								<i class="fas fa-bus-alt mr-1"></i>ZAWADI BUS SERVICES
 							</v-col>
 							<v-col cols="3" class="sm12 py-1 text-right ">
-								SEAT NO. <strong> {{ viewTicket.seat}} </strong>
 							</v-col>
 						</v-row>
-						<v-row class="mt-0">
+						<v-row class="mt-0 mb-0">
 							<v-col cols="5" class="sm12 py-1">
 								<div class="ml-5 pl-0">P.O.Box 770 Arua</div>
-								<!-- SEAT NO.<br> <strong> {{ viewTicket.seat}} </strong> -->
 							</v-col>
-							<v-col cols="7" class="sm12 pb-1 pt-1 text-right">
-								RECEIPT NO. <strong> {{ viewTicket.ticket_no }} </strong>
+							<v-col cols="7" class="sm12 pb-0 pt-1 text-right">
+								<small> SEAT NO. <strong> {{ viewTicket.seat}} </strong></small>
+								
 							</v-col>
 						</v-row>
 					</v-card-subtitle>
 
 					<v-card-text class="mt-0 pt-0">
 						<v-row>
-							<v-col cols="5" class="mt-0 mb-0 pb-0 pt-0"> BUS NO.<strong> {{ viewTicket.fleet_registration_no }} </strong></v-col>
+							<v-col cols="5" class="mt-0 mb-0 pb-0 pt-0"> 
+								<small> BUS NO.<strong> {{ viewTicket.fleet_registration_no }} </strong></small>
+							</v-col>
 							<v-col cols="7" class=" mt-0 mb-0 pb-0 pt-0">
-								<div><strong> Travel Ticket</strong></div>
+								<small> RECEIPT NO. <strong> {{ viewTicket.ticket_no }} </strong></small>
 							</v-col>
 						</v-row>
 						<v-divider></v-divider>
@@ -625,63 +626,93 @@ export default {
 		},
 
 		printReport() {
-			let timestamp = 'Print Time: '
-			timestamp += (new Date()).toLocaleTimeString();
-			let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150')
+			let timestamp = 'Print Time: ' + (new Date()).toLocaleTimeString();
+			let reportWindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150')
 
-			mywindow.document.write(`<html><head><title>Zawadi Smart Traveller Report</title>`)
-			mywindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
-			mywindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
-			mywindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
-			mywindow.document.write('th {border-top: 2px solid #dddddd;border-bottom: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
-			mywindow.document.write('</head><body>')
-			mywindow.document.write('<table style="width:100%; border-bottom: 2px solid #dddddd;" id="data">')
-			mywindow.document.write('<caption><span style="text-transform:uppercase"><strong>Ticket List<strong></span></caption>')
-			mywindow.document.write("<tr><th>S/N</th><th>Ticket Number</th><th>Trip Route</th>"+
+			reportWindow.document.write(`<html><head><title>Zawadi Smart Traveller Report</title>`)
+			reportWindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
+			reportWindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
+			reportWindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
+			reportWindow.document.write('th {border-top: 2px solid #dddddd;border-bottom: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
+			reportWindow.document.write('</head><body>')
+			reportWindow.document.write('<table style="width:100%; border-bottom: 2px solid #dddddd;" id="data">')
+			reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Ticket List<strong></span></caption>')
+			reportWindow.document.write("<tr><th>S/N</th><th>Ticket Number</th><th>Trip Route</th>"+
 						"<th>Trip Type</th><th>Passenger</th><th>Mobile</th>"+
 						"<th>Travel Date</th><th>Departure Time</th><th>Ticket Cost</th></tr>")
 			
 			this.tickets.forEach((ticket,index) => {
 				index += 1;
-				mywindow.document.write("<tr><td>"+ index +"</td>")
-				mywindow.document.write("<td>"+ ticket.ticket_no +"</td>")
-				mywindow.document.write("<td>"+ ticket.ticket_trip +"</td>")
-				mywindow.document.write("<td>"+ ticket.fleet_type +"</td>")
-				mywindow.document.write("<td>"+ ticket.passenger_name +"</td>")
-				mywindow.document.write("<td>"+ ticket.mobile +"</td>")
-				mywindow.document.write("<td>"+ ticket.trip_start_date +"</td>")
-				mywindow.document.write("<td>"+ ticket.departure_time +"</td>")
-				mywindow.document.write("<td>"+ ticket.price +"</td></tr>")
+				reportWindow.document.write("<tr><td>"+ index +"</td>")
+				reportWindow.document.write("<td>"+ ticket.ticket_no +"</td>")
+				reportWindow.document.write("<td>"+ ticket.ticket_trip +"</td>")
+				reportWindow.document.write("<td>"+ ticket.fleet_type +"</td>")
+				reportWindow.document.write("<td>"+ ticket.passenger_name +"</td>")
+				reportWindow.document.write("<td>"+ ticket.mobile +"</td>")
+				reportWindow.document.write("<td>"+ ticket.trip_start_date +"</td>")
+				reportWindow.document.write("<td>"+ ticket.departure_time +"</td>")
+				reportWindow.document.write("<td>"+ ticket.price +"</td></tr>")
 			})
-
-			mywindow.document.writeln(timestamp + '<br>')
-			mywindow.document.writeln('Printed by: ' +
+			reportWindow.document.writeln(timestamp + '<br>')
+			reportWindow.document.writeln('Printed by: ' +
 			JSON.parse(this.$cookie.get('currentUser')).user.first_name + ' ' +
 			JSON.parse(this.$cookie.get('currentUser')).user.last_name)
-			mywindow.document.write('</body></html>');
-
-			mywindow.document.close(); // necessary for IE >= 10
-			mywindow.focus(); // necessary for IE >= 10*/
-
-			mywindow.print();
-			mywindow.close();
+			reportWindow.document.write('</body></html>');
+			reportWindow.document.close();
+			reportWindow.focus();
+			reportWindow.print();
+			reportWindow.close();
 
 			return true;
 		},
 
 	printTicket() {
-		let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
-
-		mywindow.document.write('<html><head><title>Travel Ticket</title>');
-		mywindow.document.write('</head><body >');
-		mywindow.document.write(document.getElementById("ticket").innerHTML);
-		mywindow.document.write('</body></html>');
-
-		mywindow.document.close(); // necessary for IE >= 10
-		mywindow.focus(); // necessary for IE >= 10*/
-
-		mywindow.print();
-		mywindow.close();
+		let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
+		let ticketwindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
+		ticketwindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
+		ticketwindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
+		ticketwindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
+		ticketwindow.document.write('th {border-top: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
+		ticketwindow.document.write('</head><body>')
+		ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
+		ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
+		ticketwindow.document.write(`<tr><th colspan=2><i class='fas fa-bus-alt mr-1'></i>ZAWADI BUS SERVICES</th></tr>`)
+		ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ this.viewTicket.seat} </strong></small></td></tr>`)
+		ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ this.viewTicket.fleet_registration_no }
+										</strong></small></td><td><small>RECEIPT NO. <strong> <br>
+										${ this.viewTicket.ticket_no } </strong></small></td></tr>`)
+		ticketwindow.document.write(`<tr><td colspan=2><hr></td></tr>`)
+		ticketwindow.document.write(`<tr><td>
+										<strong>NAME OF PASSENGER </strong> <br />
+										${ this.viewTicket.passenger_name }</td>
+										<td><strong> JOURNEY: </strong>
+										<br />
+										${ this.viewTicket.ticket_trip }</td></tr>`)
+		ticketwindow.document.write(`<tr><td><strong> BOOKING DATE: </strong> <br>
+										${this.viewTicket.trip_start_date}</td>
+										<td><strong> TRIP TYPE: </strong>
+										<br />
+										${ this.viewTicket.fleet_type }</td></tr>`)
+		ticketwindow.document.write(`<tr><td><strong> TRAVEL DATE: </strong> <br />
+										${ this.viewTicket.trip_start_date }</td>
+										<td><strong> BOOKING CLERK: </strong>
+										<br />
+										${ this.viewTicket.created_by }</td></tr>`)
+		ticketwindow.document.write(`<tr><td><strong> REPORTING TIME: </strong> <br />
+										${ this.viewTicket.departure_time }</td>
+										<td><strong> FARE: </strong><br />
+										${ this.viewTicket.price }</td></tr>`)
+		ticketwindow.document.write(`<tr><td colspan=2>
+										<strong> DEPARTURE TIME: </strong><br>
+										${  this.viewTicket.departure_time }</td></tr>`)
+		ticketwindow.document.write(`<tr><td colspan=2>
+										<small><b> Valid Only For The Date of Travel</b></small></td></tr>`)
+		ticketwindow.document.writeln(printTime + '<br><br>')
+		ticketwindow.document.write('</body></html>')
+		ticketwindow.document.close();
+		ticketwindow.focus();
+		ticketwindow.print();
+		ticketwindow.close();
 
 		return true;
 	}
