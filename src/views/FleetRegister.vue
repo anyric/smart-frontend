@@ -109,6 +109,7 @@
 		:id="dialogId"
 		:item="dialogItem"
 		:items="dialogItems"
+		:itemType="itemType"
 		@close-modal="closeDialog"
 	></main-confirm-dialog>
     </v-layout>
@@ -116,7 +117,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
 		editedItem: {
@@ -135,6 +136,7 @@ export default {
 		dialogId: 0,
 		dialogItems: null,
 		dialogItem: null,
+		itemType: "",
 		dialog: false,
 		search: '',
 		editedIndex: -1,
@@ -180,6 +182,12 @@ export default {
 		this.mapIdToName();
 	},
 
+	created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
+
     methods: {
 		editItem (item) {
 			if (item){
@@ -201,6 +209,7 @@ export default {
 			this.dialogItem = item;
 			this.dialogId = item.id;
 			this.dialogItems = this.fleets
+			this.itemType = "FLEETS"
 			this.isOpen = true;
 		},
 
@@ -225,6 +234,7 @@ export default {
 
 		mapNameToId(fleet) {
 			let editedFleet = {
+				'id': fleet.id,
 				'registration_no': fleet.registration_no,
 				'engine_no': fleet.engine_no,
 				'chasis_no': fleet.chasis_no,
@@ -274,6 +284,12 @@ export default {
 				this.$store.dispatch('SAVE_FLEET', data)
 			}
 			this.close()
+		},
+
+		delete (data) {
+			if (data.type == "FLEETS") {
+				this.$store.dispatch('DELETE_FLEET', data);
+			}
 		},
     },
 }

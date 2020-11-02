@@ -54,5 +54,19 @@ export default {
                 })
             }
         },
+
+        DELETE_AGENT: async ({dispatch}, agent) => {
+            if(agent.id){
+                await Api().delete('/agents/' + agent.id + '/')
+                .then(() => {
+                    dispatch("GET_AGENTS");
+                    Router.push({name: 'agents'});
+                    console.log('deleted agent ' + agent.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

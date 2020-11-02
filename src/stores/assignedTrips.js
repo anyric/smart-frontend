@@ -26,7 +26,6 @@ export default {
             .then((response) => {
                 let data = response.data.results;
                 if (data.length > 0){
-                    
                     commit('SET_ASSIGNED_TRIPS', data);
                 }
             })
@@ -52,6 +51,21 @@ export default {
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")
+                })
+            }
+        },
+
+        DELETE_ASSIGNED_TRIP: async ({dispatch}, trip_assigned) => {
+            console.log(trip_assigned)
+            if(trip_assigned.id){
+                await Api().delete('/fleet-assignments/' + trip_assigned.id + '/')
+                .then(() => {
+                    dispatch("GET_FARES");
+                    Router.push({name: 'trip-assigned'});
+                    console.log('deleted assigned Trip ' + trip_assigned.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
                 })
             }
         },

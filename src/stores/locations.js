@@ -54,5 +54,19 @@ export default {
                 })
             }
         },
+
+        DELETE_LOCATION: async ({dispatch}, location) => {
+            if(location.id){
+                await Api().delete('/locations/' + location.id + '/')
+                .then(() => {
+                    dispatch("GET_LOCATIONS");
+                    Router.push({name: 'trip-locations'});
+                    console.log('deleted location ' + location.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

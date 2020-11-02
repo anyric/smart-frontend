@@ -74,5 +74,18 @@ export default {
                 })
             }
         },
+        DELETE_TICKET: async ({dispatch}, ticket) => {
+            if(ticket.id){
+                await Api().delete('/tickets/' + ticket.id + '/')
+                .then(() => {
+                    dispatch("GET_TICKETS");
+                    Router.push({name: 'trip-ticket'});
+                    console.log('deleted ticket' + ticket.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

@@ -80,6 +80,7 @@
 			:id="dialogId"
 			:item="dialogItem"
 			:items="dialogItems"
+            :itemType="itemType"
 			@close-modal="closeDialog"
 		></main-confirm-dialog>
     </v-layout>
@@ -87,6 +88,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
 		editedItem: {
@@ -96,7 +98,8 @@ export default {
 		isOpen: false,
 		dialogId: 0,
 		dialogItem: null,
-		dialogItems: null,
+        dialogItems: null,
+        itemType: "",
 		dialog: false,
 		search: '',
 		editedIndex: -1,
@@ -133,7 +136,11 @@ export default {
         }
         this.$store.dispatch('GET_FLEET_TYPES');
     },
-    
+    created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
     methods: {
 		editItem (item) {
 			this.editedIndex = this.fleetTypes.indexOf(item)
@@ -141,11 +148,6 @@ export default {
 			this.dialog = true
 		},
 
-		deleteItem (item) {
-			const index = this.fleetTypes.indexOf(item)
-			confirm('Are you sure you want to delete this item?') && this.fleetTypes.splice(index, 1)
-		},
-		
 		closeDialog() {
 			this.isOpen = false;
 		},
@@ -153,7 +155,8 @@ export default {
 		openDialog(item){
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.fleetTypes
+            this.dialogItems = this.fleetTypes
+            this.itemType = "FLEETTYPES";
 			this.isOpen = true;
 		},
 
@@ -185,7 +188,16 @@ export default {
                 this.$store.dispatch('SAVE_FLEET_TYPE', fleet_type)
 			}
 			this.close()
+        },
+        
+        delete (data) {
+			if (data.type == "FLEETTYPES") {
+				console.log("Yes FleetType")
+				console.log(data)
+				this.$store.dispatch('DELETE_FLEET_TYPE', data);
+			}
 		},
+		
     },
 }
 </script>

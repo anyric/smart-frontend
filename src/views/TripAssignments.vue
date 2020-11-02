@@ -179,6 +179,7 @@
 		:id="dialogId"
 		:item="dialogItem"
 		:items="dialogItems"
+        :itemType="itemType"
 		@close-modal="closeDialog"
 	></main-confirm-dialog>
     </v-layout>
@@ -186,9 +187,11 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
 		editedItem: {
+            id: 0,
 			fleet_registration_no: '',
 			route_name: '',
 			trip_start_date: '',
@@ -203,7 +206,8 @@ export default {
 		isOpen: false,
 		dialogId: 0,
 		dialogItems: null,
-		dialogItem: null,
+        dialogItem: null,
+        itemType: "",
 		dialog: false,
 		search: '',
 		editedIndex: -1,
@@ -253,6 +257,12 @@ export default {
 		this.mapIdToName();
     },
 
+	created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
+
     methods: {
 		editItem (item) {
             if (item){
@@ -273,7 +283,8 @@ export default {
         openDialog(item){
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.assignTrips
+            this.dialogItems = this.assignTrips;
+            this.itemType = "ASSIGNTRIPS";
 			this.isOpen = true;
         },
 
@@ -311,6 +322,7 @@ export default {
 
         mapNameToId(assignedFleet) {
 			let editedAssignedFleet = {
+                'id': assignedFleet.id,
                 'trip_start_date': assignedFleet.trip_start_date,
                 'trip_end_date': assignedFleet.trip_end_date,
                 'departure_time': assignedFleet.departure_time,
@@ -363,6 +375,12 @@ export default {
 				this.$store.dispatch('SAVE_ASSIGNED_TRIP', assignedTrip);
 			}
 			this.close()
+        },
+        
+		delete (data) {
+			if (data.type == "ASSIGNTRIPS") {
+				this.$store.dispatch('DELETE_ASSIGNED_TRIP', data);
+			}
 		},
     },
 }

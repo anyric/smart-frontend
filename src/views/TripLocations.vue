@@ -83,6 +83,7 @@
 		:id="dialogId"
 		:item="dialogItem"
 		:items="dialogItems"
+        :itemType="itemType"
 		@close-modal="closeDialog"
 	></main-confirm-dialog>
     </v-layout>
@@ -90,6 +91,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
 		editedItem: {
@@ -100,7 +102,8 @@ export default {
 		isOpen: false,
 		dialogId: 0,
 		dialogItems: null,
-		dialogItem: null,
+        dialogItem: null,
+        itemType: "",
 		dialog: false,
 		search: '',
 		editedIndex: -1,
@@ -139,6 +142,12 @@ export default {
         this.$store.dispatch('GET_LOCATIONS');
     },
 
+	created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
+
     methods: {
 		editItem (item) {
 			this.editedIndex = this.locations.indexOf(item)
@@ -153,7 +162,8 @@ export default {
 		openDialog(item){
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.locations
+            this.dialogItems = this.locations;
+            this.itemType = "LOCATIONS";
 			this.isOpen = true;
 		},
 
@@ -186,6 +196,12 @@ export default {
                 this.$store.dispatch('SAVE_LOCATION', location)
 			}
 			this.close()
+        },
+        
+		delete (data) {
+			if (data.type == "LOCATIONS") {
+				this.$store.dispatch('DELETE_LOCATION', data);
+			}
 		},
     },
 }

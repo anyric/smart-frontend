@@ -54,5 +54,19 @@ export default {
                 })
             }
         },
+
+        DELETE_USER: async ({dispatch}, user) => {
+            if(user.id){
+                await Api().delete('/users/' + user.id + '/')
+                .then(() => {
+                    dispatch("GET_USERS");
+                    Router.push({name: 'users'});
+                    console.log('deleted user' + user.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

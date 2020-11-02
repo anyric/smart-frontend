@@ -121,6 +121,7 @@
 		:id="dialogId"
 		:item="dialogItem"
 		:items="dialogItems"
+		:itemType="itemType"
 		@close-modal="closeDialog"
 		></main-confirm-dialog>
 	</v-layout>
@@ -128,6 +129,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
 	data: () => ({
 		editedItem: {
@@ -140,6 +142,7 @@ export default {
 		dialogId: 0,
 		dialogItems: null,
 		dialogItem: null,
+		itemType: "",
 		dialog: false,
 		search: "",
 		editedIndex: -1,
@@ -186,6 +189,12 @@ export default {
 		this.mapIdToName();
 	},
 
+	created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
+
 	methods: {
 		editItem(item) {
 			if (item){
@@ -207,6 +216,7 @@ export default {
 			this.dialogItem = item;
 			this.dialogId = item.id;
 			this.dialogItems = this.fares;
+			this.itemType = "FARES";
 			this.isOpen = true;
 		},
 
@@ -237,6 +247,7 @@ export default {
 
 		mapNameToId(fare) {
 			let editedFare = {
+				'id': fare.id,
                 'price_per_person': fare.price_per_person
 			};
 			this.routes.forEach( el => {
@@ -265,7 +276,6 @@ export default {
 						price_per_person: this.editedItem.price_per_person
 					}
 				};
-				console.log(fare);
 				this.$store.dispatch('SAVE_FARE', fare);
 			} else {
 				let data = {
@@ -274,11 +284,16 @@ export default {
 					price_per_person: this.editedItem.price_per_person,
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				console.log(data);
 				this.$store.dispatch('SAVE_FARE', data)
 			}
 			this.close();
-		}
+		},
+
+		delete (data) {
+			if (data.type == "FARES") {
+				this.$store.dispatch('DELETE_FARE', data);
+			}
+		},
 	}
 };
 </script>

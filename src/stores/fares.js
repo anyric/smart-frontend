@@ -54,5 +54,19 @@ export default {
                 })
             }
         },
+
+        DELETE_FARE: async ({dispatch}, fare) => {
+            if(fare.id){
+                await Api().delete('/trip-prices/' + fare.id + '/')
+                .then(() => {
+                    dispatch("GET_FARES");
+                    Router.push({name: 'trip-fares'});
+                    console.log('deleted fare ' + fare.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

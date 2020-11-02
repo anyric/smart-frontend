@@ -356,6 +356,7 @@
 		:id="dialogId"
 		:item="dialogItem"
 		:items="dialogItems"
+		:itemType="itemType"
 		@close-modal="closeDialog"
 		></main-confirm-dialog>
 	</v-layout>
@@ -363,6 +364,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
 	data: () => ({
 		editedItem: {
@@ -396,6 +398,7 @@ export default {
 		dialogId: 0,
 		dialogItems: null,
 		dialogItem: null,
+		itemType: "",
 		dialog: false,
 		viewDialog: false,
 		search: "",
@@ -464,6 +467,12 @@ export default {
 		
 	},
 
+	created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
+
 	updated() {
 		this.mapIdToName();
 	},
@@ -471,7 +480,6 @@ export default {
 	methods: {
 		viewItem(item) {
 			this.viewDialog = true
-			console.log(item)
 			this.ticketDetail = item
 		},
 		editItem(item) {
@@ -494,7 +502,9 @@ export default {
 			this.dialogItem = item;
 			this.dialogId = item.id;
 			this.dialogItems = this.tickets;
+			this.itemType = "TICKETS";
 			this.isOpen = true;
+
 		},
 
 		close() {
@@ -623,6 +633,14 @@ export default {
 				this.$store.dispatch('SAVE_TICKET', data)
 			}
 			this.close();
+		},
+
+		delete(data) {
+			if (data.type == "TICKETS") {
+				console.log("Yes Ticket")
+				console.log(data)
+				this.$store.dispatch('DELETE_TICKET', data);
+			}
 		},
 
 		printReport() {

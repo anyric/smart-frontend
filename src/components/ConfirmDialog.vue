@@ -13,14 +13,18 @@
 </template>
 
 <script>
+import { EventBus } from "@/services/bus";
 export default {
   props: {
         open: {
             type:Boolean,
             default: false
-        },
-        id: {
+		},
+		id: {
 			type: Number
+		},
+        itemType: {
+			type: String
         },
         item: {
 			type: Object,
@@ -38,6 +42,10 @@ export default {
 		confirmActive() {
 			const index = this.items.indexOf(this.item)
 			this.items.splice(index, 1)
+			EventBus.$emit("delete", {
+					id: this.item.id,
+					type: this.itemType
+                });
 			this.$emit("close-modal");
 		}
 	},

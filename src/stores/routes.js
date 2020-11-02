@@ -59,5 +59,19 @@ export default {
                 })
             }
         },
+
+        DELETE_ROUTE: async ({dispatch}, route) => {
+            if(route.id){
+                await Api().delete('/routes/' + route.id + '/')
+                .then(() => {
+                    dispatch("GET_ROUTES");
+                    Router.push({name: 'trip-routes'});
+                    console.log('deleted route ' + route.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

@@ -54,5 +54,19 @@ export default {
                 })
             }
         },
+
+        DELETE_FLEET_TYPE: async ({dispatch}, fleetType) => {
+            if(fleetType.id){
+                await Api().delete('/fleet-types/' + fleetType.id + '/')
+                .then(() => {
+                    dispatch("GET_FLEET_TYPES");
+                    Router.push({name: 'fleet-types'});
+                    console.log('deleted fleetType ' + fleetType.id)
+                })
+                .catch(error=>{
+                    console.log(error.message + " delete error")
+                })
+            }
+        },
     },
 }

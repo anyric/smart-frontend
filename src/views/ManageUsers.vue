@@ -113,6 +113,7 @@
 			:id="dialogId"
 			:item="dialogItem"
 			:items="dialogItems"
+            :itemType="itemType"
 			@close-modal="closeDialog"
 		></main-confirm-dialog>
     </v-layout>
@@ -120,6 +121,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
 		editedItem: {
@@ -137,7 +139,8 @@ export default {
 		isOpen: false,
 		dialogId: 0,
 		dialogItem: null,
-		dialogItems: null,
+        dialogItems: null,
+        itemType: "",
 		dialog: false,
 		editedIndex: -1,
 		search: '',
@@ -179,6 +182,11 @@ export default {
         }
         this.$store.dispatch('GET_USERS')
     },
+    created() {
+		EventBus.$on('delete', data => {
+			this.delete(data);
+		})
+	},
     methods: {
 		editItem (item) {
 			this.editedIndex = this.users.indexOf(item)
@@ -193,7 +201,8 @@ export default {
 		openDialog(item){
 			this.dialogItem = item;
 			this.dialogId = item.id;
-			this.dialogItems = this.users
+            this.dialogItems = this.users;
+            this.itemType = "USERS";
 			this.isOpen = true;
 		},
 
@@ -236,6 +245,12 @@ export default {
                 this.$store.dispatch('SAVE_USER', data)
 			}
 			this.close()
+        },
+        
+        delete(data) {
+			if (data.type == "USERS") {
+				this.$store.dispatch('DELETE_USER', data);
+			}
 		},
 	},
 }
