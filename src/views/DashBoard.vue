@@ -1,15 +1,24 @@
 <template>
     <v-layout row wrap>
         <template v-for="(item, i) in entity">
-            <v-card class="mx-auto my-3 pa-3" :key="i" link @click="viewDetails(item.url)">
-                <v-card color="#385F73" dark>
+            <v-card class="mx-auto my-3 pa-3" max-height=125 max-width=300 :key="i" link @click="viewDetails(item.url)">
+                <v-card color="#385F73" dark max-height=100 max-width=300>
                     <div class="d-flex wrap">
-                        <v-avatar class="ma-3" size="100" tile>
+                        <v-avatar class="ma-3" size="80" tile>
                             <v-icon large>{{item.icon}}</v-icon>
                         </v-avatar>
                         <div>
                             <v-card-title><h6 class="text-center text-uppercase">{{item.name}}</h6></v-card-title>
-                            <v-card-subtitle><h1 class="text-center orange--text">{{entity.length}}</h1></v-card-subtitle>
+                            <v-card-subtitle>
+                                <h1 v-if="(item.url == 'users' )" class="text-center orange--text">{{users.length}}</h1>
+                                <h1 v-if="(item.url == 'agents' )" class="text-center orange--text">{{agents.length}}</h1>
+                                <h1 v-if="(item.url == 'fleet-register' )" class="text-center orange--text">{{fleets.length}}</h1>
+                                <h1 v-if="(item.url == 'fleet-types' )" class="text-center orange--text">{{fleetTypes.length}}</h1>
+                                <h1 v-if="(item.url == 'trip-locations' )" class="text-center orange--text">{{locations.length}}</h1>
+                                <h1 v-if="(item.url == 'trip-routes' )" class="text-center orange--text">{{routes.length}}</h1>
+                                <h1 v-if="(item.url == 'trip-assigned' )" class="text-center orange--text">{{assignTrips.length}}</h1>
+                                <h1 v-if="(item.url == 'trip-fares' )" class="text-center orange--text">{{fares.length}}</h1>
+                            </v-card-subtitle>
                         </div>
                     </div>
                 </v-card>
@@ -34,14 +43,30 @@ import {mapGetters} from "vuex";
         ],
     }),
     computed: {
-		...mapGetters({
+        ...mapGetters({
+                users: 'USERS',
+                agents: 'AGENTS',
+                fleets: 'FLEETS',
+                fleetTypes: 'FLEET_TYPES',
+                locations: 'LOCATIONS',
+                routes: 'ROUTES',
+                assignTrips: 'ASSIGNED_TRIPS',
+                fares: "FARES",
                 isLoggedIn: "IS_LOGGED_IN"
-			}),
+            }),
     },
     mounted() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.$store.dispatch('GET_USERS')
+        this.$store.dispatch('GET_AGENTS');
+        this.$store.dispatch("GET_FLEET_TYPES");
+        this.$store.dispatch('GET_FLEETS');
+        this.$store.dispatch('GET_ASSIGNED_TRIPS');
+        this.$store.dispatch('GET_LOCATIONS');
+		this.$store.dispatch("GET_ROUTES");
+        this.$store.dispatch("GET_FARES");
     },
     methods: {
         viewDetails(url){

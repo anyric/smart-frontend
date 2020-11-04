@@ -61,15 +61,16 @@
 														item-value="id"
 														v-model="editedItem.fleet_type"
 														required
+														@change="verifyFleetType()"
 													></v-select>
                                                 </v-col>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.layout" label="Layout *"></v-text-field>
+													<v-text-field id="layout" required v-model="editedItem.layout" label="Layout *"></v-text-field>
 												</v-col>
 											</v-row>
 											<v-row>
 												<v-col col="6" class="sm12">
-													<v-text-field required v-model="editedItem.seat_nos" label="Total Seat No *"></v-text-field>
+													<v-text-field id="seat" required v-model="editedItem.seat_nos" label="Total Seat No *"></v-text-field>
 												</v-col>
 												<v-col col="6" class="sm12">
 													<v-checkbox required v-model="editedItem.status" label="Active *"></v-checkbox>
@@ -252,7 +253,22 @@ export default {
 
 			return editedFleet;
 		},
+		verifyFleetType(){
+			console.log("I'm called")
+			let id = this.editedItem.fleet_type
+			this.fleetTypes.forEach( element => {
+				if (element.id == id && element.name == "Cargo") {
+					window.document.getElementById('layout').setAttribute('disabled',true)
+					window.document.getElementById('layout').setAttribute('filled',true)
 
+					window.document.getElementById('seat').setAttribute('disabled',true)
+					window.document.getElementById('seat').setAttribute('filled',true)
+				}else{
+					window.document.getElementById('layout').removeAttribute('disabled')
+					window.document.getElementById('seat').removeAttribute('disabled')
+				}
+			})
+		},
 		save () {
 			if (this.editedIndex > -1) {
 				let fleet = {
