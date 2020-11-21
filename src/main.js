@@ -15,6 +15,15 @@ Vue.component('main-container', Container);
 Vue.component('main-confirm-dialog', ConfirmDialog);
 Vue.component('main-password-dialog', PasswordDialog);
 Vue.component('main-profile-dialog', EditProfileDialog);
+require('@/assets/css/linearicons.css')
+require('@/assets/css/font-awesome.min.css')
+require('@/assets/css/bootstrap.css')
+require('@/assets/css/magnific-popup.css')
+require('@/assets/css/jquery-ui.css')
+require('@/assets/css/nice-select.css')
+require('@/assets/css/animate.min.css')
+require('@/assets/css/owl.carousel.css')
+require('@/assets/css/main.css')
 
 new Vue({
   vuetify,
