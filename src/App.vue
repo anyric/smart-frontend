@@ -47,13 +47,13 @@
 		<v-app-bar
 			:clipped-left="$vuetify.breakpoint.lgAndUp"
 			app
-			color="teal darken-1"
+			color="navbar-dark"
 			dark
 			v-if="isLoggedIn"
 		>
 			<v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 			<v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-			<span class="hidden-sm-and-down">Smart Traveller</span>
+			<span class="hidden-sm-and-down">Zawadi Bus Services</span>
 			</v-toolbar-title>
 			<v-spacer />
 			<div v-if="isLoggedIn">
@@ -75,20 +75,20 @@
 						<v-list-item-group>
 							<v-list-item @click="openProfile">
 								<v-list-item-icon>
-									<v-icon small color="teal darken-1">fas fa-user-edit</v-icon>
+									<v-icon small color="orange">fas fa-user-edit</v-icon>
 								</v-list-item-icon>
 								<v-list-item-content>Edit Profile</v-list-item-content>
 							</v-list-item>
 							<v-list-item @click="openDialog">
 								<v-list-item-icon>
-									<v-icon small color="teal darken-1">fas fa-edit</v-icon>
+									<v-icon small color="orange">fas fa-edit</v-icon>
 								</v-list-item-icon>
 								<v-list-item-content>Change Password</v-list-item-content>
 							</v-list-item>
 							<v-divider></v-divider>
 							<v-list-item @click="logout">
 								<v-list-item-icon>
-									<v-icon small color="teal darken-1">fa fa-sign-out-alt</v-icon>
+									<v-icon small color="orange">fa fa-sign-out</v-icon>
 								</v-list-item-icon>
 								<v-list-item-content>Logout</v-list-item-content>
 							</v-list-item>

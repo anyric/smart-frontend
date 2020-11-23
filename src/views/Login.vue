@@ -29,6 +29,9 @@
                                 </v-form>
                             </v-card-text>
                             <v-card-actions>
+                                <v-btn color="primary" @click="home()">
+                                    Home
+                                </v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn color="primary" @click="loginUser()" :disabled="!(form.mobile && form.password)">
                                     Login
@@ -93,6 +96,9 @@ import {mapGetters} from 'vuex';
                     text: "You've successfully logged in!",
                     color: "success",
                 });
+            },
+            home() {
+                this.$router.push({name: 'indexpage'});
             }
         }
     }

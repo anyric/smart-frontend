@@ -1,5 +1,5 @@
 <template>
-    <v-layout row wrap>
+    <v-layout row wrap class="container ml-1">
         <template v-for="(item, i) in entity">
             <v-card class="mx-auto my-3 pa-3" max-height=125 max-width=300 :key="i" link @click="viewDetails(item.url)">
                 <v-card color="#385F73" dark max-height=100 max-width=300>

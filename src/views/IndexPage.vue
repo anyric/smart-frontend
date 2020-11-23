@@ -1,69 +1,69 @@
 <template>
     <div>
         <header id="header">
-            <div class="header-top">
+
+            <div class="header-top pt-4">
                 <div class="container">
-                    <div class="row align-items-center mx-10">
-                        <div class="col-lg-6 header-top-left">
+                    <div class="row align-items-center justify-content-between mx-10">
+                        <div class="header-top-left">
                             <div class="header-social">
                                 <a href="#" class="text-white"><i class="fa fa-phone"></i> Call Toll-Free: +256-700-000-000</a>
                                 <a href="#" class="text-white"><i class="fa fa-facebook"></i></a>
                                 <a href="#" class="text-white"><i class="fa fa-twitter"></i></a>
                             </div>
                         </div>
-                        <div class="col-lg-6 header-top-right">
-                            <a href="#" class="text-white" >LogIn</a>
+                        <div class="header-top-right">
+                            <a href="#" class="text-white" @click="login()">LogIn</a>
                         </div>
                     </div>			  					
                 </div>
             </div>
-            <div class="container main-menu">
-                <div class="row align-items-center justify-content-between d-flex mx-10">
-                    <div id="logo">
-                        <a href="index.html">
-                            <div class="float-left"><img style="width: 40px; height: 40px" src="../assets/logo.png" alt="" title="" /></div>
-                            <div class="text-white text-uppercase font-weight-bold d-flex float-right pt-1 pl-1" style="font-size: 20px;"> Zawadi Bus Services</div>
-                        </a>
+            <nav class="navbar navbar-expand-md header-top navbar-dark px-6 pb-4">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div id="logo">
+                            <a href="index.html">
+                                <div class="float-left"><img style="width: 40px; height: 40px" src="../assets/logo.png" alt="" title="" /></div>
+                                <div class="text-white text-uppercase font-weight-bold d-flex float-right pt-1 pl-1" style="font-size: 20px;"> Zawadi Bus Services</div>
+                            </a>
+                        </div>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="col-lg-6 collapse navbar-collapse header-top-right" id="collapsibleNavbar">
+                            <ul class="nav-menu">
+                                <li><a href="#" class="text-white">Home</a></li>
+                                <li><a href="#about-us" class="text-white">About</a></li>
+                                <li><a href="#services" class="text-white">Services</a></li>
+                                <li><a href="" class="text-white">Booking</a></li>	
+                                <li><a href="#about-us" class="text-white">Contact</a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <nav id="nav-menu-container">
-                        <ul class="nav-menu">
-                            <li><a href="#" class="text-white">Home</a></li>
-                            <li><a href="#about-us" class="text-white">About</a></li>
-                            <li><a href="#services" class="text-white">Services</a></li>		          					          		          
-                            <li class="menu-has-children"><a href="" class="text-white">Booking</a>
-                                <ul>
-                                    <li><a href="#">Cancel Ticket</a></li>
-                                    <li><a href="#">Print Ticket</a></li>
-                                </ul>
-                            </li>	
-                            <li><a href="#about-us" class="text-white">Contact</a></li>
-                        </ul>
-                    </nav>
-                    <!-- #nav-menu-container 					      		   -->
                 </div>
-            </div>
+            </nav>
         </header>
-
         <!-- start banner Area -->
         <div class="row">
             <section class="banner-area relative">
-                <div class="overlay overlay-bg"></div>				
-                <div class="container">
-                    <div class="row fullscreen align-items-center justify-content-between">
-                        <div class="d-md-flex flex-md-equal w-100 pt-5 mt-60 align-items-center">
-                            <div class="col-lg-6 ml-md-4 pt-5 pl-10 pt-md-5 px-md-5 overflow-hidden mt-170">
-                                <h1 class="text-dark">Your Travel Partner</h1>
-                                <p class="text-dark">
-                                    Brings you secure and convinient booking services at your doorstep.
-                                </p>
-                                <a href="#" class="primary-btn text-uppercase">Book Now</a>
-                            </div>
-                            <div class="col-lg-6 overflow-hidden pt-3 mt-40">
-                                <img class="img-fluid d-block rounded " src="../assets/img/bus.jpg" alt="Landing page" />
-                            </div>
+                <div class="overlay overlay-bg"></div>
+                <div class="d-md-flex flex-md-equal w-100 pl-5 pt-5 mt-99">
+                    <div class="ml-md-4 pt-5 px-3 pt-md-5 px-md-5 mt-150 overflow-hidden">
+                        <div class="my-5 pt-5 ml-2 px-0">
+                            <h1 class="text-dark pt-10">Your Travel Partner</h1>
+                        </div>
+                        <div class="my-5 py-3 ml-2 px-0">
+                            <h5 class="pb-5 text-secondary">
+                                Brings you secure and convinient booking services at your doorstep.
+                            </h5>
+                            <a href="#" class="primary-btn text-uppercase">Book Now</a>
                         </div>
                     </div>
-                </div>					
+                    <div class="text-center overflow-hidden pt-3 pl-5">
+                        <img class="d-block" src="../assets/img/bus.jpg" style="width: 775px; height: 637px;" alt="Landing page" />
+                    </div>
+                </div>
             </section>
         </div>
         <!-- End banner Area -->
@@ -222,7 +222,7 @@
                                         <ul>
                                             <li><a href="#">Home</a></li>
                                             <li><a href="#about-us">About</a></li>
-                                            <li><a href="#servicers">Services</a></li>
+                                            <li><a href="#services">Services</a></li>
                                             <li><a href="#">Booking</a></li>
                                             <li><a href="#about-us">Contact</a></li>
                                         </ul>
@@ -265,102 +265,26 @@
     </div>
 </template>
 <script>
+    import {mapGetters} from 'vuex';
     export default {
-        mounted() {
-            const vendorJquery = document.createElement("script");
-            const popper = document.createElement("script");
-            const bootstrap = document.createElement("script");
-            // const maps = document.createElement("script");
-            const jqueryUi = document.createElement("script");
-            const easing = document.createElement("script");
-            const hoverIntent = document.createElement("script");
-            const superFish = document.createElement("script");
-            const ajaxChimp = document.createElement("script");
-            const popup = document.createElement("script");
-            const nice = document.createElement("script");
-            const carousel = document.createElement("script");
-            const mail = document.createElement("script");
-            const main = document.createElement("script");
+        data() {
+            return {};
+        },
 
-            vendorJquery.setAttribute(
-                "src",
-                "../assets/js/vendor/jquery-2.2.4.min.js"
-            );
-            vendorJquery.async = true;
-            popper.setAttribute(
-                "src",
-                "../assets/js/popper.min.js"
-            );
-            popper.async = true;
-            bootstrap.setAttribute(
-                "src",
-                "../assets/js/vendor/bootstrap.min.js"
-            );
-            bootstrap.async = true;
-            jqueryUi.setAttribute(
-                "src",
-                "../assets/js/jquery-ui.js"
-            );
-            jqueryUi.async = true;
-            easing.setAttribute(
-                "src",
-                "../assets/js/easing.min.js"
-            );
-            easing.async = true;
-            hoverIntent.setAttribute(
-                "src",
-                "../assets/js/hoverIntent.js"
-            );
-            hoverIntent.async = true;
-            superFish.setAttribute(
-                "src",
-                "../assets/js/superfish.min.js"
-            );
-            superFish.async = true;
-            ajaxChimp.setAttribute(
-                "src",
-                "../assets/js/jquery.ajaxchimp.min.js"
-            );
-            ajaxChimp.async = true;
-            popup.setAttribute(
-                "src",
-                "../assets/js/jquery.magnific-popup.min.js"
-            );
-            popup.async = true;
-            nice.setAttribute(
-                "src",
-                "../assets/js/jquery.nice-select.min.js"
-            );
-            nice.async = true;
-            carousel.setAttribute(
-                "src",
-                "../assets/js/owl.carousel.min.js"
-            );
-            carousel.async = true;
-            mail.setAttribute(
-                "src",
-                "../assets/js/mail-script.js"
-            );
-            mail.async = true;
-            main.setAttribute(
-                "src",
-                "../assets/js/main.js"
-            );
-            main.async = true;
-            
-            document.body.appendChild(vendorJquery);
-            document.body.appendChild(popper);
-            document.body.appendChild(bootstrap);
-            document.body.appendChild(jqueryUi);
-            document.body.appendChild(easing);
-            document.body.appendChild(hoverIntent);
-            document.body.appendChild(superFish);
-            document.body.appendChild(ajaxChimp);
-            document.body.appendChild(popup);
-            document.body.appendChild(nice);
-            document.body.appendChild(carousel);
-            document.body.appendChild(mail);
-            document.body.appendChild(main);
+        computed: {
+            ...mapGetters({isLoggedIn: "IS_LOGGED_IN"}),
+        },
+
+        mounted() {
+            if(this.isLoggedIn){
+                this.$router.push({name: 'dashboard'});
+            }
+        },
+
+        methods: {
+            login() {
+                this.$router.push({name: 'login'});
+            }
         }
     };
 </script>
