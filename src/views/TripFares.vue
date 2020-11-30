@@ -130,6 +130,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { EventBus } from "@/services/bus";
+import { idToName } from "@/services/helper";
 export default {
 	data: () => ({
 		editedItem: {
@@ -186,7 +187,7 @@ export default {
 	},
 
 	updated() {
-		this.mapIdToName();
+		idToName(this.fleetTypes, this.routes, this.fares);
 	},
 
 	created() {
@@ -205,7 +206,9 @@ export default {
 			}
 			this.editedIndex = this.fares.indexOf(item)
 			this.dialog = true;
-			this.mapIdToName();
+			// this.mapIdToName
+			idToName(this.fleetTypes, this.routes, this.fares);
+
 		},
 
 		closeDialog() {
@@ -226,18 +229,19 @@ export default {
 				this.editedItem = Object.assign({}, this.defaultItem);
 				this.editedIndex = -1;
 			}, 300);
-			this.mapIdToName();
+			// this.mapIdToName(this.fleetTypes, this.routes, this.fares);
+			idToName(this.fleetTypes, this.routes, this.fares);
 		},
 
-		mapIdToName(){
-			this.fares.forEach(element => {
-				this.routes.forEach( el => {
+		mapIdToName(fleetTypes, routes, fares){
+			fares.forEach(element => {
+				routes.forEach( el => {
 					if (element.trip_route == el.id){
 						element.trip_route = el.name
 					}
                 });
 
-                this.fleetTypes.forEach( els => {
+                fleetTypes.forEach( els => {
 					if (element.fleet_type === els.id){
 						element.fleet_type = els.name
 					}

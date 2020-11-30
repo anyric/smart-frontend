@@ -16,6 +16,8 @@ import Settings from '../views/Settings';
 import IndexPage from '../views/IndexPage';
 import Store from '../store';
 import Container from '../components/Container';
+import BookingBoard from '../views/BookingBoard';
+import Schedule from '../views/Schedule';
 
 
 Vue.use(VueRouter);
@@ -25,6 +27,16 @@ const routes = [
         path: '',
         name: 'indexpage',
         component: IndexPage
+    },
+    {
+        path: '/bookingboard',
+        name: 'bookingboard',
+        component: BookingBoard
+    },
+    {
+        path: '/schedule',
+        name: 'schedule',
+        component: Schedule
     },
     {
         path: '/login',
