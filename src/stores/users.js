@@ -55,6 +55,16 @@ export default {
             }
         },
 
+        REGISTER_PASSENGER: async ({dispatch}, passenger) => {
+            await Api().post('/users/', passenger)
+                .then(() => {
+                    dispatch("GET_USERS");
+                })
+                .catch(error =>{
+                    console.log(error.message + " post error")
+                })
+        },
+
         DELETE_USER: async ({dispatch}, user) => {
             if(user.id){
                 await Api().delete('/users/' + user.id + '/')

@@ -18,6 +18,8 @@ import Store from '../store';
 import Container from '../components/Container';
 import BookingBoard from '../views/BookingBoard';
 import Schedule from '../views/Schedule';
+import Payment from '../views/Payment';
+import Preview from '../views/Preview';
 
 
 Vue.use(VueRouter);
@@ -34,9 +36,19 @@ const routes = [
         component: BookingBoard
     },
     {
-        path: '/schedule',
+        path: '/schedule/:scheduleId',
         name: 'schedule',
-        component: Schedule
+        component: Schedule,
+    },
+    {
+        path: '/payment/:paymentId',
+        name: 'payment',
+        component: Payment,
+    },
+    {
+        path: '/preview/:previewId',
+        name: 'preview',
+        component: Preview,
     },
     {
         path: '/login',

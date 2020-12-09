@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import VueCookie from 'vue-cookie';
 
 import Api from '@/services/api'
 
@@ -7,16 +8,24 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        trip_schedule: null,
+        trip_schedule: {},
+        trip: {}
     },
     getters: {
         TRIP_SCHEDULE: (state) => {
             return state.trip_schedule
+        },
+        TRIP: (state) => {
+            return state.trip
         }
     },
     mutations: {
         SET_TRIP_SCHEDULE: (state, trip_schedule) => {
             state.trip_schedule = trip_schedule;
+        },
+        SET_TRIP: (state, payload) => {
+            state.trip = payload;
+            VueCookie.set('trip', JSON.stringify(payload), 1);
         },
     },
     actions: {
@@ -31,6 +40,9 @@ export default {
             .catch(error=>{
                 console.log(error.message + " get error");
             })
-        }
+        },
+        STORE_TRIP: ({commit}, trip) => {
+            commit('SET_TRIP', trip);
+        },
     },
 }

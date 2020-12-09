@@ -12,7 +12,7 @@
                             </div>
                         </div>
                         <div class="header-top-right">
-                            <a href="" class="text-warning" @click="login()">LogIn</a>
+                            <a href="" class="text-warning font-weight-bold" @click="login()">LogIn</a>
                         </div>
                     </div>			  					
                 </div>
@@ -32,11 +32,26 @@
                         
                         <div class="col-lg-6 collapse navbar-collapse header-top-right" id="collapsibleNavbar">
                             <ul class="nav-menu">
-                                <li><a href="" class="text-white" @click="indexPage">Home</a></li>
-                                <li><a href="#about-us" class="text-white" @click="aboutUs">About</a></li>
-                                <li><a href="#services" class="text-white" @click="services">Services</a></li>
-                                <li><a href="" class="text-white" @click="booking">Booking</a></li>	
-                                <li><a href="#about-us" class="text-white" @click="aboutUs">Contact</a></li>
+                                <li><a href="" id="indexpage" class="text-white"
+                                        @mouseover="changeColor('indexpage')"
+                                        @mouseout="changeColor('indexpage')"
+                                        @click="indexPage">Home</a></li>
+                                <li><a href="#about-us" id="about" class="text-white"
+                                        @mouseover="changeColor('about')"
+                                        @mouseout="changeColor('about')"
+                                        @click="aboutUs">About</a></li>
+                                <li><a href="#services" id="services" class="text-white"
+                                        @mouseover="changeColor('services')"
+                                        @mouseout="changeColor('services')"
+                                        @click="services">Services</a></li>
+                                <li><a href="" class="text-white" id="booking"
+                                        @mouseover="changeColor('booking')"
+                                        @mouseout="changeColor('booking')"
+                                        @click="booking">Booking</a></li>	
+                                <li><a href="#about-us" class="text-white" id="contact"
+                                        @mouseover="changeColor('contact')"
+                                        @mouseout="changeColor('contact')"
+                                        @click="aboutUs">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -45,7 +60,15 @@
         </header>
         <v-row class="container justify-center mt-100">
             <div class="my-5 py-3 ml-2 px-0">
-                <h5 class="pb-5 text-dark">
+                <div class="justify-center">
+                    <h4 class="py-1 text-dark mt-5"><span class="text-warning">Route Name:</span>  {{ trip.route_name }} </h4>
+                    <h5 class="py-1 text-dark"><span class="text-warning">Bus Reg.:</span> {{ trip.registration_no }} </h5>
+                    <h5 class="py-1 text-dark"><span class="text-warning">Bus Type:</span> {{ trip.fleet_type }} </h5>
+                    <h5 class="py-1 text-dark"><span class="text-warning">Dep Time:</span> {{ trip.departure_time }}{{ amOrPM }} ({{ trip.trip_start_date }}) </h5>
+                    <h5 class="py-1 text-dark"><span class="text-warning">Total Seats:</span> {{ trip.seat_nos }} </h5>
+                    <h5 class="py-1 text-dark"><span class="text-warning">Ticket Price:</span> UGX  {{ trip.fare }} </h5>
+                </div>
+                <h5 class="py-5 text-dark">
                     Please choose your preferred seat and boarding point.
                 </h5>
             </div>
@@ -53,7 +76,7 @@
         <v-row class="container-fluid  justify-center">
             <v-card class="px-2 mb-5">
                 <div class="mr-1 py-3 pl-3 pr-8">
-                    <div class="row justify-content-between font-weight-bold px-3 mb-3">
+                    <div class="row justify-content-between font-weight-bold pl-5 mb-3">
                         <div>
                             <div class="justify-center"><v-btn text class="indigo lighten-5"></v-btn></div>
                             Available Seat
@@ -68,128 +91,152 @@
                         </div>
                     </div>
                     <div class="row pb-0 mb-0 justify-content-between">
-                        <div><v-btn class="d-flex justify-content-center d-md-table mx-5">1</v-btn></div>
-                        <div><v-btn disabled class="mr-5"><small>Driver</small></v-btn></div>
+                        <div><v-btn small @click="seats('seat_1')" id="seat_1" class="d-flex justify-content-center d-md-table mx-5">1</v-btn></div>
+                        <div><v-btn small disabled class="mr-5"><small>Driver</small></v-btn></div>
                     </div>
                     <div class="row py-0">
-                            <div class="col-2 pl-5"><v-btn>2</v-btn></div>
-                            <div class="col-2"><v-btn>3</v-btn></div>
+                            <div class="col-2 pl-5"><v-btn small id="seat_2" @click="seats('seat_2')">2</v-btn></div>
+                            <div class="col-2"><v-btn small id="seat_3" @click="seats('seat_3')">3</v-btn></div>
                     </div>
                     <div class="row py-0">
-                            <div class="col-2 pl-5"><v-btn>4</v-btn></div>
-                            <div class="col-2"><v-btn>5</v-btn></div>
+                            <div class="col-2 pl-5"><v-btn small @click="seats('seat_4')" id="seat_4">4</v-btn></div>
+                            <div class="col-2"><v-btn small @click="seats('seat_5')" id="seat_5">5</v-btn></div>
                             <div class="col-2">&nbsp;</div>
-                            <div class="col-2 pr-0"><v-btn>6</v-btn></div>
-                            <div class="col-2 pl-2"><v-btn>7</v-btn></div>
-                            <div class="col-2 pl-0"><v-btn>8</v-btn></div>
+                            <div class="col-2 pr-0"><v-btn small @click="seats('seat_6')" id="seat_6">6</v-btn></div>
+                            <div class="col-2 pl-2"><v-btn small @click="seats('seat_7')" id="seat_7">7</v-btn></div>
+                            <div class="col-2 pl-0"><v-btn small @click="seats('seat_8')" id="seat_8">8</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>9</v-btn></div>
-                        <div class="col-2"><v-btn>10</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_9')" id="seat_9">9</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_10')" id="seat_10">10</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>11</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>12</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>13</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_11')" id="seat_11">11</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_12')" id="seat_12">12</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_13')" id="seat_13">13</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-6 justify-center font-weight-bold">ENTRANCE</div>
-                        <div class="col-2 pr-0"><v-btn>14</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>15</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>16</v-btn></div>
+                        <div class="col-6 justify-center font-weight-bold pl-5">ENTRANCE</div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_14')" id="seat_14">14</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_15')" id="seat_15">15</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_16')" id="seat_16">16</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>17</v-btn></div>
-                        <div class="col-2" ><v-btn disabled><small>STAFF</small></v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_17')" id="seat_17">17</v-btn></div>
+                        <div class="col-2" ><v-btn small disabled><small>STAFF</small></v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>18</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>19</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>20</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_18')" id="seat_18">18</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_19')" id="seat_19">19</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_20')" id="seat_20">20</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>21</v-btn></div>
-                        <div class="col-2"><v-btn>22</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_21')" id="seat_21">21</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_22')" id="seat_22">22</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>23</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>24</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>25</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_23')" id="seat_23">23</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_24')" id="seat_24">24</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_25')" id="seat_25">25</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>26</v-btn></div>
-                        <div class="col-2"><v-btn>27</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_26')" id="seat_26">26</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_27')" id="seat_27">27</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>28</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>29</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>30</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_28')" id="seat_28">28</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_29')" id="seat_29">29</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_30')" id="seat_30">30</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>31</v-btn></div>
-                        <div class="col-2"><v-btn>32</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_31')" id="seat_31">31</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_32')" id="seat_32">32</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>33</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>34</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>35</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_33')" id="seat_33">33</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_34')" id="seat_34">34</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_35')" id="seat_35">35</v-btn></div>
                     </div>
                     <div class="row py-0">
-                        <div class="col-2 pl-5"><v-btn>36</v-btn></div>
-                        <div class="col-2"><v-btn>37</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_36')" id="seat_36">36</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_37')" id="seat_37">37</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>38</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>39</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>40</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_38')" id="seat_38">38</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_39')" id="seat_39">39</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_40')" id="seat_40">40</v-btn></div>
                     </div>
                     <div class="row">
-                        <div class="col-2 pl-5"><v-btn>41</v-btn></div>
-                        <div class="col-2"><v-btn>42</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_41')" id="seat_41">41</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_42')" id="seat_42">42</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>43</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>44</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>45</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_43')" id="seat_43">43</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_44')" id="seat_44">44</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_45')" id="seat_45">45</v-btn></div>
                     </div>
                     <div class="row">
-                        <div class="col-2 pl-5"><v-btn>46</v-btn></div>
-                        <div class="col-2"><v-btn>47</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_46')" id="seat_46">46</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_47')" id="seat_47">47</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>48</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>49</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>50</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_48')" id="seat_48">48</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_49')" id="seat_49">49</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_50')" id="seat_50">50</v-btn></div>
                     </div>
                     <div class="row">
-                        <div class="col-2 pl-5"><v-btn>51</v-btn></div>
-                        <div class="col-2"><v-btn>52</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_51')" id="seat_51">51</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_52')" id="seat_52">52</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>53</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>54</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>55</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_53')" id="seat_53">53</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_54')" id="seat_54">54</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_55')" id="seat_55">55</v-btn></div>
                     </div>
                     <div class="row">
-                        <div class="col-2 pl-5"><v-btn>56</v-btn></div>
-                        <div class="col-2"><v-btn>57</v-btn></div>
+                        <div class="col-2 pl-5"><v-btn small @click="seats('seat_56')" id="seat_56">56</v-btn></div>
+                        <div class="col-2"><v-btn small @click="seats('seat_57')" id="seat_57">57</v-btn></div>
                         <div class="col-2">&nbsp;</div>
-                        <div class="col-2 pr-0"><v-btn>58</v-btn></div>
-                        <div class="col-2 pl-2"><v-btn>59</v-btn></div>
-                        <div class="col-2 pl-0"><v-btn>60</v-btn></div>
+                        <div class="col-2 pr-0"><v-btn small @click="seats('seat_58')" id="seat_58">58</v-btn></div>
+                        <div class="col-2 pl-2"><v-btn small @click="seats('seat_59')" id="seat_59">59</v-btn></div>
+                        <div class="col-2 pl-0"><v-btn small @click="seats('seat_60')" id="seat_60">60</v-btn></div>
                     </div>
                     <div class="row px-0 mx-0 justify-content-between">
-                        <div class="col-1 mx-0 px-0"><v-btn small>61</v-btn></div>
-                        <div class="col-1 mx-0 pr-1"><v-btn small>62</v-btn></div>
-                        <div class="col-1 mx-1 pr-1"><v-btn small>63</v-btn></div>
-                        <div class="col-1 mx-0 px-1"><v-btn small>64</v-btn></div>
-                        <div class="col-1 mx-0 pr-1"><v-btn small>65</v-btn></div>
-                        <div class="col-1 mx-0 pr-1"><v-btn small>66</v-btn></div>
-                        <div class="col-1 mx-0 pr-1"><v-btn small>67</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_61')" id="seat_61">61</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_62')" id="seat_62">62</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_63')" id="seat_63">63</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_64')" id="seat_64">64</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_65')" id="seat_65">65</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_66')" id="seat_66">66</v-btn></div>
+                        <div class="col-1 mx-0 px-1"><v-btn small @click="seats('seat_67')" id="seat_67">67</v-btn></div>
                         <span></span>
                     </div>
                 </div>
             </v-card>
             <div class="mx-5">&nbsp;</div>
-            <div class="ml-5">
+            <div class="ml-5 mb-5">
+                <v-alert type="error" v-if="emptyField">
+                    Please select your pick up point and seat to continue! 
+                </v-alert>
                 <form>
                     <v-card class="px-2 pb-5">
+                            <div></div>
                             <div class="px-4">
-                                <v-text-field small required label="Enter Boarding point *"></v-text-field>
-                                <v-text-field small disabled label="Seat(s)"></v-text-field>
-                                <v-text-field small disabled id="total" required label="Total"></v-text-field>
-                                <v-btn class="primary" block>Continue</v-btn>
+                                <v-select
+                                    :items="trip.pick_up_points"
+                                    label="Choose pickup point *"
+                                    item-text="name"
+                                    item-value="name"
+                                    v-model="pickpoint"
+                                    id="pickpoint"
+                                    required
+                                ></v-select>
+                                <v-text-field
+                                    small
+                                    disabled
+                                    id="selected_seats"
+                                    v-model="selected_seats"
+                                    label="Seat(s)"
+                                    ></v-text-field>
+                                <v-text-field
+                                    small
+                                    disabled
+                                    id="total"
+                                    v-model="totalFare"
+                                    label="Total Fare (UGX)"
+                                    ></v-text-field>
+                                <v-btn class="primary" block @click="choice">Continue</v-btn>
                             </div>
                     </v-card>
                 </form>
@@ -200,7 +247,7 @@
             <footer class="footer-area section-gap bg-dark">
                 <div class="container">
                     <div class="row mx-10 justify-content-between pr-0">
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                        <div class="col-lg-6 col-md-4 col-sm-4">
                             <div class="single-footer-widget">
                                 <h6>About Zawadi</h6>
                                 <p>
@@ -261,31 +308,42 @@
 
 <script>
 import {mapGetters} from "vuex";
+import VueCookie from 'vue-cookie';
 export default {
     data: () => ({
-        items: []
+        pickpoint: '',
+        selected_seats: '',
+        totalFare: 0.0,
+        amOrPM: '',
+        emptyField: false
     }),
 
     computed: {
 		...mapGetters({
-                fleets: 'FLEETS',
-                routes: 'ROUTES',
-                assignTrips: 'ASSIGNED_TRIPS',
-                isLoggedIn: "IS_LOGGED_IN",
-                schedule: "TRIP_SCHEDULE"
-			}),
-		formTitle () {
-			return this.editedIndex === -1 ? 'Add Assignment' : 'Edit Assignment'
-		},
-    },
-    mounted() {
-        this.$store.dispatch('GET_FLEETS');
-        this.$store.dispatch('GET_ROUTES');
-        this.$store.dispatch('GET_ASSIGNED_TRIPS');
-        this.$store.dispatch('GET_TRIP_SCHEDULE');
+                trip: "TRIP"
+			})
     },
 
-    
+    mounted() {
+        if(this.trip.length < 1){
+            this.restoreData()
+        }
+
+        // if back button is pressed
+        window.onpopstate = () => {
+            if(this.trip.length < 1){
+                this.restoreData()
+            }
+        };
+        // if page is refreshed
+        if (performance.getEntriesByType('navigation')[0].type != 'navigate') {
+            this.restoreData();
+        }
+        if(this.trip){
+            this.amOrPM = this.convertTime(this.trip.departure_time);
+        }
+    },
+
     methods: {
         login() {
             this.$router.push({name: 'login'});
@@ -307,8 +365,75 @@ export default {
             this.$router.push({name: 'indexpage#services'});
         },
 
-        seats() {
-            
+        changeColor(obj) {
+            if (document.getElementById(obj).className === "text-warning"){
+                document.getElementById(obj).className = "text-white"
+            }else {
+                document.getElementById(obj).className = 'text-warning'
+            }
+        },
+
+        seats(btn) {
+            if(this.selected_seats ){
+                document.getElementById('seat_'+this.selected_seats).style.backgroundColor = ""
+                this.selected_seats = '';
+                this.totalFare = 0.0;
+            }else{
+                if (document.getElementById(btn).style.backgroundColor === ""){
+                    document.getElementById(btn).style.backgroundColor = "blue"
+                }else {
+                    document.getElementById(btn).style.backgroundColor = ""
+                }
+                this.selected_seats = document.getElementById(btn).innerText
+                this.totalFare = this.trip.fare;
+                document.getElementById('pickpoint').focus();
+            }
+        },
+
+        choice() {
+            this.trip["selected_seat"] = this.selected_seats;
+            this.trip["total_fare"] = this.totalFare;
+            this.trip["pick_up_point"] = this.pickpoint;
+            this.trip["am_or_pm"] = this.amOrPM;
+
+            if(this.selected_seats == '' | this.totalFare < 1 | this.pickpoint == '') {
+                this.emptyField = true;
+            }else{
+                this.emptyField = false;
+                this.viewPayment(this.trip);
+            }
+        },
+
+        restoreData() {
+            let data = JSON.parse(VueCookie.get('trip'));
+            if(data){
+                this.$store.dispatch('STORE_TRIP', data);
+                this.pickpoint = data.pick_up_point;
+                this.totalFare = data.total_fare;
+                this.selected_seats = data.selected_seat;
+                 if(this.selected_seats){
+                    document.getElementById('seat_'+this.selected_seats).style.backgroundColor = "blue"
+                }
+            }
+        },
+
+        convertTime(time) {
+            const hour = time.split(':')[0];
+            return  hour >= 12 ? 'PM' : 'AM';
+        },
+
+        checkField(){
+            if(this.selected_seats.length < 1 | this.totalFare < 1 | this.pickpoint == '') {
+                this.emptyField = true;
+                document.getElementById('id').scrollIntoView();
+            }else{
+                this.emptyField = false;
+            }
+        },
+
+        viewPayment(trip) {
+            this.$store.dispatch('STORE_TRIP', trip)
+            this.$router.push({name: 'payment', params: { paymentId: trip.id }});
         }
     }
 }

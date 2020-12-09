@@ -56,7 +56,7 @@
                             <h5 class="pb-5 text-secondary">
                                 Brings you secure and convinient booking services at your doorstep.
                             </h5>
-                            <a href="#" class="primary-btn text-uppercase">Book Now</a>
+                            <a href="" @click="Booking()" class="primary-btn text-uppercase">Book Now</a>
                         </div>
                     </div>
                     <div class="text-center overflow-hidden pt-3 pl-5">
@@ -139,7 +139,7 @@
                             <ul class="price-list" v-for="(item, i) in fares" :key="i">
                                 <li v-if="item.fleet_type == 'Universal Day'" class="d-flex justify-content-between align-items-center">
                                     <span>{{ item.trip_route }}</span>
-                                    <a href="#" class="price-btn">UGX {{ item.price_per_person}}</a>
+                                    <span>UGX {{ item.price_per_person}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -150,11 +150,11 @@
                             <ul class="price-list" v-for="(item, i) in fares" :key="i">
                                 <li v-if="item.fleet_type == 'Premium Day'" class="d-flex justify-content-between align-items-center">
                                     <span>{{ item.trip_route }}</span>
-                                    <a href="#" class="price-btn">UGX {{ item.price_per_person}}</a>
+                                    <span>UGX {{ item.price_per_person}}</span>
                                 </li>
                             </ul>
                         </div>
-                        <div> <a href="#" class="primary-btn text-uppercase">Book Now</a></div>
+                        <div> <a href="" @click="Booking()" class="primary-btn text-uppercase">Book Now</a></div>
                     </div>												
                 </div>
             </div>	

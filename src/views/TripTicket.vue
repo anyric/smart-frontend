@@ -629,7 +629,6 @@ export default {
 					status: 'travelling',
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				console.log(data)
 				this.$store.dispatch('SAVE_TICKET', data)
 			}
 			this.close();
@@ -637,8 +636,6 @@ export default {
 
 		delete(data) {
 			if (data.type == "TICKETS") {
-				console.log("Yes Ticket")
-				console.log(data)
 				this.$store.dispatch('DELETE_TICKET', data);
 			}
 		},

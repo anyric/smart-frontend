@@ -50,12 +50,12 @@
                 </h5>
             </div>
         </v-row>
-        <v-row class="container justify-center">
+        <div class="container px-0">
             <v-simple-table
                 fixed-header
                 height="300px"
-                style="width: 80%"
-                class="table-responsive"
+                style="width: 90%"
+                class="table-responsive container px-0"
             >
                 <template v-slot:default>
                     <thead>
@@ -64,22 +64,10 @@
                             Date
                             </th>
                             <th class="text-left">
-                            Bus
-                            </th>
-                            <th class="text-left">
                             Route
                             </th>
                             <th class="text-left">
                             Trip
-                            </th>
-                            <th class="text-left">
-                            Departure
-                            </th>
-                            <th class="text-left">
-                            Total Seat
-                            </th>
-                            <th class="text-left">
-                            Fare
                             </th>
                             <th class="text-left">
                             View Seat
@@ -91,28 +79,25 @@
                             v-for="item in schedule"
                             :key="item.id"
                         >
-                            <td>{{ item.trip_start_date }}</td>
-                            <td>{{ item.registration_no }}</td>
+                            <td>{{ item.trip_start_date }} ({{ item.departure_time }})</td>
                             <td>{{ item.route_name }}</td>
                             <td>{{ item.fleet_type }}</td>
-                            <td>{{ item.departure_time }}</td>
-                            <td>{{ item.seat_nos}}</td>
-                            <td>UGX{{ item.fare }}</td>
                             <td>
                                 <v-btn 
                                     color="warning"
                                     elevation="0"
                                     small
+                                    @click="viewSchedule(item)"
                                     >
                                         View Seats
-                                        <v-icon small @click="viewSchedule(item)">mdi-eye</v-icon>
+                                        <v-icon small>mdi-eye</v-icon>
                                 </v-btn>
                             </td>
                         </tr>
                     </tbody>
                 </template>
             </v-simple-table>
-        </v-row>
+        </div>
         <!-- start footer Area -->
         <div id="about-us" class="row">	
             <footer class="footer-area section-gap bg-dark">
@@ -181,25 +166,20 @@
 import {mapGetters} from "vuex";
 export default {
     data: () => ({
-        items: []
+        items: [],
+        pickUpPoints: []
     }),
 
     computed: {
-		...mapGetters({
-                fleets: 'FLEETS',
-                routes: 'ROUTES',
-                assignTrips: 'ASSIGNED_TRIPS',
-                isLoggedIn: "IS_LOGGED_IN",
-                schedule: "TRIP_SCHEDULE"
-			}),
-		formTitle () {
-			return this.editedIndex === -1 ? 'Add Assignment' : 'Edit Assignment'
-		},
+        ...mapGetters({
+            routes: 'ROUTES',
+            locations: 'LOCATIONS',
+            schedule: "TRIP_SCHEDULE"
+		}),
     },
     mounted() {
-        this.$store.dispatch('GET_FLEETS');
+        this.$store.dispatch('GET_LOCATIONS');
         this.$store.dispatch('GET_ROUTES');
-        this.$store.dispatch('GET_ASSIGNED_TRIPS');
         this.$store.dispatch('GET_TRIP_SCHEDULE');
     },
 
@@ -225,8 +205,16 @@ export default {
             this.$router.push({name: 'indexpage#services'});
         },
 
-        viewSchedule() {
-            this.$router.push({name: 'schedule'});
+        viewSchedule(trip) {
+            const route = this.routes.filter(item => item.name === trip.route_name)
+            this.locations.filter(item =>  {
+                if (route[0].stopage_points.includes(item.id)) {
+                    this.pickUpPoints.push({'id': item.id, 'name': item.name});
+                }
+            });
+            trip['pick_up_points'] = this.pickUpPoints
+            this.$store.dispatch('STORE_TRIP', trip)
+            this.$router.push({name: 'schedule', params: { scheduleId: trip.id }});
         }
     }
 }
