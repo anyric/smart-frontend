@@ -65,7 +65,8 @@
                         <v-container class="px-0" style="width: 100%">
                             <v-row no-gutters>
                                 <v-col cols="9" class="sm12 font-weight-bold py-1">
-                                    <i class="fas fa-bus-alt mr-1"></i>ZAWADI BUS SERVICES
+                                    <div class="float-left"><img class="mr-1 py-0" style="width: 20px; height: 20px" src="../assets/logo.png" alt="" title="" /></div>
+                                    ZAWADI BUS SERVICES
                                 </v-col>
                                 <v-col cols="3" class="sm12 py-1 text-right ">
                                 </v-col>
@@ -97,7 +98,7 @@
                                     <strong> NAME OF PASSENGER:  </strong> <br />{{ ticket.passenger_name }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-2">
-                                    <strong> JOURNEY: </strong> <br />{{ trip.route_name }}
+                                    <strong> JOURNEY: </strong> <br />{{ trip.pick_up_point }} - {{ trip.stop_point }}
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -108,7 +109,7 @@
                                     {{  ticket.trip_start_date }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-0">
-                                    <strong> BUS TYPE: </strong> <br />{{ trip.fleet_type }}
+                                    <strong> TRIP: </strong> <br />{{ trip.fleet_type }}
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -232,6 +233,7 @@ import {mapGetters} from "vuex";
 import VueCookie from 'vue-cookie';
 export default {
     data: () => ({
+        overlay: false,
         ticket: {},
         user: {}
     }),
@@ -245,6 +247,7 @@ export default {
     },
 
     mounted() {
+        this.overlay = true;
         document.getElementById('ticket').focus();
         this.$store.dispatch('GET_USERS')
         this.$store.dispatch("GET_TICKETS");
@@ -258,7 +261,7 @@ export default {
             this.$store.dispatch('GET_USERS')
             this.$store.dispatch("GET_TICKETS"); 
         };
-
+        // if page is refreshed
         if (performance.getEntriesByType('navigation')[0].type != 'navigate') {
             this.$store.dispatch('STORE_TRIP', JSON.parse(VueCookie.get('trip')));
             this.$store.dispatch('GET_USERS')
@@ -267,7 +270,14 @@ export default {
         if(this.trip !== {}){
             this.ticket = this.tickets.filter(item => item.mobile === this.trip.mobile)[0];
         }
-        // this.user = this.users.filter(item => item.mobile === '0783018864')[0];
+    },
+
+    watch: {
+        overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false
+            }, 5000)
+        },
     },
 
     methods: {
@@ -300,7 +310,7 @@ export default {
         },
 
         printTicket() {
-            this.user = this.users.filter(item => item.mobile === '0783018864')[0];
+            this.user = this.users.filter(item => item.mobile === this.trip.mobile)[0];
             console.log(this.ticket);
             console.log(this.user);
             let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
@@ -312,7 +322,9 @@ export default {
             ticketwindow.document.write('</head><body>')
             ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
             ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
-            ticketwindow.document.write(`<tr><th colspan=2><i class='fas fa-bus-alt mr-1'></i>ZAWADI BUS SERVICES</th></tr>`)
+            ticketwindow.document.write(`<tr><th colspan=2><div class="float-left">
+                                            <img class="mr-1 py-0" style="width: 20px; height: 20px" src="../assets/logo.png" alt="" title="" />
+                                            </div> ZAWADI BUS SERVICES</th></tr>`)
             ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ this.ticket.seat} </strong></small></td></tr>`)
             ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ this.trip.registration_no }
                                             </strong></small></td><td><small>RECEIPT NO. <strong> <br>

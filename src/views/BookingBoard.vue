@@ -79,7 +79,7 @@
                             v-for="item in schedule"
                             :key="item.id"
                         >
-                            <td>{{ item.trip_start_date }} ({{ item.departure_time }})</td>
+                            <td>{{ item.trip_start_date }} ({{ item.departure_time }} {{ item.departure_time.split(':')[0] >= 12 ? 'PM' : 'AM' }})</td>
                             <td>{{ item.route_name }}</td>
                             <td>{{ item.fleet_type }}</td>
                             <td>
@@ -89,8 +89,8 @@
                                     small
                                     @click="viewSchedule(item)"
                                     >
-                                        View Seats
                                         <v-icon small>mdi-eye</v-icon>
+                                        View Seats
                                 </v-btn>
                             </td>
                         </tr>
@@ -159,6 +159,9 @@
             </footer>
         </div>	
         <!-- End footer Area -->
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
@@ -166,6 +169,7 @@
 import {mapGetters} from "vuex";
 export default {
     data: () => ({
+        overlay: false,
         items: [],
         pickUpPoints: []
     }),
@@ -178,11 +182,19 @@ export default {
 		}),
     },
     mounted() {
+        this.overlay = true;
         this.$store.dispatch('GET_LOCATIONS');
         this.$store.dispatch('GET_ROUTES');
         this.$store.dispatch('GET_TRIP_SCHEDULE');
     },
 
+    watch: {
+        overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false
+            }, 1000)
+        },
+    },
     
     methods: {
         login() {

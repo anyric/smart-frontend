@@ -105,14 +105,17 @@
 				</v-data-table>
             </v-col>
         </v-row>
-    <main-confirm-dialog
-		:open="isOpen"
-		:id="dialogId"
-		:item="dialogItem"
-		:items="dialogItems"
-		:itemType="itemType"
-		@close-modal="closeDialog"
-	></main-confirm-dialog>
+		<main-confirm-dialog
+			:open="isOpen"
+			:id="dialogId"
+			:item="dialogItem"
+			:items="dialogItems"
+			:itemType="itemType"
+			@close-modal="closeDialog"
+		></main-confirm-dialog>
+		<v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </v-layout>
 </template>
 
@@ -121,6 +124,7 @@ import {mapGetters} from "vuex";
 import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
+		overlay: false,
 		editedItem: {
 			id: 0,
 			registration_no: '',
@@ -169,12 +173,18 @@ export default {
 		dialog (val) {
 			val || this.close()
 		},
+		overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false
+            }, 1000)
+        },
     },
 
 	mounted() {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
+		this.overlay = true
 		this.$store.dispatch('GET_FLEET_TYPES');
 		this.$store.dispatch('GET_FLEETS');
 	},

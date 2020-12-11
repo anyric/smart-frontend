@@ -66,7 +66,6 @@
                     <h5 class="py-1 text-dark"><span class="text-warning">Bus Type:</span> {{ trip.fleet_type }} </h5>
                     <h5 class="py-1 text-dark"><span class="text-warning">Dep Time:</span> {{ trip.departure_time }}{{ amOrPM }} ({{ trip.trip_start_date }}) </h5>
                     <h5 class="py-1 text-dark"><span class="text-warning">Total Seats:</span> {{ trip.seat_nos }} </h5>
-                    <h5 class="py-1 text-dark"><span class="text-warning">Ticket Price:</span> UGX  {{ trip.fare }} </h5>
                 </div>
                 <h5 class="py-5 text-dark">
                     Please choose your preferred seat and boarding point.
@@ -78,21 +77,21 @@
                 <div class="mr-1 py-3 pl-3 pr-8">
                     <div class="row justify-content-between font-weight-bold pl-5 mb-3">
                         <div>
-                            <div class="justify-center"><v-btn text class="indigo lighten-5"></v-btn></div>
+                            <div class="justify-center"><v-btn text disabled class="indigo lighten-5"></v-btn></div>
                             Available Seat
                         </div>
                         <div>
-                            <div class="justify-center"><v-btn text class="blue"></v-btn></div>
+                            <div class="justify-center"><v-btn text disabled class="primary"></v-btn></div>
                             Selected Seat
                         </div>
                         <div>
-                            <div class="justify-center"><v-btn text class="green"></v-btn></div>
+                            <div class="justify-center"><v-btn text disabled class="success"></v-btn></div>
                             Booked Seat
                         </div>
                     </div>
                     <div class="row pb-0 mb-0 justify-content-between">
-                        <div><v-btn small @click="seats('seat_1')" id="seat_1" class="d-flex justify-content-center d-md-table mx-5">1</v-btn></div>
-                        <div><v-btn small disabled class="mr-5"><small>Driver</small></v-btn></div>
+                        <div><v-btn small @click="seats('seat_1')" id="seat_1" class="d-flex justify-content-center d-md-table mb-2 mx-5">1</v-btn></div>
+                        <div><v-btn small disabled class="mr-5 mb-0"><small>Driver</small></v-btn></div>
                     </div>
                     <div class="row py-0">
                             <div class="col-2 pl-5"><v-btn small id="seat_2" @click="seats('seat_2')">2</v-btn></div>
@@ -207,7 +206,7 @@
             <div class="mx-5">&nbsp;</div>
             <div class="ml-5 mb-5">
                 <v-alert type="error" v-if="emptyField">
-                    Please select your pick up point and seat to continue! 
+                    {{ message }} 
                 </v-alert>
                 <form>
                     <v-card class="px-2 pb-5">
@@ -215,28 +214,30 @@
                             <div class="px-4">
                                 <v-select
                                     :items="trip.pick_up_points"
-                                    label="Choose pickup point *"
+                                    label="From *"
                                     item-text="name"
                                     item-value="name"
-                                    v-model="pickpoint"
+                                    v-model="pickPoint"
                                     id="pickpoint"
+                                    required
+                                ></v-select>
+                                 <v-select
+                                    :items="trip.pick_up_points"
+                                    label="To *"
+                                    item-text="name"
+                                    item-value="name"
+                                    v-model="stopPoint"
+                                    id="stoppoint"
                                     required
                                 ></v-select>
                                 <v-text-field
                                     small
                                     disabled
                                     id="selected_seats"
-                                    v-model="selected_seats"
+                                    v-model="selectedSeats"
                                     label="Seat(s)"
                                     ></v-text-field>
-                                <v-text-field
-                                    small
-                                    disabled
-                                    id="total"
-                                    v-model="totalFare"
-                                    label="Total Fare (UGX)"
-                                    ></v-text-field>
-                                <v-btn class="primary" block @click="choice">Continue</v-btn>
+                                <v-btn class="success" block @click="choice">Book Seat</v-btn>
                             </div>
                     </v-card>
                 </form>
@@ -303,6 +304,9 @@
             </footer>
         </div>	
         <!-- End footer Area -->
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
@@ -311,20 +315,30 @@ import {mapGetters} from "vuex";
 import VueCookie from 'vue-cookie';
 export default {
     data: () => ({
-        pickpoint: '',
-        selected_seats: '',
-        totalFare: 0.0,
+        overlay: false,
+        pickPoint: '',
+        stopPoint: '',
+        selectedSeats: '',
+        bookedSeats: [],
         amOrPM: '',
-        emptyField: false
+        emptyField: false,
+        message: 'Please select your pick up, stop point and seat to continue!'
     }),
 
     computed: {
 		...mapGetters({
-                trip: "TRIP"
+                trip: "TRIP",
+                fares: "FARES",
+                routes: "ROUTES",
+                tickets: "TICKETS"
 			})
     },
 
     mounted() {
+        this.overlay = true;
+        this.$store.dispatch("GET_FARES");
+        this.$store.dispatch("GET_ROUTES");
+        this.$store.dispatch("GET_TICKETS");
         if(this.trip.length < 1){
             this.restoreData()
         }
@@ -342,6 +356,21 @@ export default {
         if(this.trip){
             this.amOrPM = this.convertTime(this.trip.departure_time);
         }
+    },
+
+    watch: {
+        overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false;
+                this.tickets.forEach(item => this.bookedSeats.push(item.seat));
+                if(this.bookedSeats){
+                    this.bookedSeats.forEach( item => {
+                        document.getElementById('seat_'+ item).style.backgroundColor = "#4caf50";
+                        document.getElementById('seat_'+ item).disabled = true;
+                    })
+                }
+            }, 5000)
+        },
     },
 
     methods: {
@@ -374,33 +403,43 @@ export default {
         },
 
         seats(btn) {
-            if(this.selected_seats ){
-                document.getElementById('seat_'+this.selected_seats).style.backgroundColor = ""
-                this.selected_seats = '';
-                this.totalFare = 0.0;
-            }else{
-                if (document.getElementById(btn).style.backgroundColor === ""){
-                    document.getElementById(btn).style.backgroundColor = "blue"
-                }else {
-                    document.getElementById(btn).style.backgroundColor = ""
-                }
-                this.selected_seats = document.getElementById(btn).innerText
-                this.totalFare = this.trip.fare;
-                document.getElementById('pickpoint').focus();
+            console.log('clicked ', btn);
+            if(this.selectedSeats | this.selectedSeats === document.getElementById(btn).innerText ){
+                document.getElementById('seat_'+this.selectedSeats).style.backgroundColor = ""
             }
+            if (document.getElementById(btn).style.backgroundColor === ""){
+                document.getElementById(btn).style.backgroundColor = "#1976d2"
+            }else {
+                document.getElementById(btn).style.backgroundColor = ""
+            }
+            this.selectedSeats = document.getElementById(btn).innerText
+            document.getElementById('pickpoint').focus();
         },
 
         choice() {
-            this.trip["selected_seat"] = this.selected_seats;
-            this.trip["total_fare"] = this.totalFare;
-            this.trip["pick_up_point"] = this.pickpoint;
+            let route = this.routes.filter( item => item.name === this.pickPoint + ' - ' + this.stopPoint )[0];
+            let fare = {};
+            if(route){
+                fare = this.fares.filter( item => item.trip_route == route.id );
+            }
+
+            this.trip["total_fare"] = fare.price_per_person | this.trip.fare;
+            console.log(this.trip.total_fare);
+            this.trip["selected_seat"] = this.selectedSeats;
+            this.trip["pick_up_point"] = this.pickPoint;
+            this.trip["stop_point"] = this.stopPoint;
             this.trip["am_or_pm"] = this.amOrPM;
 
-            if(this.selected_seats == '' | this.totalFare < 1 | this.pickpoint == '') {
+            if(this.selectedSeats == '' | this.pickPoint == '' | this.stopPoint == '') {
                 this.emptyField = true;
             }else{
-                this.emptyField = false;
-                this.viewPayment(this.trip);
+                if(this.pickPoint === this.stopPoint){
+                    this.message = "From and To can't be the same!"
+                    this.emptyField = true;
+                }else{
+                    this.emptyField = false;
+                    this.viewPayment(this.trip);
+                }
             }
         },
 
@@ -408,11 +447,12 @@ export default {
             let data = JSON.parse(VueCookie.get('trip'));
             if(data){
                 this.$store.dispatch('STORE_TRIP', data);
-                this.pickpoint = data.pick_up_point;
+                this.pickPoint = data.pick_up_point;
+                this.stopPoint = data.stop_point;
                 this.totalFare = data.total_fare;
-                this.selected_seats = data.selected_seat;
-                 if(this.selected_seats){
-                    document.getElementById('seat_'+this.selected_seats).style.backgroundColor = "blue"
+                this.selectedSeats = data.selected_seat;
+                if(this.selectedSeats){
+                    document.getElementById('seat_'+this.selectedSeats).style.backgroundColor = "#1976d2"
                 }
             }
         },
@@ -423,9 +463,8 @@ export default {
         },
 
         checkField(){
-            if(this.selected_seats.length < 1 | this.totalFare < 1 | this.pickpoint == '') {
+            if(this.selectedSeats.length < 1 | this.pickPoint == '') {
                 this.emptyField = true;
-                document.getElementById('id').scrollIntoView();
             }else{
                 this.emptyField = false;
             }

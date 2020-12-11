@@ -221,6 +221,9 @@
             </footer>
         </div>	
         <!-- End footer Area -->
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 <script>
@@ -228,6 +231,7 @@
     import { idToName } from "@/services/helper";
     export default {
         data: () => ({
+            overlay: false,
             isOpen: false,
         }),
 
@@ -240,10 +244,19 @@
             }),
         },
 
+        watch: {
+            overlay (val) {
+                val && setTimeout(() => {
+                    this.overlay = false
+                }, 5000)
+            },
+        },
+
         mounted() {
             if(this.isLoggedIn){
                 this.$router.push({name: 'dashboard'});
             }
+            this.overlay = true;
             this.$store.dispatch("GET_FLEET_TYPES");
             this.$store.dispatch("GET_ROUTES");
             this.$store.dispatch("GET_FARES");

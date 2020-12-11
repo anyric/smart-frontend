@@ -18,12 +18,16 @@
                                 <h1 v-if="(item.url == 'trip-routes' )" class="text-center orange--text">{{routes.length}}</h1>
                                 <h1 v-if="(item.url == 'trip-assigned' )" class="text-center orange--text">{{assignTrips.length}}</h1>
                                 <h1 v-if="(item.url == 'trip-fares' )" class="text-center orange--text">{{fares.length}}</h1>
+                                <h1 v-if="(item.url == 'trip-ticket' )" class="text-center orange--text">{{tickets.length}}</h1>
                             </v-card-subtitle>
                         </div>
                     </div>
                 </v-card>
             </v-card>
         </template>
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </v-layout>
 </template>
 
@@ -31,6 +35,7 @@
 import {mapGetters} from "vuex";
   export default {
     data: () => ({
+        overlay: false,
         entity: [
             {name: "Total Users", url: "users", icon: "fas fa-users"},
             {name: "Total Agents", url: "agents", icon: "fas fa-handshake"},
@@ -40,6 +45,7 @@ import {mapGetters} from "vuex";
             {name: "Total Routes", url: "trip-routes", icon: "fas fa-road"},
             {name: "Total Trips", url: "trip-assigned", icon: "fas fa-suitcase"},
             {name: "Total Fares", url: "trip-fares", icon: "fa fa-credit-card"},
+            {name: "Total Tickets", url: "trip-ticket", icon: "fa fa-credit-card"},
         ],
     }),
     computed: {
@@ -52,6 +58,7 @@ import {mapGetters} from "vuex";
                 routes: 'ROUTES',
                 assignTrips: 'ASSIGNED_TRIPS',
                 fares: "FARES",
+                tickets: "TICKETS",
                 isLoggedIn: "IS_LOGGED_IN"
             }),
     },
@@ -59,6 +66,7 @@ import {mapGetters} from "vuex";
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
+        this.overlay = true;
         this.$store.dispatch('GET_USERS')
         this.$store.dispatch('GET_AGENTS');
         this.$store.dispatch("GET_FLEET_TYPES");
@@ -67,7 +75,17 @@ import {mapGetters} from "vuex";
         this.$store.dispatch('GET_LOCATIONS');
 		this.$store.dispatch("GET_ROUTES");
         this.$store.dispatch("GET_FARES");
+        this.$store.dispatch("GET_TICKETS");
     },
+
+    watch: {
+        overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false
+            }, 1000)
+        },
+    },
+
     methods: {
         viewDetails(url){
             this.$router.push({name: url});

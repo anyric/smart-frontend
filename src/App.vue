@@ -53,7 +53,8 @@
 		>
 			<v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 			<v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-			<span class="hidden-sm-and-down">Zawadi Bus Services</span>
+            <div class="float-left"><img style="width: 30px; height: 30px" src="./assets/logo.png" alt="" title="" /></div>
+			<span class="hidden-sm-and-down ml-1 font-weight-bold">Zawadi Bus Services</span>
 			</v-toolbar-title>
 			<v-spacer />
 			<div v-if="isLoggedIn">

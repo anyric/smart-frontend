@@ -100,8 +100,9 @@
                                 <h3>Journey Details</h3>
                                 <h4 class="py-1 text-dark">{{ trip.route_name }} </h4>
                                 <h5 class="py-1 font-weight-regular">{{ trip.trip_start_date }}, {{ trip.departure_time }}{{ trip.am_or_pm }}</h5>
-                                <h5 class="py-1 font-weight-regular">Seat No(s):<span class="font-weight-bold pl-4"> {{ passengerSeats }} </span> </h5>
-                                <h5 class="py-1 font-weight-regular">Pickup Point:<span class="font-weight-bold pl-1"> {{ trip.pick_up_point }} </span> </h5>
+                                <h5 class="py-1 font-weight-regular">Seat:<span class="font-weight-bold pl-4"> {{ passengerSeats }} </span> </h5>
+                                <h5 class="py-1 font-weight-regular">From:<span class="font-weight-bold pl-1"> {{ trip.pick_up_point }} </span> </h5>
+                                <h5 class="py-1 font-weight-regular">To:<span class="font-weight-bold pl-1"> {{ trip.stop_point }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">Total Fare:<span class="font-weight-bold pl-5"> {{ trip.total_fare }} </span> </h5>
 
                             </div>
@@ -124,11 +125,11 @@
                             <v-tabs-slider></v-tabs-slider>
                             <v-tab href="#tab-1">
                                 FlexiPay
-                                <v-icon color="#F57C00">fa fa-mobile</v-icon>
+                                <div class="float-left"><img style="width: 25px; height: 25px" src="../assets/img/flexipay.png" alt="Flexi" title="" /></div>
                             </v-tab>
                             <v-tab href="#tab-2">
                                 MTN MOMO
-                                <v-icon color="#F57C00">fa fa-mobile</v-icon>
+                                <div class="float-left"><img style="width: 20px; height: 20px" src="../assets/img/momo.png" alt="Momo" title="" /></div>
                             </v-tab>
                             </v-tabs>
                             <v-tabs-items v-model="tab">
@@ -158,10 +159,10 @@
                                     </v-card>
                                 </v-tab-item>
                             </v-tabs-items>
-                            <!-- <v-btn class="success" width="300px" @click="choice">
+                            <v-btn class="success" width="300px" @click="choice">
                                 <v-icon left> fa fa-money </v-icon>
                                 Pay Now
-                            </v-btn> -->
+                            </v-btn>
                         </v-card>
                     </div>
                 </div>
@@ -228,6 +229,9 @@
             </footer>
         </div>	
         <!-- End footer Area -->
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
@@ -236,6 +240,7 @@ import {mapGetters} from "vuex";
 import VueCookie from 'vue-cookie';
 export default {
     data: () => ({
+        overlay: false,
         items: [],
         isEditing: true,
         emptyField: false,
@@ -253,6 +258,7 @@ export default {
     },
 
     mounted() {
+        this.overlay = true;
         document.getElementById('name').focus();
         this.$store.dispatch('GET_USERS')
         if(!this.trip){
@@ -272,6 +278,14 @@ export default {
         if(this.trip){
             this.passengerSeats = this.trip.selected_seat.toString();
         }
+    },
+
+    watch: {
+        overlay (val) {
+            val && setTimeout(() => {
+                this.overlay = false
+            }, 5000)
+        },
     },
 
     methods: {
@@ -336,6 +350,7 @@ export default {
         },
 
         generateTicket(trip) {
+            console.log(this.users);
             this.user = this.users.filter(item => item.mobile === trip.mobile)[0];
             let data = {
                 passenger_name: this.trip.full_name,	

@@ -43,7 +43,7 @@
 										dark
 										v-on="on"
 										class="mb-2 ml-2 button-small"
-										@click="printReport()">
+										@click="generateReport()">
 										<i class="fa fa-file-pdf mr-1"></i> View PDF
 									</v-btn>
 								</template>
@@ -54,7 +54,6 @@
 								<v-card-title>
 									<span class="headline">{{ formTitle }}</span>
 								</v-card-title>
-
 								<v-card-text>
 									<v-container>
 										<v-row>
@@ -87,7 +86,7 @@
 											<v-col col="6" class="sm12">
 												<v-select
 													:items="fleets"
-													label="Trip Fleet *"
+													label="Bus *"
 													item-text="registration_no"
 													item-value="id"
 													v-model="editedItem.fleet_registration_no"
@@ -99,7 +98,7 @@
 											<v-col col="5" class="sm12">
 												<v-select
 													:items="fleetTypes"
-													label="Trip Type *"
+													label="Trip *"
 													item-text="name"
 													item-value="id"
 													v-model="editedItem.fleet_type"
@@ -179,7 +178,6 @@
 										</v-row>
 									</v-container>
 								</v-card-text>
-
 								<v-card-actions>
 									<v-spacer></v-spacer>
 									<v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
@@ -196,7 +194,6 @@
 									color="green"
 									small
 									v-on="on"
-
 									@click="viewItem(item)"
 								>mdi-eye</v-icon>
 							</template>
@@ -208,7 +205,6 @@
 									color="primary"
 									small
 									v-on="on"
-									
 									@click="editItem(item)"
 								>mdi-pencil</v-icon>
 							</template>
@@ -235,14 +231,14 @@
 			>
 				<v-card id="ticket">
 					<div class="mt-0 pt-0 text-right">
-							<v-btn
-								
-								color="red"
-								text
-								@click="viewDialog = false"
-							>
-								<i class="fa fa-times" aria-hidden="true"></i>
-							</v-btn>
+						<v-btn
+							
+							color="red"
+							text
+							@click="viewDialog = false"
+						>
+							<i class="fa fa-times" aria-hidden="true"></i>
+						</v-btn>
 					</div>
 					<v-card-subtitle class="mb-0 pb-0">
 						<v-row>
@@ -258,11 +254,9 @@
 							</v-col>
 							<v-col cols="7" class="sm12 pb-0 pt-1 text-right">
 								<small> SEAT NO. <strong> {{ viewTicket.seat}} </strong></small>
-								
 							</v-col>
 						</v-row>
 					</v-card-subtitle>
-
 					<v-card-text class="mt-0 pt-0">
 						<v-row>
 							<v-col cols="5" class="mt-0 mb-0 pb-0 pt-0"> 
@@ -292,7 +286,7 @@
 								{{  viewTicket.trip_start_date }}
 							</v-col>
 							<v-col cols="5" class="sm12 pt-0">
-								<strong> TRIP TYPE: </strong>
+								<strong> TRIP: </strong>
 								<br />
 								{{ viewTicket.fleet_type }}
 							</v-col>
@@ -332,9 +326,7 @@
 							</v-col>
 						</v-row>
 					</v-card-text>
-
 					<v-divider></v-divider>
-
 					<v-card-actions>
 						<small><b> Valid Only For The Date of Travel</b></small>
 						<v-spacer></v-spacer>
@@ -352,21 +344,25 @@
 			</v-dialog>
 		</div>
 		<main-confirm-dialog
-		:open="isOpen"
-		:id="dialogId"
-		:item="dialogItem"
-		:items="dialogItems"
-		:itemType="itemType"
-		@close-modal="closeDialog"
+			:open="isOpen"
+			:id="dialogId"
+			:item="dialogItem"
+			:items="dialogItems"
+			:itemType="itemType"
+			@close-modal="closeDialog"
 		></main-confirm-dialog>
+        <v-overlay :value="overlay">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
 	</v-layout>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import { EventBus } from "@/services/bus";
+import { ticketReport, printTicket } from "@/services/helper";
 export default {
 	data: () => ({
+		overlay: false,
 		editedItem: {
 			id: 0,
 			ticket_no: '',
@@ -423,7 +419,6 @@ export default {
 	computed: {
 		...mapGetters({
 			users: "USERS",
-			// ticketList: 'TICKET_LIST',
 			assignTrips: 'ASSIGNED_TRIPS',
 			fleets: 'FLEETS',
 			fleetTypes: 'FLEET_TYPES',
@@ -449,14 +444,19 @@ export default {
 	watch: {
 		dialog(val) {
 			val || this.close();
-		}
+		},
+        overlay (val) {
+            val && setTimeout(() => {
+				this.overlay = false
+            }, 1000)
+        },
 	},
 
 	mounted() {
 		if (!this.isLoggedIn) {
 			this.$router.push({ name: "login" });
 		}
-		// this.$store.dispatch("GET_TICKET_LIST")
+		this.overlay = true;
 		this.$store.dispatch("GET_ASSIGNED_TRIPS");
 		this.$store.dispatch("GET_USERS");
 		this.$store.dispatch('GET_ROUTES');
@@ -640,98 +640,13 @@ export default {
 			}
 		},
 
-		printReport() {
-			let timestamp = 'Print Time: ' + (new Date()).toLocaleTimeString();
-			let reportWindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150')
-
-			reportWindow.document.write(`<html><head><title>Zawadi Smart Traveller Report</title>`)
-			reportWindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
-			reportWindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
-			reportWindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
-			reportWindow.document.write('th {border-top: 2px solid #dddddd;border-bottom: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
-			reportWindow.document.write('</head><body>')
-			reportWindow.document.write('<table style="width:100%; border-bottom: 2px solid #dddddd;" id="data">')
-			reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Ticket List<strong></span></caption>')
-			reportWindow.document.write("<tr><th>S/N</th><th>Ticket Number</th><th>Trip Route</th>"+
-						"<th>Trip Type</th><th>Passenger</th><th>Mobile</th>"+
-						"<th>Travel Date</th><th>Departure Time</th><th>Ticket Cost</th></tr>")
-			
-			this.tickets.forEach((ticket,index) => {
-				index += 1;
-				reportWindow.document.write("<tr><td>"+ index +"</td>")
-				reportWindow.document.write("<td>"+ ticket.ticket_no +"</td>")
-				reportWindow.document.write("<td>"+ ticket.ticket_trip +"</td>")
-				reportWindow.document.write("<td>"+ ticket.fleet_type +"</td>")
-				reportWindow.document.write("<td>"+ ticket.passenger_name +"</td>")
-				reportWindow.document.write("<td>"+ ticket.mobile +"</td>")
-				reportWindow.document.write("<td>"+ ticket.trip_start_date +"</td>")
-				reportWindow.document.write("<td>"+ ticket.departure_time +"</td>")
-				reportWindow.document.write("<td>"+ ticket.price +"</td></tr>")
-			})
-			reportWindow.document.writeln(timestamp + '<br>')
-			reportWindow.document.writeln('Printed by: ' +
-			JSON.parse(this.$cookie.get('currentUser')).user.first_name + ' ' +
-			JSON.parse(this.$cookie.get('currentUser')).user.last_name)
-			reportWindow.document.write('</body></html>');
-			reportWindow.document.close();
-			reportWindow.focus();
-			reportWindow.print();
-			reportWindow.close();
-
-			return true;
+		generateReport() {
+			return ticketReport(this.tickets)
 		},
 
-	printTicket() {
-		let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
-		let ticketwindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
-		ticketwindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
-		ticketwindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
-		ticketwindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
-		ticketwindow.document.write('th {border-top: 2px solid #dddddd;text-align: left;padding: 8px;}</style>')
-		ticketwindow.document.write('</head><body>')
-		ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
-		ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
-		ticketwindow.document.write(`<tr><th colspan=2><i class='fas fa-bus-alt mr-1'></i>ZAWADI BUS SERVICES</th></tr>`)
-		ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ this.viewTicket.seat} </strong></small></td></tr>`)
-		ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ this.viewTicket.fleet_registration_no }
-										</strong></small></td><td><small>RECEIPT NO. <strong> <br>
-										${ this.viewTicket.ticket_no } </strong></small></td></tr>`)
-		ticketwindow.document.write(`<tr><td colspan=2><hr></td></tr>`)
-		ticketwindow.document.write(`<tr><td>
-										<strong>NAME OF PASSENGER </strong> <br />
-										${ this.viewTicket.passenger_name }</td>
-										<td><strong> JOURNEY: </strong>
-										<br />
-										${ this.viewTicket.ticket_trip }</td></tr>`)
-		ticketwindow.document.write(`<tr><td><strong> BOOKING DATE: </strong> <br>
-										${this.viewTicket.trip_start_date}</td>
-										<td><strong> TRIP TYPE: </strong>
-										<br />
-										${ this.viewTicket.fleet_type }</td></tr>`)
-		ticketwindow.document.write(`<tr><td><strong> TRAVEL DATE: </strong> <br />
-										${ this.viewTicket.trip_start_date }</td>
-										<td><strong> BOOKING CLERK: </strong>
-										<br />
-										${ this.viewTicket.created_by }</td></tr>`)
-		ticketwindow.document.write(`<tr><td><strong> REPORTING TIME: </strong> <br />
-										${ this.viewTicket.departure_time }</td>
-										<td><strong> FARE: </strong><br />
-										${ this.viewTicket.price }</td></tr>`)
-		ticketwindow.document.write(`<tr><td colspan=2>
-										<strong> DEPARTURE TIME: </strong><br>
-										${  this.viewTicket.departure_time }</td></tr>`)
-		ticketwindow.document.write(`<tr><td colspan=2>
-										<small><b> Valid Only For The Date of Travel</b></small></td></tr>`)
-		ticketwindow.document.writeln(printTime + '<br><br>')
-		ticketwindow.document.write('</body></html>')
-		ticketwindow.document.close();
-		ticketwindow.focus();
-		ticketwindow.print();
-		ticketwindow.close();
-
-		return true;
-	}
-		
+		printTicket() {
+			return printTicket(this.ticketDetail)
+		}
 	}
 };
 </script>
