@@ -23,13 +23,13 @@ $(document).ready(function() {
 
     if (document.getElementById("default-select")) {
         $('select').niceSelect();
-    };
+    }
     if (document.getElementById("default-select2")) {
         $('select').niceSelect();
-    };
+    }
     if (document.getElementById("service-select")) {
         $('select').niceSelect();
-    };    
+    }    
 
     //------- Lightbox  js --------//  
 

@@ -28,6 +28,19 @@
                         </template>
                         <span>Assign Fleet</span>
                         </v-tooltip>
+                        <v-tooltip bottom color="green">
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    color="teal darken-1"
+                                    dark
+                                    v-on="on"
+                                    class="mb-2 ml-2 button-small"
+                                    @click="generateReport()">
+                                    <i class="fa fa-file-pdf mr-1"></i> View PDF
+                                </v-btn>
+                            </template>
+                            <span>View PDF Report</span>
+                        </v-tooltip>
                         <v-dialog v-model="dialog" persistent max-width="600px" max-height="300px">
                             <v-card>
                                 <v-card-title>
@@ -191,7 +204,7 @@
 <script>
 import {mapGetters} from "vuex";
 import { EventBus } from "@/services/bus";
-import { idToNameTrips } from "@/services/helper";
+import { idToNameTrips, tripReport } from "@/services/helper";
 export default {
     data: () => ({
         overlay: false,
@@ -394,6 +407,10 @@ export default {
 			if (data.type == "ASSIGNTRIPS") {
 				this.$store.dispatch('DELETE_ASSIGNED_TRIP', data);
 			}
+        },
+
+		generateReport() {
+			return tripReport(this.assignTrips)
 		},
     },
 }

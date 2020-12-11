@@ -36,6 +36,19 @@
 								</template>
 								<span>Add New Fare</span>
 							</v-tooltip>
+							<v-tooltip bottom color="green">
+								<template v-slot:activator="{ on }">
+									<v-btn
+										color="teal darken-1"
+										dark
+										v-on="on"
+										class="mb-2 ml-2 button-small"
+										@click="generateReport()">
+										<i class="fa fa-file-pdf mr-1"></i> View PDF
+									</v-btn>
+								</template>
+								<span>View PDF Report</span>
+							</v-tooltip>
 							<v-dialog v-model="dialog" persistent max-width="500px" max-height="300px">
 								<v-card>
 								<v-card-title>
@@ -133,7 +146,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { EventBus } from "@/services/bus";
-import { idToName } from "@/services/helper";
+import { idToName, fareReport } from "@/services/helper";
 export default {
 	data: () => ({
 		overlay: false,
@@ -307,6 +320,9 @@ export default {
 			if (data.type == "FARES") {
 				this.$store.dispatch('DELETE_FARE', data);
 			}
+		},
+		generateReport() {
+			return fareReport(this.fares)
 		},
 	}
 };

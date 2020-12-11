@@ -38,7 +38,7 @@ export const idToNameTrips = (assignTrips, routes, fleets) => {
 const reportHeader = () => {
     let timestamp = 'Print Time: ' + (new Date()).toLocaleTimeString();
     let reportWindow = window.open('', '', 'height=650,width=900,top=100,left=150')
-    reportWindow.document.write(`<html><head><title>Zawadi Smart Traveller Report</title>`)
+    reportWindow.document.write(`<html><head><title>Zawadi Bus Services Report</title>`)
     reportWindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
     reportWindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
     reportWindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
@@ -46,6 +46,9 @@ const reportHeader = () => {
     reportWindow.document.write('</head><body>')
     reportWindow.document.write('<table style="width:100%; border-bottom: 2px solid #dddddd;" id="data">')
     reportWindow.document.writeln(timestamp + '<br>')
+    reportWindow.document.writeln('Printed by: ' +
+    JSON.parse(VueCookie.get('currentUser')).user.first_name + ' ' +
+    JSON.parse(VueCookie.get('currentUser')).user.last_name)
     return reportWindow
 }
 
@@ -58,7 +61,6 @@ export const ticketReport = (data)=> {
     data.forEach((ticket,index) => {
         index += 1;
         reportWindow.document.write("<tr><td>"+ index +"</td>")
-        console.log('records ', ticket);
         reportWindow.document.write("<td>"+ ticket.ticket_no +"</td>")
         reportWindow.document.write("<td>"+ ticket.ticket_trip +"</td>")
         reportWindow.document.write("<td>"+ ticket.fleet_type +"</td>")
@@ -68,9 +70,6 @@ export const ticketReport = (data)=> {
         reportWindow.document.write("<td>"+ ticket.departure_time +"</td>")
         reportWindow.document.write("<td>"+ ticket.price +"</td></tr>")
     });
-    reportWindow.document.writeln('Printed by: ' +
-    JSON.parse(VueCookie.get('currentUser')).user.first_name + ' ' +
-    JSON.parse(VueCookie.get('currentUser')).user.last_name)
     reportWindow.document.write('</body></html>');
     reportWindow.document.close();
     reportWindow.focus();
@@ -126,5 +125,136 @@ export const printTicket = (ticket) => {
     ticketwindow.focus();
     ticketwindow.print();
     ticketwindow.close();
+    return true;
+}
+
+export const userReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>User List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Mobile</th><th>Username</th>"+
+                                "<th>Email</th><th>First NAme</th><th>Last Name</th></tr>");
+    data.forEach((user,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ user.mobile +"</td>");
+        reportWindow.document.write("<td>"+ user.username +"</td>");
+        reportWindow.document.write("<td>"+ user.email +"</td>");
+        reportWindow.document.write("<td>"+ user.first_name +"</td>");
+        reportWindow.document.write("<td>"+ user.last_name +"</td>");
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
+    return true;
+}
+
+export const agentReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Agent List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Mobile</th><th>Username</th>"+
+                                "<th>Email</th><th>First NAme</th><th>Last Name</th><th>Station</th></tr>");
+    data.forEach((user,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ user.mobile +"</td>");
+        reportWindow.document.write("<td>"+ user.username +"</td>");
+        reportWindow.document.write("<td>"+ user.email +"</td>");
+        reportWindow.document.write("<td>"+ user.first_name +"</td>");
+        reportWindow.document.write("<td>"+ user.last_name +"</td>");
+        reportWindow.document.write("<td>"+ user.station +"</td>");
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
+    return true;
+}
+
+export const fleetReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Bus List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Registration No</th><th>Engine No</th>"+
+                                "<th>Chasis No</th><th>Model _no</th><th>Bus Type</th><th>Layout</th><th>Total Seat</th></tr>");
+    data.forEach((fleet,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ fleet.registration_no +"</td>");
+        reportWindow.document.write("<td>"+ fleet.engine_no +"</td>");
+        reportWindow.document.write("<td>"+ fleet.chasis_no +"</td>");
+        reportWindow.document.write("<td>"+ fleet.model_no +"</td>");
+        reportWindow.document.write("<td>"+ fleet.fleet_type +"</td>");
+        reportWindow.document.write("<td>"+ fleet.layout +"</td>");
+        reportWindow.document.write("<td>"+ fleet.seat_nos +"</td>");
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
+    return true;
+}
+
+export const fareReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Fare List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Bus Type</th><th>Route</th><th>Fare Per Person</th></tr>");
+    data.forEach((fare,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ fare.fleet_type +"</td>");
+        reportWindow.document.write("<td>"+ fare.trip_route +"</td>");
+        reportWindow.document.write("<td>"+ fare.price_per_person +"</td>");
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
+    return true;
+}
+
+export const tripReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Trip List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Registration No</th><th>Route</th><th>Start Date</th><th>End Date</th><th>Departure</th></tr>");
+    data.forEach((trip,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ trip.fleet_registration_no +"</td>");
+        reportWindow.document.write("<td>"+ trip.route_name +"</td>");
+        reportWindow.document.write("<td>"+ trip.trip_start_date +"</td>");
+        reportWindow.document.write("<td>"+ trip.trip_end_date +"</td>");
+        reportWindow.document.write("<td>"+ trip.departure_time +"</td>");
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
+    return true;
+}
+
+export const routeReport = (data)=> {
+    let reportWindow = reportHeader();
+    reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Route List<strong></span></caption>')
+    reportWindow.document.write("<tr><th>S/N</th><th>Route Name</th><th>Start Point</th><th>End Point</th><th>Stopage Points</th><th>Description</th></tr>");
+    data.forEach((route,index) => {
+        index += 1;
+        reportWindow.document.write("<tr><td>"+ index +"</td>");
+        reportWindow.document.write("<td>"+ route.name +"</td>");
+        reportWindow.document.write("<td>"+ route.start_point +"</td>");
+        reportWindow.document.write("<td>"+ route.end_point +"</td>");
+        reportWindow.document.write("<td>"+ route.stopage_points +"</td>");
+        reportWindow.document.write("<td>"+ route.description +"</td>");
+
+    });
+    reportWindow.document.write('</body></html>');
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+    reportWindow.close();
     return true;
 }

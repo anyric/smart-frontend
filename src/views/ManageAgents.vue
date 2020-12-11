@@ -28,6 +28,19 @@
                       </template>
                       <span>Agent</span>
                     </v-tooltip>
+                    <v-tooltip bottom color="green">
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                color="teal darken-1"
+                                dark
+                                v-on="on"
+                                class="mb-2 ml-2 button-small"
+                                @click="generateReport()">
+                                <i class="fa fa-file-pdf mr-1"></i> View PDF
+                            </v-btn>
+                        </template>
+                        <span>View PDF Report</span>
+                    </v-tooltip>
                     <v-dialog v-model="dialog" max-width="800px" max-height="300px">
                         <v-card>
                             <v-card-title>
@@ -122,6 +135,7 @@
 <script>
 import {mapGetters} from "vuex";
 import { EventBus } from "@/services/bus";
+import { agentReport } from "@/services/helper";
 export default {
     data: () => ({
         overlay: false,
@@ -267,6 +281,10 @@ export default {
 				console.log(data)
 				this.$store.dispatch('DELETE_AGENT', data);
 			}
+        },
+
+        generateReport() {
+			return agentReport(this.agents)
 		},
 	},
 }
