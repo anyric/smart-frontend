@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header id="header">
+        <header id="header" v-if="!isLoggedIn">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -103,7 +103,7 @@
                                 <h5 class="py-1 font-weight-regular">Seat:<span class="font-weight-bold pl-4"> {{ passengerSeats }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">From:<span class="font-weight-bold pl-1"> {{ trip.pick_up_point }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">To:<span class="font-weight-bold pl-1"> {{ trip.stop_point }} </span> </h5>
-                                <h5 class="py-1 font-weight-regular">Total Fare:<span class="font-weight-bold pl-5"> {{ trip.total_fare }} </span> </h5>
+                                <h5 class="py-1 font-weight-regular">Fare:<span class="font-weight-bold pl-5">UGX {{ trip.fare }} </span> </h5>
 
                             </div>
                         </v-container>
@@ -124,10 +124,14 @@
                             >
                             <v-tabs-slider></v-tabs-slider>
                             <v-tab href="#tab-1">
+                                Cash
+                                <v-icon>fa fa-money</v-icon>
+                            </v-tab>
+                            <v-tab href="#tab-2" v-if="!isLoggedIn">
                                 FlexiPay
                                 <div class="float-left"><img style="width: 25px; height: 25px" src="../assets/img/flexipay.png" alt="Flexi" title="" /></div>
                             </v-tab>
-                            <v-tab href="#tab-2">
+                            <v-tab href="#tab-3" v-if="!isLoggedIn">
                                 MTN MOMO
                                 <div class="float-left"><img style="width: 20px; height: 20px" src="../assets/img/momo.png" alt="Momo" title="" /></div>
                             </v-tab>
@@ -139,16 +143,26 @@
                                     <v-card flat>
                                         <v-card-text>
                                             <div class="pt-3">
-                                                <!-- <h5 class="py-1 font-weight-regular">Total Fare:<span class="font-weight-bold pl-5"> UGX{{ trip.total_fare }} </span> </h5>
+                                                <h5 class="py-1 font-weight-regular">Total Fare:<span class="font-weight-bold pl-5"> UGX {{ trip.fare }} </span> </h5>
                                                 <h5 class="py-1 font-weight-regular">Charge:<span class="font-weight-bold pl-1"> UGX 0.00% </span> </h5>
-                                                <h5 class="py-1 font-weight-regular">Payable:<span class="font-weight-bold pl-4"> UGX{{ trip.total_fare + trip.total_fare * 0.00 }} </span> </h5> -->
-                                                <p> FlexiPay service will be comming soon!</p>
+                                                <h5 class="py-1 font-weight-regular">Payable:<span class="font-weight-bold pl-4"> UGX {{ trip.fare + trip.fare * 0.00 }} </span> </h5>
                                             </div>
                                         </v-card-text>
                                     </v-card>
                                 </v-tab-item>
                                 <v-tab-item
                                     :value="'tab-2'"
+                                >
+                                    <v-card flat>
+                                        <v-card-text>
+                                            <div class="pt-3">
+                                                <p> FlexiPay service will be comming soon!</p>
+                                            </div>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-tab-item>
+                                <v-tab-item
+                                    :value="'tab-3'"
                                 >
                                     <v-card flat>
                                         <v-card-text>
@@ -169,7 +183,7 @@
             </div>
         </v-row>
         <!-- start footer Area -->
-        <div id="about-us" class="row">	
+        <div id="about-us" class="row" v-if="!isLoggedIn">	
             <footer class="footer-area section-gap bg-dark">
                 <div class="container">
                     <div class="row mx-10 justify-content-between pr-0">
@@ -253,14 +267,15 @@ export default {
     computed: {
 		...mapGetters({
                 trip: "TRIP",
-                users: "USERS"
+                users: "USERS",
+                isLoggedIn: "IS_LOGGED_IN"
 			})
     },
 
     mounted() {
         this.overlay = true;
         document.getElementById('name').focus();
-        this.$store.dispatch('GET_USERS')
+        this.$store.dispatch('GET_USERS');
         if(!this.trip){
             this.restoreData()
         }
@@ -320,7 +335,6 @@ export default {
         choice() {
             this.trip["full_name"] = this.name;
             this.trip["mobile"] = this.mobile;
-            this.trip["grand_total"] = this.trip.total_fare + this.trip.total_fare * 0.00;
 
             if(this.name == '' | this.mobile == '') {
                 this.emptyField = true;
@@ -333,7 +347,8 @@ export default {
                 };
                 let user = this.users.filter(item => item.mobile === this.trip.mobile);
                 if(user.length == 0){
-                    this.$store.dispatch('REGISTER_PASSENGER', data)
+                    console.log(data);
+                    // this.$store.dispatch('REGISTER_PASSENGER', data)
                 }
                 this.generateTicket(this.trip);
                 this.previewBooking(this.trip);
@@ -350,8 +365,9 @@ export default {
         },
 
         generateTicket(trip) {
-            console.log(this.users);
             this.user = this.users.filter(item => item.mobile === trip.mobile)[0];
+            let currentUser = JSON.parse(VueCookie.get('currentUser')).user;
+            this.trip['clerk'] = currentUser.username
             let data = {
                 passenger_name: this.trip.full_name,	
                 mobile: this.trip.mobile,
@@ -359,13 +375,14 @@ export default {
                 fleet_registration_no: this.trip.registration_no,
                 fleet_type: this.trip.fleet_type,
                 seat: this.trip.selected_seat,
-                price: this.trip.total_fare,
+                price: this.trip.fare,
                 trip_start_date: this.trip.trip_start_date,
                 departure_time: this.trip.departure_time,
                 status: 'travelling',
-                created_by: this.user.id
+                created_by: currentUser.pk ? currentUser.pk : this.user.id
             };
-            this.$store.dispatch('SAVE_TICKET', data)
+            console.log('data', data);
+            // this.$store.dispatch('SAVE_TICKET', data)
         },
 
         previewBooking(trip){

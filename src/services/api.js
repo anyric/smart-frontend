@@ -8,8 +8,8 @@ export default () =>{
     }
 
     return axios.create({
-        // baseURL: 'http://localhost:8000/api/v1',
-        baseURL: 'http://192.168.43.32:8000/api/v1',
+        baseURL: 'http://localhost:8000/api/v1',
+        // baseURL: 'http://192.168.43.32:8000/api/v1',
         xhrFields: {
             withCredentials: true
         },

@@ -167,7 +167,7 @@ export default {
 			icon: "fas fa-bus-alt",
 			text: "Manage Fleet",
 			children: [
-			{ route: "/fleets/types", text: "Types" },
+			{ route: "/fleets/types", text: "Fleet Type" },
 			{ route: "/fleets/register", text: "Register" }
 			]
 		},
@@ -177,9 +177,10 @@ export default {
 			children: [
 			{ route: "/trips/locations", text: "Locations" },
 			{ route: "/trips/routes", text: "Routes" },
-			{ route: "/trips/assignments", text: "Assign Fleets" },
+			{ route: "/trips/assignments", text: "Schedule Fleets" },
 			{ route: "/trips/fares", text: "Ticket Fares" },
-			{ route: "/trips/tickets", text: "Tickets" }
+			{ route: "/trips/tickets", text: "Tickets" },
+			{ route: "/bookingboard", text: "Booking" }
 			]
 		},
 		{ route: "/settings", icon: "mdi-settings", text: "Settings" }

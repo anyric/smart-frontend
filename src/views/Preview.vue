@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header id="header">
+        <header id="header" v-if="!isLoggedIn">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -60,7 +60,7 @@
         </header>
         <v-row class="container d-flex  justify-center mb-5 mt-150">
             <div class="row justify-center mb-10 ml-1">
-                <v-card class="mx-0" id="ticket">
+                <v-card class="mx-0" id="ticket" v-if="tickets">
                     <v-card-subtitle class="mb-0 pb-0">
                         <v-container class="px-0" style="width: 100%">
                             <v-row no-gutters>
@@ -98,7 +98,7 @@
                                     <strong> NAME OF PASSENGER:  </strong> <br />{{ ticket.passenger_name }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-2">
-                                    <strong> JOURNEY: </strong> <br />{{ trip.pick_up_point }} - {{ trip.stop_point }}
+                                    <strong> MOBILE: </strong> <br />{{ trip.mobile }}
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -109,7 +109,7 @@
                                     {{  ticket.trip_start_date }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-0">
-                                    <strong> TRIP: </strong> <br />{{ trip.fleet_type }}
+                                    <strong> JOURNEY: </strong> <br />{{ trip.pick_up_point }} - {{ trip.stop_point }}
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -120,7 +120,7 @@
                                     {{  ticket.trip_start_date }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-0">
-                                    <strong> BOOKING CLERK: </strong> <br />{{ trip.full_name }}
+                                    <strong> BUS TRIP: </strong> <br />{{ trip.fleet_type }}
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -131,16 +131,18 @@
                                     {{  ticket.departure_time }}
                                 </v-col>
                                 <v-col cols="5" class="sm12 pt-0">
-                                    <strong> FARE: </strong>
-                                    {{ ticket.price }}
+                                    <strong> BOOKING CLERK: </strong> <br />{{trip.clerk }}
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="4" class="sm12 pt-0">
                                     <strong> DEPARTURE TIME: </strong>
                                 </v-col>
-                                <v-col cols="4" class="sm12 pt-0 pl-0">
+                                <v-col cols="3" class="sm12 pt-0 pl-0">
                                     {{  ticket.departure_time }}
+                                </v-col>
+                                <v-col cols="5" class="sm12 pt-0">
+                                    <strong> FARE: </strong>{{ trip.fare }}
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -165,7 +167,7 @@
             </div>
         </v-row>
         <!-- start footer Area -->
-        <div id="about-us" class="row">	
+        <div id="about-us" class="row" v-if="!isLoggedIn">	
             <footer class="footer-area section-gap bg-dark">
                 <div class="container">
                     <div class="row mx-10 justify-content-between pr-0">
@@ -235,14 +237,15 @@ export default {
     data: () => ({
         overlay: false,
         ticket: {},
-        user: {}
+        user: {},
     }),
 
     computed: {
 		...mapGetters({
                 trip: "TRIP",
                 users: "USERS",
-                tickets: 'TICKETS'
+                tickets: 'TICKETS',
+                isLoggedIn: "IS_LOGGED_IN"
             })
     },
 
@@ -268,7 +271,7 @@ export default {
             this.$store.dispatch("GET_TICKETS");
         }
         if(this.trip !== {}){
-            this.ticket = this.tickets.filter(item => item.mobile === this.trip.mobile)[0];
+            this.ticket = this.tickets.filter(item => item.mobile === '+256700000000')[0];
         }
     },
 
@@ -310,9 +313,7 @@ export default {
         },
 
         printTicket() {
-            this.user = this.users.filter(item => item.mobile === this.trip.mobile)[0];
-            console.log(this.ticket);
-            console.log(this.user);
+            this.user = this.users.filter(item => item.mobile === '+256700000000')[0];
             let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
             let ticketwindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
             ticketwindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
@@ -333,26 +334,28 @@ export default {
             ticketwindow.document.write(`<tr><td>
                                             <strong>NAME OF PASSENGER </strong> <br />
                                             ${ this.ticket.passenger_name }</td>
-                                            <td><strong> JOURNEY: </strong>
+                                            <td><strong> Mobile: </strong>
                                             <br />
-                                            ${ this.trip.route_name }</td></tr>`)
+                                            ${ this.trip.mobile }</td></tr>`)
             ticketwindow.document.write(`<tr><td><strong> BOOKING DATE: </strong> <br>
                                             ${ this.ticket.trip_start_date}</td>
-                                            <td><strong> BUS TYPE: </strong>
+                                            <td><strong> JOURNEY: </strong>
                                             <br />
-                                            ${ this.trip.fleet_type }</td></tr>`)
+                                            ${ this.trip.pick_up_point } - ${this.trip.stop_point }</td></tr>`)
             ticketwindow.document.write(`<tr><td><strong> TRAVEL DATE: </strong> <br />
                                             ${ this.ticket.trip_start_date }</td>
-                                            <td><strong> BOOKING CLERK: </strong>
+                                            <td><strong> BUS TRIP: </strong>
                                             <br />
-                                            ${ this.user.username }</td></tr>`)
+                                            ${ this.trip.fleet_type }</td></tr>`)
             ticketwindow.document.write(`<tr><td><strong> REPORTING TIME: </strong> <br />
                                             ${ this.ticket.departure_time }</td>
+                                            <td><strong> BOOKING CLERK: </strong><br />
+                                            ${ this.user.username }</td></tr>`)
+            ticketwindow.document.write(`<tr><td>
+                                            <strong> DEPARTURE TIME: </strong><br>
+                                            ${  this.ticket.departure_time }</td>
                                             <td><strong> FARE: </strong><br />
                                             ${ this.ticket.price }</td></tr>`)
-            ticketwindow.document.write(`<tr><td colspan=2>
-                                            <strong> DEPARTURE TIME: </strong><br>
-                                            ${  this.ticket.departure_time }</td></tr>`)
             ticketwindow.document.write(`<tr><td colspan=2>
                                             <small><b> Valid Only For The Date of Travel</b></small></td></tr>`)
             ticketwindow.document.writeln(printTime + '<br><br>')

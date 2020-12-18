@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header id="header">
+        <header id="header" v-if="!isLoggedIn">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -58,8 +58,8 @@
                 </div>
             </nav>
         </header>
-        <v-row class="container justify-center mt-100">
-            <div class="my-5 py-3 ml-2 px-0">
+        <v-row id="scheduleHeaderRow" class="container justify-center mt-100">
+            <div id="scheduleHeaderText" class="py-3 ml-2 px-0">
                 <div class="justify-center">
                     <h4 class="py-1 text-dark mt-5"><span class="text-warning">Route Name:</span>  {{ trip.route_name }} </h4>
                     <h5 class="py-1 text-dark"><span class="text-warning">Bus Reg.:</span> {{ trip.registration_no }} </h5>
@@ -244,7 +244,7 @@
             </div>
         </v-row>
         <!-- start footer Area -->
-        <div id="about-us" class="row">	
+        <div id="about-us" class="row" v-if="!isLoggedIn">	
             <footer class="footer-area section-gap bg-dark">
                 <div class="container">
                     <div class="row mx-10 justify-content-between pr-0">
@@ -330,7 +330,8 @@ export default {
                 trip: "TRIP",
                 fares: "FARES",
                 routes: "ROUTES",
-                tickets: "TICKETS"
+                tickets: "TICKETS",
+                isLoggedIn: "IS_LOGGED_IN"
 			})
     },
 
@@ -403,7 +404,6 @@ export default {
         },
 
         seats(btn) {
-            console.log('clicked ', btn);
             if(this.selectedSeats | this.selectedSeats === document.getElementById(btn).innerText ){
                 document.getElementById('seat_'+this.selectedSeats).style.backgroundColor = ""
             }
@@ -417,14 +417,13 @@ export default {
         },
 
         choice() {
-            let route = this.routes.filter( item => item.name === this.pickPoint + ' - ' + this.stopPoint )[0];
-            let fare = {};
-            if(route){
-                fare = this.fares.filter( item => item.trip_route == route.id );
-            }
+            // let route = this.routes.filter( item => item.name === this.pickPoint + ' - ' + this.stopPoint )[0];
+            // let fare = {};
+            // if(route){
+            //     fare = this.fares.filter( item => item.trip_route == route.id );
+            // }
 
-            this.trip["total_fare"] = fare.price_per_person | this.trip.fare;
-            console.log(this.trip.total_fare);
+            // this.trip["total_fare"] = fare.price_per_person | this.trip.fare;
             this.trip["selected_seat"] = this.selectedSeats;
             this.trip["pick_up_point"] = this.pickPoint;
             this.trip["stop_point"] = this.stopPoint;

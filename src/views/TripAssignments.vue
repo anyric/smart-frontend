@@ -1,191 +1,191 @@
 <template>
     <v-layout row wrap>
-    <v-row class="container mx-auto">
-        <v-col cols="12" class="sm12">
-            <v-data-table
-                :headers="headers"
-                :items="assignTrips"
-                :search="search"
-                sort-by="name"
-                class="elevation-1"
-            >
-                <template v-slot:top>
-                    <v-toolbar color="white">
-                        <h2 class="mr-1" color="teal darken-1">Trips</h2>
-                        <v-spacer></v-spacer>
-                        <v-text-field
-                            v-model="search"
-                            append-icon="fas fa-search"
-                            label="Search"
-                            single-line
-                            hide-details
-                            class="mr-1"
-                        ></v-text-field>
-                        <v-spacer></v-spacer>
-                        <v-tooltip bottom color="green">
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
-                        </template>
-                        <span>Assign Fleet</span>
-                        </v-tooltip>
-                        <v-tooltip bottom color="green">
+        <v-row class="container mx-auto">
+            <v-col cols="12" class="sm12">
+                <v-data-table
+                    :headers="headers"
+                    :items="assignTrips"
+                    :search="search"
+                    sort-by="name"
+                    class="elevation-1"
+                >
+                    <template v-slot:top>
+                        <v-toolbar color="white">
+                            <h2 class="mr-1" color="teal darken-1">Schedules</h2>
+                            <v-spacer></v-spacer>
+                            <v-text-field
+                                v-model="search"
+                                append-icon="fas fa-search"
+                                label="Search"
+                                single-line
+                                hide-details
+                                class="mr-1"
+                            ></v-text-field>
+                            <v-spacer></v-spacer>
+                            <v-tooltip bottom color="green">
                             <template v-slot:activator="{ on }">
-                                <v-btn
-                                    color="teal darken-1"
-                                    dark
-                                    v-on="on"
-                                    class="mb-2 ml-2 button-small"
-                                    @click="generateReport()">
-                                    <i class="fa fa-file-pdf mr-1"></i> View PDF
-                                </v-btn>
+                                <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
                             </template>
-                            <span>View PDF Report</span>
-                        </v-tooltip>
-                        <v-dialog v-model="dialog" persistent max-width="600px" max-height="300px">
-                            <v-card>
-                                <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
-                                </v-card-title>
+                            <span>Schedule Fleet</span>
+                            </v-tooltip>
+                            <v-tooltip bottom color="green">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        color="teal darken-1"
+                                        dark
+                                        v-on="on"
+                                        class="mb-2 ml-2 button-small"
+                                        @click="generateReport()">
+                                        <i class="fa fa-file-pdf mr-1"></i> View PDF
+                                    </v-btn>
+                                </template>
+                                <span>View PDF Report</span>
+                            </v-tooltip>
+                            <v-dialog v-model="dialog" persistent max-width="600px" max-height="300px">
+                                <v-card>
+                                    <v-card-title>
+                                        <span class="headline">{{ formTitle }}</span>
+                                    </v-card-title>
 
-                                <v-card-text>
-                                    <v-container>
-                                        <v-row>
-                                            <v-col col="6" class="sm12">
-                                                <v-select
-                                                    :items="fleets"
-                                                    label="Registration No *"
-                                                    item-text="registration_no"
-                                                    item-value="id"
-                                                    v-model="editedItem.fleet_registration_no"
-                                                    required
-                                                ></v-select>
-                                            </v-col>
-                                            <v-col col="6" class="sm12">
-                                                <v-select
-                                                    :items="routes"
-                                                    label="Route *"
-                                                    item-text="name"
-                                                    item-value="id"
-                                                    v-model="editedItem.route_name"
-                                                    required
-                                                ></v-select>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col cols="6" class="sm12">
-                                                <v-menu
-                                                    v-model="start_date"
-                                                    :close-on-content-click="false"
-                                                    :nudge-right="40"
-                                                    transition="scale-transition"
-                                                    offset-y
-                                                    min-width="290px"
-                                                >
-                                                    <template v-slot:activator="{ on }">
+                                    <v-card-text>
+                                        <v-container>
+                                            <v-row>
+                                                <v-col col="6" class="sm12">
+                                                    <v-select
+                                                        :items="fleets"
+                                                        label="Registration No *"
+                                                        item-text="registration_no"
+                                                        item-value="id"
+                                                        v-model="editedItem.fleet_registration_no"
+                                                        required
+                                                    ></v-select>
+                                                </v-col>
+                                                <v-col col="6" class="sm12">
+                                                    <v-select
+                                                        :items="routes"
+                                                        label="Route *"
+                                                        item-text="name"
+                                                        item-value="id"
+                                                        v-model="editedItem.route_name"
+                                                        required
+                                                    ></v-select>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col cols="6" class="sm12">
+                                                    <v-menu
+                                                        v-model="start_date"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                                required
+                                                                v-model="editedItem.trip_start_date"
+                                                                label="Start Date"
+                                                                prepend-icon="fa fa-calendar"
+                                                                readonly
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker
+                                                            v-model="editedItem.trip_start_date"
+                                                            @input="start_date = false"
+                                                        ></v-date-picker>
+                                                    </v-menu>
+                                                </v-col>
+                                                <v-col cols="6" class="sm12">
+                                                    <v-menu
+                                                        v-model="end_date"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
                                                         <v-text-field
                                                             required
-                                                            v-model="editedItem.trip_start_date"
-                                                            label="Start Date"
+                                                            v-model="editedItem.trip_end_date"
+                                                            label="End Date"
                                                             prepend-icon="fa fa-calendar"
                                                             readonly
                                                             v-on="on"
                                                         ></v-text-field>
-                                                    </template>
-                                                    <v-date-picker
-                                                        v-model="editedItem.trip_start_date"
-                                                        @input="start_date = false"
-                                                    ></v-date-picker>
-                                                </v-menu>
-                                            </v-col>
-                                            <v-col cols="6" class="sm12">
-                                                <v-menu
-                                                    v-model="end_date"
-                                                    :close-on-content-click="false"
-                                                    :nudge-right="40"
-                                                    transition="scale-transition"
-                                                    offset-y
-                                                    min-width="290px"
-                                                >
-                                                    <template v-slot:activator="{ on }">
-                                                    <v-text-field
-                                                        required
-                                                        v-model="editedItem.trip_end_date"
-                                                        label="End Date"
-                                                        prepend-icon="fa fa-calendar"
-                                                        readonly
-                                                        v-on="on"
-                                                    ></v-text-field>
-                                                    </template>
-                                                    <v-date-picker
-                                                        v-model="editedItem.trip_end_date"
-                                                        @input="end_date = false"
-                                                    ></v-date-picker>
-                                                </v-menu>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col cols="11" sm="5">
-                                                <v-menu
-                                                    ref="menu"
-                                                    v-model="departure_time"
-                                                    :close-on-content-click="false"
-                                                    :nudge-right="40"
-                                                    :return-value.sync="editedItem.departure_time"
-                                                    transition="scale-transition"
-                                                    offset-y
-                                                    max-width="290px"
-                                                    min-width="290px"
-                                                >
-                                                    <template v-slot:activator="{ on, attrs }">
-                                                    <v-text-field
-                                                        v-model="editedItem.departure_time"
-                                                        label="Departure Time"
-                                                        prepend-icon="fa fa-clock"
-                                                        readonly
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                    ></v-text-field>
-                                                    </template>
-                                                    <v-time-picker
-                                                        v-if="departure_time"
-                                                        v-model="editedItem.departure_time"
-                                                        full-width
-                                                        @click:minute="$refs.menu.save(editedItem.departure_time)"
-                                                    ></v-time-picker>
-                                                </v-menu>
-                                            </v-col>
-                                            <v-col cols="1" class="sm12">
-                                                <v-checkbox required v-model="editedItem.status" label="Active"></v-checkbox>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
+                                                        </template>
+                                                        <v-date-picker
+                                                            v-model="editedItem.trip_end_date"
+                                                            @input="end_date = false"
+                                                        ></v-date-picker>
+                                                    </v-menu>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col cols="11" sm="5">
+                                                    <v-menu
+                                                        ref="menu"
+                                                        v-model="departure_time"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        :return-value.sync="editedItem.departure_time"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                        <v-text-field
+                                                            v-model="editedItem.departure_time"
+                                                            label="Departure Time"
+                                                            prepend-icon="fa fa-clock"
+                                                            readonly
+                                                            v-bind="attrs"
+                                                            v-on="on"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="departure_time"
+                                                            v-model="editedItem.departure_time"
+                                                            full-width
+                                                            @click:minute="$refs.menu.save(editedItem.departure_time)"
+                                                        ></v-time-picker>
+                                                    </v-menu>
+                                                </v-col>
+                                                <v-col cols="1" class="sm12">
+                                                    <v-checkbox required v-model="editedItem.status" label="Active"></v-checkbox>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
+                                    </v-card-text>
 
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
-                                    <v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-toolbar>
-                </template>
-                <template v-slot:item.action="{ item }">
-                    <v-tooltip bottom color="primary">
-                        <template v-slot:activator="{ on }">
-                        <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                        </template>
-                        <span>Edit Assignment</span>
-                    </v-tooltip>
-                    <v-tooltip bottom color="red">
-                        <template v-slot:activator="{ on }">
-                        <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
-                        </template>
-                        <span>Delete Assignment</span>
-                    </v-tooltip>
-                </template>
-            </v-data-table>
-        </v-col>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="red" dark class="mb-2 mr-5" @click="close">Cancel</v-btn>
+                                        <v-btn color="teal darken-1" dark class="mb-2" @click="save">Save</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </v-toolbar>
+                    </template>
+                    <template v-slot:item.action="{ item }">
+                        <v-tooltip bottom color="primary">
+                            <template v-slot:activator="{ on }">
+                            <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+                            </template>
+                            <span>Edit Assignment</span>
+                        </v-tooltip>
+                        <v-tooltip bottom color="red">
+                            <template v-slot:activator="{ on }">
+                            <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
+                            </template>
+                            <span>Delete Assignment</span>
+                        </v-tooltip>
+                    </template>
+                </v-data-table>
+            </v-col>
         </v-row>
 		<main-confirm-dialog
             :open="isOpen"

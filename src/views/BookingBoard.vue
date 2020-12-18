@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header id="header">
+        <header id="header" v-if="!isLoggedIn">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -67,7 +67,7 @@
                             Route
                             </th>
                             <th class="text-left">
-                            Trip
+                            Type
                             </th>
                             <th class="text-left">
                             View Seat
@@ -99,7 +99,7 @@
             </v-simple-table>
         </div>
         <!-- start footer Area -->
-        <div id="about-us" class="row">	
+        <div id="about-us" class="row" v-if="!isLoggedIn">	
             <footer class="footer-area section-gap bg-dark">
                 <div class="container">
                     <div class="row mx-10 justify-content-between pr-0">
@@ -178,7 +178,8 @@ export default {
         ...mapGetters({
             routes: 'ROUTES',
             locations: 'LOCATIONS',
-            schedule: "TRIP_SCHEDULE"
+            schedule: "TRIP_SCHEDULE",
+            isLoggedIn: "IS_LOGGED_IN"
 		}),
     },
     mounted() {

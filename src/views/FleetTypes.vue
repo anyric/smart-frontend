@@ -11,7 +11,7 @@
         >
             <template v-slot:top>
                 <v-toolbar color="white">
-                    <h2 class="mr-1" color="teal darken-1">Types</h2>
+                    <h2 class="mr-1" color="teal darken-1"> Types</h2>
                     <v-spacer></v-spacer>
                     <v-text-field
                         v-model="search"

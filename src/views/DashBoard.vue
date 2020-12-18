@@ -43,7 +43,7 @@ import {mapGetters} from "vuex";
             {name: "Total Fleet-Types", url: "fleet-types", icon: "fas fa-bus"},
             {name: "Total Locations", url: "trip-locations", icon: "fas fa-map-marker"},
             {name: "Total Routes", url: "trip-routes", icon: "fas fa-road"},
-            {name: "Total Trips", url: "trip-assigned", icon: "fas fa-suitcase"},
+            {name: "Total Schedules", url: "trip-assigned", icon: "fas fa-suitcase"},
             {name: "Total Fares", url: "trip-fares", icon: "fa fa-credit-card"},
             {name: "Total Tickets", url: "trip-ticket", icon: "fa fa-credit-card"},
         ],
