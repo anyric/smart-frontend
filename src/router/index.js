@@ -12,7 +12,7 @@ import TripRoutes from '../views/TripRoutes';
 import TripAssignments from '../views/TripAssignments';
 import TripFares from '../views/TripFares';
 import TripTicket from '../views/TripTicket';
-import Settings from '../views/Settings';
+import Company from '../views/Company';
 import IndexPage from '../views/IndexPage';
 import Store from '../store';
 import Container from '../components/Container';
@@ -20,11 +20,16 @@ import BookingBoard from '../views/BookingBoard';
 import Schedule from '../views/Schedule';
 import Payment from '../views/Payment';
 import Preview from '../views/Preview';
+import NavBar from '../components/NavBar';
 
 
 Vue.use(VueRouter);
 
 const routes = [
+    {
+        path: '/navbar',
+        component: NavBar
+    },
     {
         path: '',
         name: 'indexpage',
@@ -129,9 +134,9 @@ const routes = [
                 component: TripTicket
             },
             {
-                path: 'settings',
-                name: 'settings',
-                component: Settings
+                path: 'settings/company',
+                name: 'company',
+                component: Company
             },
         ],
     },

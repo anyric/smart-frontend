@@ -12,6 +12,8 @@ import assignedTripsStore from './stores/assignedTrips';
 import faresStore from './stores/fares';
 import ticketStore from './stores/tickets';
 import tripSchedule from './stores/schedule';
+import company from './stores/company';
+import branch from './stores/branch';
 
 Vue.use(Vuex);
 
@@ -27,7 +29,9 @@ export default new Vuex.Store({
         assignedTrips: assignedTripsStore,
         fares: faresStore,
         tickets: ticketStore,
-        schedule: tripSchedule
+        schedule: tripSchedule,
+        company: company,
+        branch: branch
     },
     state: {},
     getters: {},

@@ -8,7 +8,7 @@ Vue.use(Vuex);
 
 export default {
     state: {
-        trip_schedule: {},
+        trip_schedule: null,
         trip: {}
     },
     getters: {

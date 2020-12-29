@@ -183,7 +183,14 @@ export default {
 			{ route: "/bookingboard", text: "Booking" }
 			]
 		},
-		{ route: "/settings", icon: "mdi-settings", text: "Settings" }
+		{
+			icon: "mdi-settings",
+			text: "Settings",
+			children: [
+			{ route: "/settings/company", text: "Company" },
+			// { route: "/fleets/register", text: "Register" }
+			]
+		},
 		]
 	}),
 	computed: {

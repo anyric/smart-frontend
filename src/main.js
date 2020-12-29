@@ -8,11 +8,15 @@ import PasswordDialog from './components/ChangePassword';
 import EditProfileDialog from './components/EditProfile';
 import PrintTicket from './components/PrintTicket';
 import Container from './components/Container';
+import NavBar from './components/NavBar';
+import Footer from './components/Footer';
 
 import vueCookie from 'vue-cookie';
 Vue.config.productionTip = false
 Vue.use(vueCookie);
 Vue.component('main-container', Container);
+Vue.component('main-navbar', NavBar);
+Vue.component('main-footer', Footer);
 Vue.component('main-confirm-dialog', ConfirmDialog);
 Vue.component('main-password-dialog', PasswordDialog);
 Vue.component('main-profile-dialog', EditProfileDialog);

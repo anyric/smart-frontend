@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header id="header">
+        <!-- <header id="header">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -42,7 +42,8 @@
                     </div>
                 </div>
             </nav>
-        </header>
+        </header> -->
+        <main-navbar></main-navbar>
         <!-- start banner Area -->
         <div class="row">
             <section class="banner-area relative">
@@ -161,65 +162,7 @@
         </section>
         <!-- End price Area -->
         <!-- start footer Area -->
-        <div id="about-us" class="row">	
-            <footer class="footer-area section-gap bg-dark">
-                <div class="container">
-                    <div class="row mx-10 justify-content-between pr-0">
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-                            <div class="single-footer-widget">
-                                <h6>About Zawadi</h6>
-                                <p>
-                                    The world has become so fast paced that people don’t want to stand by reading a page of information, they would much rather look at a presentation and understand the message. It has come to a point 
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-4 col-sm-4">
-                            <div class="single-footer-widget">
-                                <h6>Navigation Links</h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <ul>
-                                            <li><a href="#">Home</a></li>
-                                            <li><a href="#about-us">About</a></li>
-                                            <li><a href="#services">Services</a></li>
-                                            <li><a href="#" @click="Booking()">Booking</a></li>
-                                            <li><a href="#about-us">Contact</a></li>
-                                        </ul>
-                                    </div>									
-                                </div>							
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-4 col-sm-4">
-                            <div class="single-footer-widget">
-                                <h6>Contact Us</h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <ul>
-                                            <li>Kampala: +256700000000</li>
-                                            <li>Adjumani: +256700000000</li>
-                                            <li>Moyo: +256700000000</li>
-                                            <li>Yumbe: +256700000000</li>
-                                            <li>Arua: +256700000000</li>
-                                            <li>Lira: +256700000000</li>
-                                        </ul>
-                                    </div>									
-                                </div>							
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row footer-bottom d-flex justify-content-between align-items-center mx-10">
-                        <p class="col-lg-4 col-sm-12 footer-text text-white text-center m-0">
-                        &copy; Zawadi Bus Services 2020, All Rights Reserved.</p>
-                        <p class="col-lg-4 col-sm-12 footer-text text-white text-center m-0">Powered by: Smart Traveller Limited.</p>
-                        <div class="col-lg-4 col-sm-12 footer-social text-center">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>	
+        <main-footer></main-footer>	
         <!-- End footer Area -->
         <v-overlay :value="overlay">
             <v-progress-circular indeterminate size="64"></v-progress-circular>

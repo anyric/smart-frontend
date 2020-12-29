@@ -61,39 +61,37 @@
         <v-content >
             <v-container fluid fill-height>
                 <v-layout align-center justify-center>
-                    <v-flex xs12 sm8 md4>
-                        <v-card class="elevation-12">
-                            <v-toolbar color="text-white text-center secondary" flat>
-                                <v-toolbar-title>User Login</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card-text>
-                                <v-alert dense outlined text v-if="loginError" type="error">{{loginError}}</v-alert>
-                                <v-form>
-                                    <v-text-field
-                                        label="Mobile"
-                                        v-model="form.mobile"
-                                        type="text"
-                                        prepend-icon="fas fa-user"
-                                    ></v-text-field>
-                                    <v-text-field
-                                        :type="showPassword ? 'text' : 'password'"
-                                        label="Password"
-                                        v-model="form.password"
-                                        prepend-icon="fas fa-lock"
-                                        :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-                                        @click:append="showPassword = !showPassword"
-                                        @keyup.enter="loginUser()"
-                                    ></v-text-field>
-                                </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="primary" @click="loginUser()" :disabled="!(form.mobile && form.password)">
-                                    Login
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-flex>
+                    <v-card class="elevation-12">
+                        <v-toolbar color="text-white text-center secondary" flat>
+                            <v-toolbar-title>User Login</v-toolbar-title>
+                        </v-toolbar>
+                        <v-card-text>
+                            <v-alert dense outlined text v-if="loginError" type="error">{{loginError}}</v-alert>
+                            <v-form>
+                                <v-text-field
+                                    label="Mobile"
+                                    v-model="form.mobile"
+                                    type="text"
+                                    prepend-icon="fas fa-user"
+                                ></v-text-field>
+                                <v-text-field
+                                    :type="showPassword ? 'text' : 'password'"
+                                    label="Password"
+                                    v-model="form.password"
+                                    prepend-icon="fas fa-lock"
+                                    :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                                    @click:append="showPassword = !showPassword"
+                                    @keyup.enter="loginUser()"
+                                ></v-text-field>
+                            </v-form>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" @click="loginUser()" :disabled="!(form.mobile && form.password)">
+                                Login
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
                 </v-layout>
             </v-container>
             <v-overlay :value="overlay">

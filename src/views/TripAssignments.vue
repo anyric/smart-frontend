@@ -278,7 +278,6 @@ export default {
     },
 
     updated() {
-        // this.mapIdToName();
         idToNameTrips(this.assignTrips, this.routes, this.fleets);
     },
 
@@ -298,7 +297,6 @@ export default {
 			}
 			this.editedIndex = this.assignTrips.indexOf(item)
             this.dialog = true
-            // this.mapIdToName()
             idToNameTrips(this.assignTrips, this.routes, this.fleets);
 		},
 
@@ -385,7 +383,6 @@ export default {
 						status: this.editedItem.status
 					}
 				};
-				console.log(assignedTrip);
 				this.$store.dispatch('SAVE_ASSIGNED_TRIP', assignedTrip);
 			} else {
                 let assignedTrip = {
@@ -397,7 +394,6 @@ export default {
                         status: this.editedItem.status,
                         created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				console.log(assignedTrip);
 				this.$store.dispatch('SAVE_ASSIGNED_TRIP', assignedTrip);
 			}
 			this.close()
