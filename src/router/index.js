@@ -18,6 +18,7 @@ import Store from '../store';
 import Container from '../components/Container';
 import BookingBoard from '../views/BookingBoard';
 import Schedule from '../views/Schedule';
+import PremiumSchedule from '../views/PremiumSchedule';
 import Payment from '../views/Payment';
 import Preview from '../views/Preview';
 import NavBar from '../components/NavBar';
@@ -44,6 +45,11 @@ const routes = [
         path: '/schedule/:scheduleId',
         name: 'schedule',
         component: Schedule,
+    },
+    {
+        path: '/premium-schedule/:scheduleId',
+        name: 'premiumschedule',
+        component: PremiumSchedule,
     },
     {
         path: '/payment/:paymentId',

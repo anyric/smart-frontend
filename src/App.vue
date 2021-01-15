@@ -7,6 +7,7 @@
 			app
 			color="blue-grey darken-2"
 			v-if="isLoggedIn"
+			class="pr-3"
 		>
 			<!-- Menu List Container -->
 			<template>
@@ -52,21 +53,23 @@
 			v-if="isLoggedIn"
 		>
 			<v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-			<v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-            <div class="float-left"><img style="width: 30px; height: 30px" src="./assets/logo.png" alt="" title="" /></div>
-			<span class="hidden-sm-and-down ml-1 font-weight-bold">Zawadi Bus Services</span>
+			<v-toolbar-title style="width: 226px" class="ml-0 pl-0">
+				<div class="float-left" v-if="company.length > 0"><img style="width: 40px; height: 40px" :src="company[0].logo" alt="Logo" title="" /></div>
+                <div class="text-white text-uppercase font-weight-bold d-flex float-right pt-2 pl-1" style="font-size: 18px;" v-if="company.length > 0"><small>{{ company[0].name }}</small></div>
 			</v-toolbar-title>
 			<v-spacer />
-			<div v-if="isLoggedIn">
+			<div v-if="isLoggedIn" class="mr-0">
 				<v-menu offset-y>
 					<template v-slot:activator="{ on }">
-						<v-avatar>
-							<img src="@/assets/images/avatar1.png"/>
+						<v-avatar class="ml-0 pl-0">
+							<img small src="@/assets/images/avatar1.png"/>
 						</v-avatar>
 						<v-btn
 							text
 							dark
 							v-on="on"
+							small
+							class="px-1"
 						>
 							{{currentUser.user.username}}
 							<i class="fa fa-caret-down ml-2" aria-hidden="true"></i>
@@ -195,6 +198,7 @@ export default {
 	}),
 	computed: {
 		...mapGetters({
+			company: "COMPANY",
 			isLoggedIn: "IS_LOGGED_IN"
 		}),
 
@@ -202,6 +206,10 @@ export default {
 		return this.editedIndex === -1 ? "Add User" : "Edit User";
 		}
 	},
+	
+	mounted() {
+        this.$store.dispatch('GET_COMPANY');
+    },
 	created() {
 		let user = this.$cookie.get('currentUser');
 		if(user){

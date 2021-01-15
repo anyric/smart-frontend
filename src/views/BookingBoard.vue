@@ -131,9 +131,15 @@ export default {
                     this.pickUpPoints.push({'id': item.id, 'name': item.name});
                 }
             });
-            trip['pick_up_points'] = this.pickUpPoints
-            this.$store.dispatch('STORE_TRIP', trip)
-            this.$router.push({name: 'schedule', params: { scheduleId: trip.id }});
+            trip['pick_up_points'] = this.pickUpPoints;
+            this.$store.dispatch('STORE_TRIP', trip);
+            const fleet_type = trip.fleet_type.split(" ")[0];
+
+            if(fleet_type === 'Universal'){
+                this.$router.push({name: 'schedule', params: { scheduleId: trip.id }});
+            }else{
+                this.$router.push({name: 'premiumschedule', params: { scheduleId: trip.id }});
+            }
         }
     }
 }

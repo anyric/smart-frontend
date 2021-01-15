@@ -8,7 +8,7 @@
                         <v-container class="px-0" style="width: 100%">
                             <v-row no-gutters>
                                 <v-col cols="9" class="sm12 font-weight-bold py-1">
-                                    <div class="float-left"><img class="mr-1 py-0" style="width: 20px; height: 20px" src="../assets/logo.png" alt="" title="" /></div>
+                                    <div class="float-left"><img class="mr-1 py-0" style="width: 20px; height: 20px" :src="company[0].logo" alt="Logo" title="" /></div>
                                     {{ company[0].name }}
                                 </v-col>
                                 <v-col cols="3" class="sm12 py-1 text-right ">
@@ -19,7 +19,7 @@
                                     <div class="ml-0 pl-0">P.O.Box 770 Arua</div>
                                 </v-col>
                                 <v-col cols="6" class="sm12 pb-0 pt-1 text-right">
-                                    <small> SEAT NO. <strong> {{ ticket.seat}} </strong></small>
+                                    <small> SEAT NO. <strong> {{ ticket.seat }} </strong></small>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -160,14 +160,15 @@ export default {
             this.$store.dispatch('GET_USERS')
             this.$store.dispatch("GET_TICKETS");
         }
-        if(this.trip !== {}){
-            this.ticket = this.tickets.filter(item => item.mobile === '+256700000000')[0];
-        }
     },
 
     watch: {
         overlay (val) {
             val && setTimeout(() => {
+                if(this.trip !== {}){
+                    // query this by the newly created user mobile number
+                    this.ticket = this.tickets.filter(item => item.mobile === this.trip.mobile )[0];
+                }
                 this.overlay = false
             }, 5000)
         },
@@ -203,7 +204,8 @@ export default {
         },
 
         printTicket() {
-            this.user = this.users.filter(item => item.mobile === '+256700000000')[0];
+            // query this by the newly created user mobile number
+            this.user = this.users.filter(item => item.mobile === this.trip.mobile )[0];
             let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
             let ticketwindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
             ticketwindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
@@ -213,9 +215,9 @@ export default {
             ticketwindow.document.write('</head><body>')
             ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
             ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
-            ticketwindow.document.write(`<tr><th colspan=2><div class="float-left">
-                                            <img class="mr-1 py-0" style="width: 20px; height: 20px" src="../assets/logo.png" alt="" title="" />
-                                            </div> ZAWADI BUS SERVICES</th></tr>`)
+            ticketwindow.document.write(`<tr><th colspan=2>
+                                            <img class="mr-1 py-0" style="width: 20px; height: 20px" src="${ this.company[0].logo }" alt="Logo" title="" />
+                                            <small class="py-0"> ${ this.company[0].name } </small></th></tr>`)
             ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ this.ticket.seat} </strong></small></td></tr>`)
             ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ this.trip.registration_no }
                                             </strong></small></td><td><small>RECEIPT NO. <strong> <br>
@@ -240,7 +242,7 @@ export default {
             ticketwindow.document.write(`<tr><td><strong> REPORTING TIME: </strong> <br />
                                             ${ this.ticket.departure_time }</td>
                                             <td><strong> BOOKING CLERK: </strong><br />
-                                            ${ this.user.username }</td></tr>`)
+                                            ${ this.trip.clerk }</td></tr>`)
             ticketwindow.document.write(`<tr><td>
                                             <strong> DEPARTURE TIME: </strong><br>
                                             ${  this.ticket.departure_time }</td>

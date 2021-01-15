@@ -43,7 +43,7 @@
                                 <h3>Journey Details</h3>
                                 <h4 class="py-1 text-dark">{{ trip.route_name }} </h4>
                                 <h5 class="py-1 font-weight-regular">{{ trip.trip_start_date }}, {{ trip.departure_time }}{{ trip.am_or_pm }}</h5>
-                                <h5 class="py-1 font-weight-regular">Seat:<span class="font-weight-bold pl-4"> {{ passengerSeats }} </span> </h5>
+                                <h5 class="py-1 font-weight-regular">Seat:<span class="font-weight-bold pl-4"> {{ passengerSeat }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">From:<span class="font-weight-bold pl-1"> {{ trip.pick_up_point }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">To:<span class="font-weight-bold pl-1"> {{ trip.stop_point }} </span> </h5>
                                 <h5 class="py-1 font-weight-regular">Fare:<span class="font-weight-bold pl-5">UGX {{ trip.fare }} </span> </h5>
@@ -146,13 +146,15 @@ export default {
         name: '',
         mobile: '',
         tab: null,
-        passengerSeats: [].toString()
+        passengerSeat: [].toString()
     }),
 
     computed: {
 		...mapGetters({
                 trip: "TRIP",
                 users: "USERS",
+                fleetTypes: 'FLEET_TYPES',
+                fleets: 'FLEETS',
                 isLoggedIn: "IS_LOGGED_IN"
 			})
     },
@@ -161,6 +163,8 @@ export default {
         this.overlay = true;
         document.getElementById('name').focus();
         this.$store.dispatch('GET_USERS');
+        this.$store.dispatch('GET_FLEET_TYPES');
+        this.$store.dispatch('GET_FLEETS');
         if(!this.trip){
             this.restoreData()
         }
@@ -176,7 +180,7 @@ export default {
         }
 
         if(this.trip){
-            this.passengerSeats = this.trip.selected_seat.toString();
+            this.passengerSeat = this.trip.selected_seat.toString();
         }
     },
 
@@ -230,10 +234,11 @@ export default {
                     username: this.trip.full_name,
                     password: '12@adm1n'
                 };
-                let user = this.users.filter(item => item.mobile === this.trip.mobile);
-                if(user.length == 0){
+                let user = this.users.filter(item => item.mobile === this.trip.mobile)[0];
+                console.log(user);
+                if(user === 'undefined' | user === {}){
                     console.log(data);
-                    // this.$store.dispatch('REGISTER_PASSENGER', data)
+                    this.$store.dispatch('REGISTER_PASSENGER', data)
                 }
                 this.generateTicket(this.trip);
                 this.previewBooking(this.trip);
@@ -250,24 +255,34 @@ export default {
         },
 
         generateTicket(trip) {
-            this.user = this.users.filter(item => item.mobile === trip.mobile)[0] | {};
-            let currentUser = JSON.parse(VueCookie.get('currentUser')).user;
-            this.trip['clerk'] = currentUser.username
+            this.$store.dispatch('GET_USERS');
+            const user = this.users.filter(item => item.mobile === trip.mobile)[0];
+            const fleetType = this.fleetTypes.filter(item => item.name === trip.fleet_type)[0];
+            const fleet = this.fleets.filter(item => item.registration_no === trip.registration_no)[0];
+            let currentUser = {};
+
+            if(this.isLoggedIn) {
+                currentUser = JSON.parse(VueCookie.get('currentUser')).user;
+                this.trip['clerk'] = currentUser.username
+            }else{
+                this.trip['clerk'] = 'self'
+            }
+
             let data = {
                 passenger_name: this.trip.full_name,	
                 mobile: this.trip.mobile,
-                ticket_trip: this.trip.route_name,
-                fleet_registration_no: this.trip.registration_no,
-                fleet_type: this.trip.fleet_type,
+                ticket_trip: this.trip.id,
+                fleet_registration_no: fleet.id,
+                fleet_type: fleetType.id,
                 seat: this.trip.selected_seat,
                 price: this.trip.fare,
                 trip_start_date: this.trip.trip_start_date,
                 departure_time: this.trip.departure_time,
                 status: 'travelling',
-                created_by: currentUser.pk ? currentUser.pk : this.user.id
+                created_by: currentUser.pk ? currentUser.pk : user.id
             };
-            console.log('data', data);
-            // this.$store.dispatch('SAVE_TICKET', data)
+            console.log('data: ', data);
+            this.$store.dispatch('SAVE_TICKET', data)
         },
 
         previewBooking(trip){

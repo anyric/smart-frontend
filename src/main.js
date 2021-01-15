@@ -10,6 +10,7 @@ import PrintTicket from './components/PrintTicket';
 import Container from './components/Container';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import UniversalSchedule from './components/Universal';
 
 import vueCookie from 'vue-cookie';
 Vue.config.productionTip = false
@@ -21,6 +22,7 @@ Vue.component('main-confirm-dialog', ConfirmDialog);
 Vue.component('main-password-dialog', PasswordDialog);
 Vue.component('main-profile-dialog', EditProfileDialog);
 Vue.component('main-print-ticket', PrintTicket);
+Vue.component('universal-schedule', UniversalSchedule);
 require('@/assets/css/linearicons.css')
 require('@/assets/css/font-awesome.min.css')
 require('@/assets/css/bootstrap.css')

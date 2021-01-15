@@ -5,8 +5,11 @@
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
                         <div class="header-top-left">
-                            <div class="header-social">
-                                <a href="#" class="text-warning"><i class="fa fa-phone"></i> Call Toll-Free: +256-700-000-000</a>
+                            <div class="header-social" v-if="branches.length > 0">
+                                <a href="#" class="text-warning"
+                                    v-for="item in branches"
+                                    :key="item.id"
+                                ><span v-if="item.name == 'Kampala'"><i class="fa fa-phone"></i> Call Toll-Free: {{ item.mobile }}</span></a>
                                 <a href="#" class="text-warning"><i class="fa fa-facebook"></i></a>
                                 <a href="#" class="text-warning"><i class="fa fa-twitter"></i></a>
                             </div>
@@ -21,8 +24,8 @@
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
                         <div id="logo">
-                            <a href="index.html">
-                                <div class="float-left"><img style="width: 40px; height: 40px" src="../assets/logo.png" alt="" title="" /></div>
+                            <a href="/">
+                                <div class="float-left" v-if="company.length > 0"><img style="width: 40px; height: 40px" :src="company[0].logo" alt="Logo" title="" /></div>
                                 <div class="text-white text-uppercase font-weight-bold d-flex float-right pt-1 pl-1" style="font-size: 20px;" v-if="company.length > 0">{{ company[0].name }}</div>
                             </a>
                         </div>
@@ -65,18 +68,27 @@
 import { mapGetters } from "vuex";
 export default {
 	data: () => ({
-	}),
+    }),
 	computed: {
 		...mapGetters({
-		company: 'COMPANY'
-		}),
-
+            company: 'COMPANY',
+            branches: "BRANCH"
+        }),
 	},
 	mounted() {
         this.$store.dispatch('GET_COMPANY');
-	},
+        this.$store.dispatch('GET_BRANCH');
+    },
+    
+    updated(){
+        this.getBranch();
+    },
 
 	methods: {
+        login() {
+            this.$router.push({name: 'login'});
+        },
+
 		booking(){
                 this.$router.push({name: 'bookingboard'});
 		},
@@ -99,6 +111,10 @@ export default {
                 document.getElementById(obj).className = 'text-warning'
             }
         },
+        getBranch() {
+            this.$store.dispatch('GET_BRANCH');
+            this.branch = this.branches.filter(item => item.name === 'Kampala' )[0];
+        }
 	},
 };
 </script>

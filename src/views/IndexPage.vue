@@ -1,49 +1,8 @@
 <template>
     <div>
-        <!-- <header id="header">
-            <div class="header-top pt-4">
-                <div class="container">
-                    <div class="row align-items-center justify-content-between mx-10">
-                        <div class="header-top-left">
-                            <div class="header-social">
-                                <a href="#" class="text-warning"><i class="fa fa-phone"></i> Call Toll-Free: +256-700-000-000</a>
-                                <a href="#" class="text-warning"><i class="fa fa-facebook"></i></a>
-                                <a href="#" class="text-warning"><i class="fa fa-twitter"></i></a>
-                            </div>
-                        </div>
-                        <div class="header-top-right">
-                            <a href="" class="text-warning" @click="login()">LogIn</a>
-                        </div>
-                    </div>			  					
-                </div>
-            </div>
-            <nav class="navbar navbar-expand-md header-top navbar-dark px-6 pb-4">
-                <div class="container">
-                    <div class="row align-items-center justify-content-between">
-                        <div id="logo">
-                            <a href="index.html">
-                                <div class="float-left"><img style="width: 40px; height: 40px" src="../assets/logo.png" alt="" title="" /></div>
-                                <div class="text-white text-uppercase font-weight-bold d-flex float-right pt-1 pl-1" style="font-size: 20px;"> Zawadi Bus Services</div>
-                            </a>
-                        </div>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        
-                        <div class="col-lg-6 collapse navbar-collapse header-top-right" id="collapsibleNavbar">
-                            <ul class="nav-menu">
-                                <li><a href="#" class="text-white">Home</a></li>
-                                <li><a href="#about-us" class="text-white">About</a></li>
-                                <li><a href="#services" class="text-white">Services</a></li>
-                                <li><a href="" class="text-white" @click="Booking()">Booking</a></li>	
-                                <li><a href="#about-us" class="text-white">Contact</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header> -->
+        <!-- start of Navbar -->
         <main-navbar></main-navbar>
+        <!-- end of Navbar -->
         <!-- start banner Area -->
         <div class="row">
             <section class="banner-area relative">
@@ -57,7 +16,7 @@
                             <h5 class="pb-5 text-secondary">
                                 Brings you secure and convinient booking services at your doorstep.
                             </h5>
-                            <a href="" @click="Booking()" class="primary-btn text-uppercase">Book Now</a>
+                            <a href="" @click="booking" class="primary-btn text-uppercase">Book Now</a>
                         </div>
                     </div>
                     <div class="text-center overflow-hidden pt-3 pl-5">
@@ -85,10 +44,8 @@
                                 <div class="overlay overlay-bg"></div>
                                 <img class="img-fluid" src="../assets/img/d1.jpg" alt="">
                             </div>
-                            <div class="desc">	
-                                <!-- <a href="#" class="price-btn">$150</a>			 -->
+                            <div class="desc">
                                 <h4>Kampala</h4>
-                                <!-- <p>Paraguay</p>			 -->
                             </div>
                         </div>
                     </div>
@@ -99,9 +56,7 @@
                                 <img class="img-fluid" src="../assets/img/d2.jpg" alt="">
                             </div>
                             <div class="desc">	
-                                <!-- <a href="#" class="price-btn">$250</a>			 -->
                                 <h4>Arua City</h4>
-                                <!-- <p>Paris</p>			 -->
                             </div>
                         </div>
                     </div>
@@ -112,9 +67,7 @@
                                 <img class="img-fluid" src="../assets/img/d3.jpg" alt="">
                             </div>
                             <div class="desc">	
-                                <!-- <a href="#" class="price-btn">$350</a>			 -->
                                 <h4>Moyo</h4>
-                                <!-- <p>Sri Lanka</p>			 -->
                             </div>
                         </div>
                     </div>												
@@ -134,7 +87,7 @@
                     </div>
                 </div>						
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="single-price">
                             <h4>Universal Packages</h4>
                             <ul class="price-list" v-for="(item, i) in fares" :key="i">
@@ -145,7 +98,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="single-price">
                             <h4>Premium Packages</h4>
                             <ul class="price-list" v-for="(item, i) in fares" :key="i">
@@ -155,10 +108,22 @@
                                 </li>
                             </ul>
                         </div>
-                        <div> <a href="" @click="Booking()" class="primary-btn text-uppercase">Book Now</a></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="single-price">
+                            <h4>Cargo/Parcel Packages</h4>
+                            <p>These are charged based on the sizes and destinations.</p>
+                        </div>
                     </div>												
                 </div>
-            </div>	
+                <div class="row d-flex justify-content-center my-0">
+                    <div class="menu-content py-0 col-lg-8">
+                        <div class="text-center">
+                            <a href="/bookingboard" @click="booking" class="primary-btn text-uppercase">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
         <!-- End price Area -->
         <!-- start footer Area -->
@@ -210,11 +175,7 @@
         },
 
         methods: {
-            login() {
-                this.$router.push({name: 'login'});
-            },
-
-            Booking(){
+            booking(){
                 this.$router.push({name: 'bookingboard'});
             },
         }

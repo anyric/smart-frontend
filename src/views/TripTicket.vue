@@ -22,7 +22,7 @@
 								class="mr-1"
 							></v-text-field>
 							<v-spacer></v-spacer>
-							<v-tooltip bottom color="green">
+							<!-- <v-tooltip bottom color="green">
 								<template v-slot:activator="{ on }">
 								<v-btn
 									color="teal darken-1"
@@ -35,7 +35,7 @@
 								</v-btn>
 								</template>
 								<span>Create New Ticket</span>
-							</v-tooltip>
+							</v-tooltip> -->
 							<v-tooltip bottom color="green">
 								<template v-slot:activator="{ on }">
 									<v-btn
@@ -386,7 +386,8 @@ export default {
 			seat: '',
 			price: 0.0,
             trip_start_date: '',
-            departure_time: ''
+			departure_time: '',
+			created_by: ''
 		},
 		departure_time: false,
 		start_date: false,
@@ -614,7 +615,8 @@ export default {
 						status: 'travelling'
 					}
 				};
-				this.$store.dispatch('SAVE_TICKET', ticket);
+				// this.$store.dispatch('SAVE_TICKET', ticket);
+				console.log(ticket);
 			} else {
 				let data = {
 					passenger_name: this.editedItem.passenger_name,	
@@ -629,9 +631,11 @@ export default {
 					status: 'travelling',
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				this.$store.dispatch('SAVE_TICKET', data)
+				// this.$store.dispatch('SAVE_TICKET', data)
+				console.log(data);
 			}
 			this.close();
+			// window.location.reload();
 		},
 
 		delete(data) {

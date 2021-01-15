@@ -67,7 +67,7 @@ export default {
                 await Api().post('/tickets/', ticket)
                 .then(() => {
                     dispatch("GET_TICKETS");
-                    Router.push({name: 'trip-ticket'});
+                    // Router.push({name: 'trip-ticket'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")
