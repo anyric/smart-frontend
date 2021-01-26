@@ -14,6 +14,10 @@ import ticketStore from './stores/tickets';
 import tripSchedule from './stores/schedule';
 import company from './stores/company';
 import branch from './stores/branch';
+import roles from './stores/roles';
+import permissions from './stores/permissions';
+import collections from './stores/collections';
+import roleObjectPermissions from './stores/roleObjectPermissions';
 
 Vue.use(Vuex);
 
@@ -31,7 +35,11 @@ export default new Vuex.Store({
         tickets: ticketStore,
         schedule: tripSchedule,
         company: company,
-        branch: branch
+        branch: branch,
+        roles: roles,
+        permissions: permissions,
+        collections: collections,
+        roleObjectPermissions: roleObjectPermissions
     },
     state: {},
     getters: {},

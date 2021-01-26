@@ -180,7 +180,7 @@ export default {
 			children: [
 			{ route: "/trips/locations", text: "Locations" },
 			{ route: "/trips/routes", text: "Routes" },
-			{ route: "/trips/assignments", text: "Schedule Fleets" },
+			{ route: "/trips/schedules", text: "Schedules" },
 			{ route: "/trips/fares", text: "Ticket Fares" },
 			{ route: "/trips/tickets", text: "Tickets" },
 			{ route: "/bookingboard", text: "Booking" }
@@ -191,7 +191,10 @@ export default {
 			text: "Settings",
 			children: [
 			{ route: "/settings/company", text: "Company" },
-			// { route: "/fleets/register", text: "Register" }
+			{ route: "/settings/roles", text: "User Roles" },
+			{ route: "/settings/permissions", text: "Permissions" },
+			{ route: "/settings/collections", text: "Collections" },
+			{ route: "/settings/role-permissions", text: "Role Permissions" }
 			]
 		},
 		]

@@ -21,6 +21,10 @@ import Schedule from '../views/Schedule';
 import PremiumSchedule from '../views/PremiumSchedule';
 import Payment from '../views/Payment';
 import Preview from '../views/Preview';
+import Roles from '../views/Roles';
+import Permissions from '../views/Permissions';
+import Collections from '../views/Collections';
+import RoleObjectPermissions from '../views/RoleObjectPermissions';
 import NavBar from '../components/NavBar';
 
 
@@ -125,8 +129,8 @@ const routes = [
                 component: TripRoutes,
             },
             {
-                path: 'trips/assignments',
-                name: 'trip-assigned',
+                path: 'trips/schedules',
+                name: 'trip-schedules',
                 component: TripAssignments,
             },
             {
@@ -143,6 +147,26 @@ const routes = [
                 path: 'settings/company',
                 name: 'company',
                 component: Company
+            },
+            {
+                path: 'settings/roles',
+                name: 'roles',
+                component: Roles
+            },
+            {
+                path: 'settings/permissions',
+                name: 'permissions',
+                component: Permissions
+            },
+            {
+                path: 'settings/collections',
+                name: 'collections',
+                component: Collections
+            },
+            {
+                path: 'settings/role-permissions',
+                name: 'role-permissions',
+                component: RoleObjectPermissions
             },
         ],
     },

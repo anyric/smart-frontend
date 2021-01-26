@@ -104,26 +104,6 @@ export default {
     },
     
     methods: {
-        login() {
-            this.$router.push({name: 'login'});
-        },
-
-        booking(){
-            this.$router.push({name: 'bookingboard'});
-        },
-
-        indexPage() {
-            this.$router.push({name: 'indexpage'});
-        },
-
-        aboutUs() {
-            this.$router.push({name: 'indexpage#about-us'});
-        },
-
-        services() {
-            this.$router.push({name: 'indexpage#services'});
-        },
-
         viewSchedule(trip) {
             const route = this.routes.filter(item => item.name === trip.route_name)
             this.locations.filter(item =>  {

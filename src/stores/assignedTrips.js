@@ -38,7 +38,7 @@ export default {
                 await Api().patch('/fleet-assignments/' + trip_assigned.pk + '/', trip_assigned.data)
                 .then(() => {
                     dispatch("GET_ASSIGNED_TRIPS");
-                    Router.push({name: 'trip-assigned'});
+                    Router.push({name: 'trip-schedules'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
@@ -47,7 +47,7 @@ export default {
                 await Api().post('/fleet-assignments/', trip_assigned)
                 .then(() => {
                     dispatch("GET_ASSIGNED_TRIPS");
-                    Router.push({name: 'trip-assigned'});
+                    Router.push({name: 'trip-schedules'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")
@@ -56,12 +56,11 @@ export default {
         },
 
         DELETE_ASSIGNED_TRIP: async ({dispatch}, trip_assigned) => {
-            console.log(trip_assigned)
             if(trip_assigned.id){
                 await Api().delete('/fleet-assignments/' + trip_assigned.id + '/')
                 .then(() => {
                     dispatch("GET_FARES");
-                    Router.push({name: 'trip-assigned'});
+                    Router.push({name: 'trip-schedules'});
                     console.log('deleted assigned Trip ' + trip_assigned.id)
                 })
                 .catch(error=>{

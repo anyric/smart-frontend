@@ -1,6 +1,10 @@
 <template>
     <v-app id="inspire">
-        <header id="header">
+        <!-- Start of header -->
+        <main-navbar v-if="!isLoggedIn"></main-navbar>
+        <!-- End of header -->
+
+        <!-- <header id="header">
             <div class="header-top pt-4">
                 <div class="container">
                     <div class="row align-items-center justify-content-between mx-10">
@@ -57,7 +61,7 @@
                     </div>
                 </div>
             </nav>
-        </header>
+        </header> -->
         <v-content >
             <v-container fluid fill-height>
                 <v-layout align-center justify-center>
@@ -150,33 +154,6 @@ import {mapGetters} from 'vuex';
                     color: "success",
                 });
             },
-            // login() {
-            // this.$router.push({name: 'login'});
-            // },
-
-            booking(){
-                this.$router.push({name: 'bookingboard'});
-            },
-
-            indexPage() {
-                this.$router.push({name: 'indexpage'});
-            },
-
-            aboutUs() {
-                this.$router.push({name: 'indexpage#about-us'});
-            },
-
-            services() {
-                this.$router.push({name: 'indexpage#services'});
-            },
-
-            changeColor(obj) {
-                if (document.getElementById(obj).className === "text-warning"){
-                    document.getElementById(obj).className = "text-white"
-                }else {
-                    document.getElementById(obj).className = 'text-warning'
-                }
-            }
         }
     }
 </script>
