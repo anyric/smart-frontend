@@ -63,7 +63,7 @@
 
                 <v-card-actions class="pr-3">
                     <v-spacer></v-spacer>
-                    <v-btn color="teal darken-1" dark class="mb-3 mr-10" @click="save">Save</v-btn>
+                    <v-btn color="teal darken-1" dark class="mb-3 mr-10" id="save" @click="save">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-container>
@@ -79,7 +79,10 @@ export default {
     data: () => ({
         overlay: false,
         roleId: 0,
-        assignedPermissions: []
+        assignedPermissions: {},
+        assignedroleObjectPermissions: [],
+        data: [],
+        dataSaved: false
     }),
 
     computed: {
@@ -109,6 +112,7 @@ export default {
         this.$store.dispatch('GET_ROLES');
         this.$store.dispatch('GET_PERMISSIONS');
         this.$store.dispatch('GET_COLLECTIONS');
+        // document.getElementById("save").disabled = true;
     },
 
     methods: {
@@ -116,39 +120,50 @@ export default {
             if(this.roleId < 1){
                 alert("Role can't be empty");
             }else{
-                // const isChecked = document.getElementById(id).checked
-                // console.log(isChecked);
-                console.log("verify: ", this.roleId + " " + action + " " + item.name);
-                let permission = this.permissions.filter(perm => perm.name.toLowerCase() === action)
-                const data = {
-                    roleId : this.roleId,
-                    permissionId: permission[0].id,
-                    objectId: item.id
+                if(this.dataSaved){
+                    this.data = this.data.filter(el => el.permission !== action);
+                }else{
+                    this.data.push({
+                        objectId: item.id,
+                        permission: action
+                    });
                 }
-                this.assignedPermissions.push(data)
             }
-            console.log(this.assignedPermissions);
+
 		},
 
 		save () {
-            console.log()
-			// if (this.editedIndex > -1) {
-            //     let collection = {
-            //         pk: this.editedItem.id,
-            //         data: {
-            //             name: this.editedItem.name,
-            //             description: this.editedItem.description
-            //         }
-            //     };
-            //     this.$store.dispatch('SAVE_ROLEOBJECTPERMISSION', collection)
-			// } else {
-            //     let collection = {
-            //         name: this.editedItem.name,
-            //         description: this.editedItem.description,
-            //         created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
-            //     };
-            //     this.$store.dispatch('SAVE_ROLEOBJECTPERMISSIONS', collection)
-			// }
+            this.data.forEach(item => {
+                if(Object.prototype.hasOwnProperty.call(this.assignedPermissions, item.objectId)){
+                    if(!this.assignedPermissions[item.objectId].permissions.includes(item.permission)){
+                        this.assignedPermissions[item.objectId].permissions.push(item.permission);
+                    }else{
+                        this.assignedPermissions[item.objectId].permissions = this.assignedPermissions[item.objectId].permissions.filter(el => el === item.permission)
+                    }
+                }else{
+                    this.assignedPermissions[item.objectId] = {
+                        "permissions": [item.permission]
+                    }
+                }
+            });
+            this.dataSaved = true;
+            // console.log(this.assignedPermissions)
+            Object.entries(this.assignedPermissions).forEach(([key, value]) => {
+                // console.log(parseInt(key), value.permissions.toString());
+                this.assignedroleObjectPermissions.push({
+                    roleId: this.roleId,
+                    objectId: parseInt(key),
+                    permissions: value.permissions.toString(),
+                    created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+                })
+            });
+            // console.log(this.assignedroleObjectPermissions)
+			if (this.assignedroleObjectPermissions.length === 0 ) {
+                alert("Please assign atleast permission for one item!")
+			} else {
+                console.log(this.assignedroleObjectPermissions);
+                // this.$store.dispatch('SAVE_ROLEOBJECTPERMISSIONS', this.assignedroleObjectPermissions)
+			}
         },
     },
 }

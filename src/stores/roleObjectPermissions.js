@@ -65,7 +65,7 @@ export default {
                     console.log('deleted role permission ' + roleObjectPermission.id)
                 })
                 .catch(error=>{
-                    console.log(error.message + " delete error")
+                    console.log(error + " delete error")
                 })
             }
         },
