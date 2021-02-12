@@ -16,6 +16,7 @@
                                     item-value="id"
                                     v-model="roleId"
                                     required
+                                    @change="updatePermissions"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -29,6 +30,9 @@
                                 <thead>
                                     <tr class="px-0">
                                         <th class="px-0">Item</th>
+                                        <th class="text-left">
+                                            Full
+                                        </th>
                                         <th class="text-left px-0">
                                             Add
                                         </th>
@@ -50,10 +54,11 @@
                                         class="px-0"
                                     >
                                         <td class="px-0">{{ item.name }}</td>
-                                        <td class="px-0"><v-checkbox name="add" :id="item.name + '-add'" @change="verifyState(item, 'add')"></v-checkbox></td>
-                                        <td class="px-0"><v-checkbox name="edit" :id="item.name + '-edit'" @change="verifyState(item, 'edit')"></v-checkbox></td>
-                                        <td class="px-0"><v-checkbox name="retrieve" :id="item.name + '-retrieve'" @change="verifyState(item, 'retrieve')"></v-checkbox></td>
-                                        <td class="px-0"><v-checkbox name="delete" :id="item.name + '-delete'" @change="verifyState(item, 'delete')"></v-checkbox></td>
+                                        <td class=""><input type="checkbox" value="full" :id="item.name + 'full'" @click="fullAccessControl(item.name)"></td>
+                                        <td class="px-0"><input type="checkbox" :name="item.name" value="add" :id="item.name + 'add'" @click="updateFullControl(item.name)"></td>
+                                        <td class="px-0"><input type="checkbox" :name="item.name" value="edit" :id="item.name + 'edit'" @click="updateFullControl(item.name)"></td>
+                                        <td class="px-0"><input type="checkbox" :name="item.name" value="retrieve" :id="item.name + 'retrieve'" @click="updateFullControl(item.name)"></td>
+                                        <td class="px-0"><input type="checkbox" :name="item.name" value="delete" :id="item.name + 'delete'" @click="updateFullControl(item.name)"></td>
                                     </tr>
                                 </tbody>
                             </template>
@@ -78,11 +83,11 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
         overlay: false,
-        roleId: 0,
-        assignedPermissions: {},
-        assignedroleObjectPermissions: [],
+        roleId: 1,
         data: [],
-        dataSaved: false
+        isChecked: false,
+        roleHasPermissions: false,
+        permissionsAlertShown: false
     }),
 
     computed: {
@@ -98,6 +103,7 @@ export default {
     watch: {
         overlay (val) {
             val && setTimeout(() => {
+                this.updatePermissions();
                 this.overlay = false
             }, 1000)
         },
@@ -112,59 +118,132 @@ export default {
         this.$store.dispatch('GET_ROLES');
         this.$store.dispatch('GET_PERMISSIONS');
         this.$store.dispatch('GET_COLLECTIONS');
-        // document.getElementById("save").disabled = true;
     },
 
     methods: {
-		verifyState (item, action) {
-            if(this.roleId < 1){
-                alert("Role can't be empty");
-            }else{
-                if(this.dataSaved){
-                    this.data = this.data.filter(el => el.permission !== action);
-                }else{
-                    this.data.push({
-                        objectId: item.id,
-                        permission: action
-                    });
-                }
+		fullAccessControl(name) {
+            const fullCheckBox = document.querySelector(`input[id="${name + 'full'}"]`);
+            const checkBoxes = document.querySelectorAll(`input[name="${name}"]`);
+            if(fullCheckBox.checked){
+                checkBoxes.forEach((cb) => {
+                    cb.checked = true;
+                });
+            }
+            if(!fullCheckBox.checked){
+                checkBoxes.forEach((cb) => {
+                    cb.checked = false;
+                });
             }
 
 		},
 
-		save () {
-            this.data.forEach(item => {
-                if(Object.prototype.hasOwnProperty.call(this.assignedPermissions, item.objectId)){
-                    if(!this.assignedPermissions[item.objectId].permissions.includes(item.permission)){
-                        this.assignedPermissions[item.objectId].permissions.push(item.permission);
-                    }else{
-                        this.assignedPermissions[item.objectId].permissions = this.assignedPermissions[item.objectId].permissions.filter(el => el === item.permission)
-                    }
-                }else{
-                    this.assignedPermissions[item.objectId] = {
-                        "permissions": [item.permission]
-                    }
+        updateFullControl(name){
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+
+            if(checkboxes.length === 4){
+                document.querySelector(`input[id="${name + 'full'}"]`).checked = true;
+            }
+
+            if(checkboxes.length < 4){
+                document.querySelector(`input[id="${name + 'full'}"]`).checked = false;
+            }
+        },
+
+		save() {
+            if (this.roleId === 0 ) {
+                alert("Role can't be empty!")
+                return
+            } 
+            this.collections.forEach(entity =>{
+                const data = this.generateRoleObjectPermissions(entity);
+                if(Object.keys(data).length > 0){
+                    this.$store.dispatch('SAVE_ROLEOBJECTPERMISSIONS', data)
+                    this.$router.push({name: 'role-permissions'})
                 }
             });
-            this.dataSaved = true;
-            // console.log(this.assignedPermissions)
-            Object.entries(this.assignedPermissions).forEach(([key, value]) => {
-                // console.log(parseInt(key), value.permissions.toString());
-                this.assignedroleObjectPermissions.push({
-                    roleId: this.roleId,
-                    objectId: parseInt(key),
-                    permissions: value.permissions.toString(),
-                    created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
-                })
-            });
-            // console.log(this.assignedroleObjectPermissions)
-			if (this.assignedroleObjectPermissions.length === 0 ) {
-                alert("Please assign atleast permission for one item!")
-			} else {
-                console.log(this.assignedroleObjectPermissions);
-                // this.$store.dispatch('SAVE_ROLEOBJECTPERMISSIONS', this.assignedroleObjectPermissions)
-			}
+            this.roleHasPermissions = false;
+            this.permissionsAlertShown = false;
         },
+        getSelectedCheckboxValues(name) {
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+            let values = [];
+            if(checkboxes.length > 0){
+                checkboxes.forEach((checkbox) => {
+                    values.push(checkbox.value);
+                });
+                this.roleHasPermissions = true;
+            }
+            return values;
+        },
+        generateRoleObjectPermissions(entity){
+            const selectedPermissions = this.getSelectedCheckboxValues(entity.name)
+
+            if(this.roleHasPermissions & selectedPermissions.length > 0){
+                const recordExist =  this.roleObjectPermissions.filter(record => record.objectId == entity.id & record.roleId == this.roleId)
+                if(recordExist.length > 0){
+                    if(recordExist[0].permissions.split(',').sort().join(',') === selectedPermissions.sort().join(',')){
+                        let updatedroleObjectPermissions = {
+                            pk: recordExist[0].id,
+                            data:{
+                                roleId: parseInt(this.roleId),
+                                objectId: parseInt(entity.id),
+                                permissions: selectedPermissions.toString(),
+                                created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+                            }
+                        }
+                        return updatedroleObjectPermissions;
+                    }
+                }
+                let newroleObjectPermissions = {
+                    roleId: parseInt(this.roleId),
+                    objectId: parseInt(entity.id),
+                    permissions: selectedPermissions.toString(),
+                    created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
+                }
+                return newroleObjectPermissions;
+            }
+            if(!this.roleHasPermissions & !this.permissionsAlertShown){
+                alert("Please assign atleast permission for one item!")
+                this.permissionsAlertShown = true;
+            }
+            return [];
+        },
+        updatePermissions() {
+            const selectedRolePermissions = this.roleObjectPermissions.filter(item => item.roleId === this.roleId)
+            if(selectedRolePermissions.length > 0){
+                this.collections.forEach(rec => {
+                    selectedRolePermissions.forEach(el => {
+                        if(rec.id === el.objectId){
+                            el.permissions.split(",").forEach(x =>{
+                                if(x === 'add'){
+                                    document.getElementById(rec.name+'add').checked = true;
+                                }
+                                if(x === 'edit'){
+                                    document.getElementById(rec.name+'edit').checked = true;
+                                }
+                                if(x === 'retrieve'){
+                                    document.getElementById(rec.name+'retrieve').checked = true;
+                                }
+                                if(x === 'delete'){
+                                    document.getElementById(rec.name+'delete').checked = true;
+                                }
+                            });
+                        }
+                    })
+
+                   this.updateFullControl(rec.name);
+
+                });
+            }else{
+                this.collections.forEach(rec => {
+                    document.getElementById(rec.name+'add').checked = false;
+                    document.getElementById(rec.name+'edit').checked = false;
+                    document.getElementById(rec.name+'retrieve').checked = false;
+                    document.getElementById(rec.name+'delete').checked = false;
+                    document.getElementById(rec.name + 'full').checked = false;
+                });
+            }
+        }
     },
 }
 </script>

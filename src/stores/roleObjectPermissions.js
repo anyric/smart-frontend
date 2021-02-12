@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import Router from '../router'
+// import Router from '../router'
 import Api from '@/services/api'
 
 Vue.use(Vuex);
@@ -39,16 +39,16 @@ export default {
                 await Api().patch('/assigned-permissions/' + roleObjectPermission.pk + '/', roleObjectPermission.data)
                 .then(() => {
                     dispatch("GET_ROLEOBJECTPERMISSIONS");
-                    Router.push({name: 'role-permissions'});
                 })
                 .catch(error=>{
                     console.log(error.message + " edit error")
                 })
-            }else{
+            }
+            else{
+                console.log('in post: ', roleObjectPermission);
                 await Api().post('/assigned-permissions/', roleObjectPermission)
                 .then(() => {
                     dispatch("GET_ROLEOBJECTPERMISSIONS");
-                    Router.push({name: 'role-permissions'});
                 })
                 .catch(error=>{
                     console.log(error.message + " post error")
@@ -56,12 +56,11 @@ export default {
             }
         },
 
-        DELETE_ROLE: async ({dispatch}, roleObjectPermission) => {
+        DELETE_ROLEOBJECTPERMISSIONS: async ({dispatch}, roleObjectPermission) => {
             if(roleObjectPermission.id){
                 await Api().delete('/assigned-permissions/' + roleObjectPermission.id + '/')
                 .then(() => {
                     dispatch("GET_ROLEOBJECTPERMISSIONS");
-                    Router.push({name: 'role-permissions'});
                     console.log('deleted role permission ' + roleObjectPermission.id)
                 })
                 .catch(error=>{
