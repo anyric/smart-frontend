@@ -12,8 +12,8 @@
 			<!-- Menu List Container -->
 			<template>
 				<v-list>
-					<v-list-item v-for="(menu, i) in menus" :key="i" :to="menu.route">
-						<v-list-group v-if="menu.children && menu.children.length" :key="menu.text">
+					<v-list-item v-for="(menu, i) in menus" :key="i" :to="menu.route" :name="menu.name">
+						<v-list-group v-if="menu.children && menu.children.length && menu.show" :key="menu.text">
 							<template v-slot:activator>
 								<v-list-item-icon>
 									<v-icon small color="white darken-2">{{menu.icon}}</v-icon>
@@ -24,20 +24,20 @@
 							</template>
 							<!-- children list -->
 							<v-list-item v-for="(child, i) in menu.children" :to="child.route" :key="i" link>
-								<v-list-item-action></v-list-item-action>
-								<v-list-item-content class="colored-text">
+								<v-list-item-action v-if="child.show"></v-list-item-action>
+								<v-list-item-content class="colored-text" v-if="child.show">
 								<v-list-item-title>{{ child.text }}</v-list-item-title>
 								</v-list-item-content>
 							</v-list-item>
 							<!-- end of children list -->
 						</v-list-group>
 						<v-list-item v-else :key="menu.text" link>
-						<v-list-item-icon>
-							<v-icon small color="white darken-2 mr-1">{{ menu.icon }}</v-icon>
-						</v-list-item-icon>
-						<v-list-item-content>
-							<v-list-item-title>{{ menu.text }}</v-list-item-title>
-						</v-list-item-content>
+							<v-list-item-icon v-if="menu.show">
+								<v-icon small color="white darken-2 mr-1">{{ menu.icon }}</v-icon>
+							</v-list-item-icon>
+							<v-list-item-content v-if="menu.show">
+								<v-list-item-title>{{ menu.text }}</v-list-item-title>
+							</v-list-item-content>
 						</v-list-item>
 					</v-list-item>
 				</v-list>
@@ -163,38 +163,44 @@ export default {
 		dialogItem: null,
 		dialogItems: null,
 		menus: [
-		{ route: "/dashboard", icon: "fas fa-tachometer-alt", text: "Dashboard" },
-		{ route: "/users", icon: "fas fa-users", text: "Manage Users" },
-		{ route: "/agents", icon: "fas fa-handshake", text: "Manage Agents" },
+		{ route: "/dashboard", icon: "fas fa-tachometer-alt", text: "Dashboard", show: false, name: "dashboard" },
+		{ route: "/users", icon: "fas fa-users", text: "Manage Users", show: false, name: "users" },
+		{ route: "/agents", icon: "fas fa-handshake", text: "Manage Agents", show: false, name: "agents" },
 		{
 			icon: "fas fa-bus-alt",
 			text: "Manage Fleet",
+			show: false,
+			name: "fleets",
 			children: [
-			{ route: "/fleets/types", text: "Fleet Type" },
-			{ route: "/fleets/register", text: "Register" }
+			{ route: "/fleets/types", text: "Fleet Type", name: "fleet type", show: false },
+			{ route: "/fleets/register", text: "Register", name: "register", show: false }
 			]
 		},
 		{
 			icon: "fas fa-road",
 			text: "Manage Trips",
+			show: false,
+			name: "trips",
 			children: [
-			{ route: "/trips/locations", text: "Locations" },
-			{ route: "/trips/routes", text: "Routes" },
-			{ route: "/trips/schedules", text: "Schedules" },
-			{ route: "/trips/fares", text: "Ticket Fares" },
-			{ route: "/trips/tickets", text: "Tickets" },
-			{ route: "/bookingboard", text: "Booking" }
+			{ route: "/trips/locations", text: "Locations", name: "locations", show: false },
+			{ route: "/trips/routes", text: "Routes", name: "routes", show: false },
+			{ route: "/trips/schedules", text: "Schedules", name: "schedules", show: false },
+			{ route: "/trips/fares", text: "Ticket Fares", name: "fares", show: false },
+			{ route: "/trips/tickets", text: "Tickets", name: "tickets", show: false },
+			{ route: "/bookingboard", text: "Booking", name: "bookings", show: false }
 			]
 		},
 		{
 			icon: "mdi-settings",
 			text: "Settings",
+			show: false,
+			name: "settings",
 			children: [
-			{ route: "/settings/company", text: "Company" },
-			{ route: "/settings/roles", text: "User Roles" },
-			{ route: "/settings/permissions", text: "Permissions" },
-			{ route: "/settings/collections", text: "Collections" },
-			{ route: "/settings/role-permissions", text: "Role Permissions" }
+			{ route: "/settings/company", text: "Company", name: "company", show: false },
+			{ route: "/settings/roles", text: "User Roles", name: "roles", show: false },
+			{ route: "/settings/permissions", text: "Permissions", name: "permissions", show: false },
+			{ route: "/settings/collections", text: "Collections", name: "collections", show: false },
+			{ route: "/settings/role-permissions", text: "Role Permissions", name: "role permissions", show: true }
 			]
 		},
 		]
@@ -202,7 +208,9 @@ export default {
 	computed: {
 		...mapGetters({
 			company: "COMPANY",
-			isLoggedIn: "IS_LOGGED_IN"
+			isLoggedIn: "IS_LOGGED_IN",
+			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
+			collections: "COLLECTIONS",
 		}),
 
 		formTitle() {
@@ -212,6 +220,8 @@ export default {
 	
 	mounted() {
         this.$store.dispatch('GET_COMPANY');
+		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+		this.$store.dispatch('GET_COLLECTIONS');
     },
 	created() {
 		let user = this.$cookie.get('currentUser');
@@ -229,6 +239,31 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
+		this.menus.forEach(menu =>{
+			this.roleObjectPermissions.forEach(role => {
+				if(role.roleId === this.currentUser.user.pk){
+					var item = this.collections.filter(entity => entity.id == role.objectId);
+					if(item[0].name.toLowerCase() === menu.name){
+						if(role.permissions.split(',').includes('retrieve')){
+							menu.show = true;
+						}
+					}
+
+					if ('children' in menu) {
+						menu.children.forEach(child => {
+							if(item[0].name.toLowerCase() === child.name){
+								// console.log( item[0].name.toLowerCase() +' = ' +child.name)
+								// console.log(item[0].id, role)
+								if(role.permissions.split(',').includes('retrieve')){
+									child.show = true;
+								}
+							}
+						})
+
+					}
+				}
+			});
+		});
 	},
 
 	watch: {

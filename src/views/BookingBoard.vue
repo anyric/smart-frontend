@@ -25,6 +25,9 @@
                             Date
                             </th>
                             <th class="text-left">
+                            Time
+                            </th>
+                            <th class="text-left">
                             Route
                             </th>
                             <th class="text-left">
@@ -40,7 +43,8 @@
                             v-for="item in schedule"
                             :key="item.id"
                         >
-                            <td>{{ item.trip_start_date }} ({{ item.departure_time }} {{ item.departure_time.split(':')[0] >= 12 ? 'PM' : 'AM' }})</td>
+                            <td>{{ item.trip_start_date }}</td>
+                            <td>{{ item.departure_time }} {{ item.departure_time.split(':')[0] >= 12 ? 'PM' : 'AM' }}</td>
                             <td>{{ item.route_name }}</td>
                             <td>{{ item.fleet_type }}</td>
                             <td>
