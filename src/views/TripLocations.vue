@@ -22,7 +22,7 @@
                         class="mr-1"
                     ></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-tooltip bottom color="green">
+                    <v-tooltip bottom color="green" v-if="canAdd">
                       <template v-slot:activator="{ on }">
                         <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
                       </template>
@@ -62,13 +62,13 @@
                 </v-toolbar>
             </template>
             <template v-slot:item.action="{ item }">
-                <v-tooltip bottom color="primary">
+                <v-tooltip bottom color="primary" v-if="canEdit">
                     <template v-slot:activator="{ on }">
                         <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
                     </template>
                     <span>Edit Location</span>
                 </v-tooltip>
-                <v-tooltip bottom color="red">
+                <v-tooltip bottom color="red" v-if="canDelete">
                     <template v-slot:activator="{ on }">
                         <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
                     </template>
@@ -98,6 +98,9 @@ import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
         overlay: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false,
 		editedItem: {
 			name: '',
 			description: '',
@@ -119,13 +122,14 @@ export default {
 			},
 			{ text: 'Description', value: 'description' },
 			{ text: 'Active', value: 'status' },
-			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
                 locations: 'LOCATIONS',
+                collections: "COLLECTIONS",
+                roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
                 isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
@@ -148,8 +152,11 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
-        this.overlay = true;
         this.$store.dispatch('GET_LOCATIONS');
+        this.$store.dispatch("GET_COLLECTIONS");
+        this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+        this.checkPermissions()
+        this.overlay = true;
     },
 
 	created() {
@@ -213,6 +220,31 @@ export default {
 				this.$store.dispatch('DELETE_LOCATION', data);
 			}
 		},
+
+        checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "locations");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
     },
 }
 </script>

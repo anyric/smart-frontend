@@ -68,7 +68,7 @@
 
                 <v-card-actions class="pr-3">
                     <v-spacer></v-spacer>
-                    <v-btn color="teal darken-1" dark class="mb-3 mr-10" id="save" @click="save">Save</v-btn>
+                    <v-btn color="teal darken-1" dark class="mb-3 mr-10" id="save" @click="save" :disabled="isDisabled">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-container>
@@ -80,6 +80,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
         overlay: false,
@@ -87,7 +88,8 @@ export default {
         data: [],
         isChecked: false,
         roleHasPermissions: false,
-        permissionsAlertShown: false
+        permissionsAlertShown: false,
+        isDisabled: true
     }),
 
     computed: {
@@ -113,11 +115,11 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
-        this.overlay = true;
         this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
         this.$store.dispatch('GET_ROLES');
         this.$store.dispatch('GET_PERMISSIONS');
         this.$store.dispatch('GET_COLLECTIONS');
+        this.overlay = true;
     },
 
     methods: {
@@ -151,7 +153,10 @@ export default {
 
 		save() {
             if (this.roleId === 0 ) {
-                alert("Role can't be empty!")
+                EventBus.$emit("show-snackbar", {
+                    text: "Role can't be empty!",
+                    color: "red",
+                });
                 return
             } 
             this.collections.forEach(entity =>{
@@ -203,7 +208,10 @@ export default {
                 return newroleObjectPermissions;
             }
             if(!this.roleHasPermissions & !this.permissionsAlertShown){
-                alert("Please assign atleast permission for one item!")
+                EventBus.$emit("show-snackbar", {
+                    text: "Please assign atleast permission for one item!",
+                    color: "red",
+                });
                 this.permissionsAlertShown = true;
             }
             return [];
@@ -231,7 +239,13 @@ export default {
                         }
                     })
 
-                   this.updateFullControl(rec.name);
+                    this.updateFullControl(rec.name);
+                    const record =  this.roleObjectPermissions.filter(record => record.objectId == rec.id & record.roleId == this.roleId)
+                    if(record.length > 0){
+                        if(record[0].permissions.split(',').includes('add') & record[0].permissions.split(',').includes('edit') & rec.name.toLowerCase() === 'role permissions'){
+                            this.isDisabled = false;
+                        }
+                    }
 
                 });
             }else{

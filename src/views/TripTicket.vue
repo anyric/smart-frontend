@@ -22,20 +22,6 @@
 								class="mr-1"
 							></v-text-field>
 							<v-spacer></v-spacer>
-							<!-- <v-tooltip bottom color="green">
-								<template v-slot:activator="{ on }">
-								<v-btn
-									color="teal darken-1"
-									dark
-									v-on="on"
-									class="mb-2 button-small"
-									@click="editItem()"
-								>
-									<i class="fas fa-plus mr-1"></i> Create New
-								</v-btn>
-								</template>
-								<span>Create New Ticket</span>
-							</v-tooltip> -->
 							<v-tooltip bottom color="green">
 								<template v-slot:activator="{ on }">
 									<v-btn
@@ -199,7 +185,7 @@
 							</template>
 							<span>View Ticket</span>
 						</v-tooltip>
-						<v-tooltip bottom color="primary">
+						<v-tooltip bottom color="primary" v-if="canEdit">
 							<template v-slot:activator="{ on }">
 								<v-icon
 									color="primary"
@@ -210,7 +196,7 @@
 							</template>
 							<span>Edit Ticket</span>
 						</v-tooltip>
-						<v-tooltip bottom color="red">
+						<v-tooltip bottom color="red" v-if="canDelete">
 							<template v-slot:activator="{ on }">
 								<v-icon
 									color="red"
@@ -243,7 +229,7 @@
 					<v-card-subtitle class="mb-0 pb-0">
 						<v-row>
 							<v-col cols="9" class="sm12 font-weight-bold py-1">
-								<i class="fas fa-bus-alt mr-1"></i>ZAWADI BUS SERVICES
+								<img :src="logo" style="width: 30px; height: 30px"> {{ company[0].name }}
 							</v-col>
 							<v-col cols="3" class="sm12 py-1 text-right ">
 							</v-col>
@@ -253,7 +239,7 @@
 								<div class="ml-5 pl-0">P.O.Box 770 Arua</div>
 							</v-col>
 							<v-col cols="7" class="sm12 pb-0 pt-1 text-right">
-								<small> SEAT NO. <strong> {{ viewTicket.seat}} </strong></small>
+								<small> SEAT NO. <strong> {{ viewTicket.seat }} </strong></small>
 							</v-col>
 						</v-row>
 					</v-card-subtitle>
@@ -363,6 +349,7 @@ import { ticketReport, printTicket } from "@/services/helper";
 export default {
 	data: () => ({
 		overlay: false,
+		logo: null,
 		editedItem: {
 			id: 0,
 			ticket_no: '',
@@ -413,7 +400,6 @@ export default {
         { text: "Travel Date", value: "trip_start_date" },
         { text: 'Departure Time', value: 'departure_time' },
         { text: "Ticket Cost", value: "price" },
-		{ text: "Actions", value: "action", sortable: false }
 		]
 	}),
 
@@ -426,6 +412,9 @@ export default {
 			routes: 'ROUTES',
 			tickets: 'TICKETS',
 			fares: "FARES",
+			company: 'COMPANY',
+			collections: "COLLECTIONS",
+			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
 			isLoggedIn: "IS_LOGGED_IN"
 		}),
 
@@ -448,6 +437,7 @@ export default {
 		},
         overlay (val) {
             val && setTimeout(() => {
+				this.logo = this.company[0].logo;
 				this.overlay = false
             }, 1000)
         },
@@ -457,7 +447,6 @@ export default {
 		if (!this.isLoggedIn) {
 			this.$router.push({ name: "login" });
 		}
-		this.overlay = true;
 		this.$store.dispatch("GET_ASSIGNED_TRIPS");
 		this.$store.dispatch("GET_USERS");
 		this.$store.dispatch('GET_ROUTES');
@@ -465,6 +454,11 @@ export default {
 		this.$store.dispatch('GET_FLEET_TYPES');
 		this.$store.dispatch("GET_FARES");
 		this.$store.dispatch("GET_TICKETS");
+		this.$store.dispatch("GET_COMPANY");
+		this.$store.dispatch("GET_COLLECTIONS");
+		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+        this.checkPermissions();
+		this.overlay = true;
 		
 	},
 
@@ -645,12 +639,37 @@ export default {
 		},
 
 		generateReport() {
-			return ticketReport(this.tickets)
+			return ticketReport(this.company[0].name, this.tickets)
 		},
 
 		printTicket() {
-			return printTicket(this.ticketDetail)
-		}
+			return printTicket(this.company[0], this.ticketDetail)
+		},
+
+		checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "tickets");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
 	}
 };
 </script>

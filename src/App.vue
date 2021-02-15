@@ -172,7 +172,7 @@ export default {
 			show: false,
 			name: "fleets",
 			children: [
-			{ route: "/fleets/types", text: "Fleet Type", name: "fleet type", show: false },
+			{ route: "/fleets/types", text: "Fleet Types", name: "fleet types", show: false },
 			{ route: "/fleets/register", text: "Register", name: "register", show: false }
 			]
 		},
@@ -239,31 +239,7 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
-		this.menus.forEach(menu =>{
-			this.roleObjectPermissions.forEach(role => {
-				if(role.roleId === this.currentUser.user.pk){
-					var item = this.collections.filter(entity => entity.id == role.objectId);
-					if(item[0].name.toLowerCase() === menu.name){
-						if(role.permissions.split(',').includes('retrieve')){
-							menu.show = true;
-						}
-					}
-
-					if ('children' in menu) {
-						menu.children.forEach(child => {
-							if(item[0].name.toLowerCase() === child.name){
-								// console.log( item[0].name.toLowerCase() +' = ' +child.name)
-								// console.log(item[0].id, role)
-								if(role.permissions.split(',').includes('retrieve')){
-									child.show = true;
-								}
-							}
-						})
-
-					}
-				}
-			});
-		});
+		this.updateMenu();
 	},
 
 	watch: {
@@ -285,7 +261,31 @@ export default {
 			this.snackBarColor = data.color;
 			this.isShowing = true;
 		},
+		updateMenu(){
+			this.menus.forEach(menu =>{
+				this.roleObjectPermissions.forEach(role => {
+					if(role.roleId === this.currentUser.user.pk){
+						var item = this.collections.filter(entity => entity.id == role.objectId);
+						if(item[0].name.toLowerCase() === menu.name){
+							if(role.permissions.split(',').includes('retrieve')){
+								menu.show = true;
+							}
+						}
 
+						if ('children' in menu) {
+							menu.children.forEach(child => {
+								if(item[0].name.toLowerCase() === child.name){
+									if(role.permissions.split(',').includes('retrieve')){
+										child.show = true;
+									}
+								}
+							})
+
+						}
+					}
+				});
+			});
+		},
 		openDialog(){
 			this.isOpen = true;
 		},

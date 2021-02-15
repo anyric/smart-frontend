@@ -45,7 +45,6 @@ export default {
                 })
             }
             else{
-                console.log('in post: ', roleObjectPermission);
                 await Api().post('/assigned-permissions/', roleObjectPermission)
                 .then(() => {
                     dispatch("GET_ROLEOBJECTPERMISSIONS");

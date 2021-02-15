@@ -35,10 +35,10 @@ export const idToNameTrips = (assignTrips, routes, fleets) => {
     return assignTrips
 }
 
-const reportHeader = () => {
+const reportHeader = (company) => {
     let timestamp = 'Print Time: ' + (new Date()).toLocaleTimeString();
     let reportWindow = window.open('', '', 'height=650,width=900,top=100,left=150')
-    reportWindow.document.write(`<html><head><title>Zawadi Bus Services Report</title>`)
+    reportWindow.document.write(`<html><head><title>${ company } Report</title>`)
     reportWindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
     reportWindow.document.write('td {border: 0px solid #dddddd;text-align: left;padding: 8px;}')
     reportWindow.document.write('tr:nth-child(even) {background-color: #dddddd;}')
@@ -52,8 +52,8 @@ const reportHeader = () => {
     return reportWindow
 }
 
-export const ticketReport = (data)=> {
-    let reportWindow = reportHeader();
+export const ticketReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Ticket List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Ticket Number</th><th>Trip Route</th>"+
                 "<th>Trip Type</th><th>Passenger</th><th>Mobile</th>"+
@@ -78,7 +78,7 @@ export const ticketReport = (data)=> {
     return true;
 }
 
-export const printTicket = (ticket) => {
+export const printTicket = (company, ticket) => {
     let printTime = 'Print Time: ' + (new Date()).toLocaleTimeString();
     let ticketwindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
     ticketwindow.document.write('<style> table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}')
@@ -88,7 +88,7 @@ export const printTicket = (ticket) => {
     ticketwindow.document.write('</head><body>')
     ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
     ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
-    ticketwindow.document.write(`<tr><th colspan=2><i class='fas fa-bus-alt mr-1'></i>ZAWADI BUS SERVICES</th></tr>`)
+    ticketwindow.document.write(`<tr><th colspan=2><img class="mt-1" src="${ company.logo}" style="width: 25px; height: 25px"> ${ company.name }</th></tr>`)
     ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ ticket.seat} </strong></small></td></tr>`)
     ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ ticket.fleet_registration_no }
                                     </strong></small></td><td><small>RECEIPT NO. <strong> <br>
@@ -128,8 +128,8 @@ export const printTicket = (ticket) => {
     return true;
 }
 
-export const userReport = (data)=> {
-    let reportWindow = reportHeader();
+export const userReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>User List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Mobile</th><th>Username</th>"+
                                 "<th>Email</th><th>First NAme</th><th>Last Name</th></tr>");
@@ -150,8 +150,8 @@ export const userReport = (data)=> {
     return true;
 }
 
-export const agentReport = (data)=> {
-    let reportWindow = reportHeader();
+export const agentReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Agent List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Mobile</th><th>Username</th>"+
                                 "<th>Email</th><th>First NAme</th><th>Last Name</th><th>Station</th></tr>");
@@ -173,8 +173,8 @@ export const agentReport = (data)=> {
     return true;
 }
 
-export const fleetReport = (data)=> {
-    let reportWindow = reportHeader();
+export const fleetReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Bus List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Registration No</th><th>Engine No</th>"+
                                 "<th>Chasis No</th><th>Model _no</th><th>Bus Type</th><th>Layout</th><th>Total Seat</th></tr>");
@@ -197,8 +197,8 @@ export const fleetReport = (data)=> {
     return true;
 }
 
-export const fareReport = (data)=> {
-    let reportWindow = reportHeader();
+export const fareReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Fare List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Bus Type</th><th>Route</th><th>Fare Per Person</th></tr>");
     data.forEach((fare,index) => {
@@ -216,8 +216,8 @@ export const fareReport = (data)=> {
     return true;
 }
 
-export const tripReport = (data)=> {
-    let reportWindow = reportHeader();
+export const tripReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Trip List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Registration No</th><th>Route</th><th>Start Date</th><th>End Date</th><th>Departure</th></tr>");
     data.forEach((trip,index) => {
@@ -237,8 +237,8 @@ export const tripReport = (data)=> {
     return true;
 }
 
-export const routeReport = (data)=> {
-    let reportWindow = reportHeader();
+export const routeReport = (company, data)=> {
+    let reportWindow = reportHeader(company);
     reportWindow.document.write('<caption><span style="text-transform:uppercase"><strong>Route List<strong></span></caption>')
     reportWindow.document.write("<tr><th>S/N</th><th>Route Name</th><th>Start Point</th><th>End Point</th><th>Stopage Points</th><th>Description</th></tr>");
     data.forEach((route,index) => {

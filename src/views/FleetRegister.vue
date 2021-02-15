@@ -22,7 +22,7 @@
 								class="mr-1"
 							></v-text-field>
 							<v-spacer></v-spacer>
-							<v-tooltip bottom color="green">
+							<v-tooltip bottom color="green" v-if="canAdd">
 								<template v-slot:activator="{ on }">
 									<v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
 								</template>
@@ -102,13 +102,13 @@
 						</v-toolbar>
 					</template>
 					<template v-slot:item.action="{ item }">
-						<v-tooltip bottom color="primary">
+						<v-tooltip bottom color="primary" v-if="canEdit">
 							<template v-slot:activator="{ on }">
 								<v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
 							</template>
 							<span>Edit Fleet</span>
 						</v-tooltip>
-						<v-tooltip bottom color="red">
+						<v-tooltip bottom color="red" v-if="canDelete">
 							<template v-slot:activator="{ on }">
 								<v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
 							</template>
@@ -139,6 +139,9 @@ import { fleetReport } from "@/services/helper";
 export default {
     data: () => ({
 		overlay: false,
+		canAdd: false,
+		canEdit: false,
+		canDelete: false,
 		editedItem: {
 			id: 0,
 			registration_no: '',
@@ -167,8 +170,7 @@ export default {
 			{ text: 'Fleet Type', value: 'fleet_type' },
 			{ text: 'Layout', value: 'layout' },
 			{ text: 'Total Seat', value: 'seat_nos' },
-			{ text: 'Active', value: 'status' },
-			{ text: 'Actions', value: 'action', sortable: false },
+			{ text: 'Active', value: 'status' }
 		],
     }),
 
@@ -176,6 +178,9 @@ export default {
 		...mapGetters({
 				fleetTypes: 'FLEET_TYPES',
 				fleets: 'FLEETS',
+				collections: "COLLECTIONS",
+                roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
+				company: 'COMPANY',
 				isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
@@ -198,9 +203,13 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
-		this.overlay = true
 		this.$store.dispatch('GET_FLEET_TYPES');
 		this.$store.dispatch('GET_FLEETS');
+		this.$store.dispatch("GET_COLLECTIONS");
+        this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+		this.$store.dispatch("GET_COMPANY");
+        this.checkPermissions();
+		this.overlay = true
 	},
 
 	updated() {
@@ -278,7 +287,6 @@ export default {
 			return editedFleet;
 		},
 		verifyFleetType(){
-			console.log("I'm called")
 			let id = this.editedItem.fleet_type
 			this.fleetTypes.forEach( element => {
 				if (element.id == id && element.name == "Cargo") {
@@ -332,8 +340,33 @@ export default {
 			}
 		},
 		generateReport() {
-			return fleetReport(this.fleets)
+			return fleetReport(this.company[0].name, this.fleets)
 		},
+
+		checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "register");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
     },
 }
 </script>

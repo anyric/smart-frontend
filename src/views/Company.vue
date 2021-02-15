@@ -28,7 +28,7 @@
                                 width="100%"
                                 v-model="color"
                             ></v-color-picker>
-                            <v-btn class="success mt-3" block @click="save('company')">Save</v-btn>
+                            <v-btn class="success mt-3" block @click="save('company')" v-if="canAdd">Save</v-btn>
                         </div>
                     </v-card>
                 </form>
@@ -56,7 +56,7 @@
                                 class="mr-1"
                             ></v-text-field>
                             <v-spacer></v-spacer>
-                            <v-tooltip bottom color="green">
+                            <v-tooltip bottom color="green" v-if="canAdd">
                                 <template v-slot:activator="{ on }">
                                     <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
                                 </template>
@@ -85,13 +85,13 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.action="{ item }">
-                        <v-tooltip bottom color="primary">
+                        <v-tooltip bottom color="primary" v-if="canEdit">
                             <template v-slot:activator="{ on }">
                                 <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
                             </template>
                             <span>Edit Branch</span>
                         </v-tooltip>
-                        <v-tooltip bottom color="red">
+                        <v-tooltip bottom color="red" v-if="canDelete">
                             <template v-slot:activator="{ on }">
                                 <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
                             </template>
@@ -124,6 +124,9 @@ export default {
         logo: null,
         base64TextString: '',
         overlay: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false,
         editedItem: {
 			id: 0,
 			name: '',
@@ -147,7 +150,6 @@ export default {
 			},
 			{ text: 'Name', value: 'name' },
             { text: 'Mobile', value: 'mobile' },
-            { text: "Actions", value: "action", sortable: false }
 		],
     }),
 
@@ -155,6 +157,8 @@ export default {
 		...mapGetters({
                 company: 'COMPANY',
                 branches: 'BRANCH',
+                collections: "COLLECTIONS",
+                roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
                 isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
@@ -166,9 +170,12 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
-        this.overlay = true;
         this.$store.dispatch("GET_COMPANY");
         this.$store.dispatch("GET_BRANCH");
+        this.$store.dispatch("GET_COLLECTIONS");
+		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+        this.checkPermissions();
+        this.overlay = true;
     },
     watch: {
         overlay (val) {
@@ -253,7 +260,7 @@ export default {
         
         delete(data) {
 			if (data.type == "BRANCH") {
-				// this.$store.dispatch('DELETE_BRANCH', data);
+				this.$store.dispatch('DELETE_BRANCH', data);
 			}
         },
 
@@ -265,6 +272,31 @@ export default {
             }
             reader.readAsDataURL(file);
         },
+
+        checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "company");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
 	},
 }
 </script>

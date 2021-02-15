@@ -22,7 +22,7 @@
                         class="mr-1"
                     ></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-tooltip bottom color="green">
+                    <v-tooltip bottom color="green" v-if="canAdd">
                       <template v-slot:activator="{ on }">
                         <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
                       </template>
@@ -116,13 +116,13 @@
                 </v-toolbar>
             </template>
             <template v-slot:item.action="{ item }">
-                <v-tooltip bottom color="primary">
+                <v-tooltip bottom color="primary" v-if="canEdit">
                 <template v-slot:activator="{ on }">
                   <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
                 </template>
                 <span>Edit Route</span>
               </v-tooltip>
-              <v-tooltip bottom color="red">
+              <v-tooltip bottom color="red" v-if="canDelete">
                 <template v-slot:activator="{ on }">
                 <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
                 </template>
@@ -153,6 +153,9 @@ import { routeReport } from "@/services/helper";
 export default {
     data: () => ({
 		overlay: false,
+		canAdd: false,
+		canEdit: false,
+		canDelete: false,
 		editedItem: {
 			id: 0,
 			name: '',
@@ -185,7 +188,6 @@ export default {
 			{ text: 'Distance (Kms)', value: 'distance' },
 			{ text: 'Duration (Hrs)', value: 'approximate_time' },
 			{ text: 'Active', value: 'status' },
-			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
@@ -193,6 +195,9 @@ export default {
 		...mapGetters({
 			locations: 'LOCATIONS',
 			routes: 'ROUTES',
+			company: 'COMPANY',
+			collections: "COLLECTIONS",
+			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
 			isLoggedIn: "IS_LOGGED_IN"
 		}),
 		formTitle () {
@@ -215,9 +220,13 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
 		}
-		this.overlay = true;
+		this.$store.dispatch("GET_COMPANY");
 		this.$store.dispatch('GET_LOCATIONS');
+		this.$store.dispatch("GET_COLLECTIONS");
+		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
 		this.$store.dispatch('GET_ROUTES');
+		this.checkPermissions();
+		this.overlay = true;
 	},
 
 	updated() {
@@ -329,7 +338,6 @@ export default {
 						status: this.editedItem.status
 					}
 				};
-				// console.log(route);
 				this.$store.dispatch('SAVE_ROUTE', route);
 			} else {
 				let route = {
@@ -343,7 +351,6 @@ export default {
 					status: this.editedItem.status,
 					created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk
 				};
-				// console.log(route);
 				this.$store.dispatch('SAVE_ROUTE', route);
 			}
 			this.close();
@@ -355,8 +362,33 @@ export default {
 			}
 		},
 		generateReport() {
-			return routeReport(this.routes)
+			return routeReport(this.company[0].name, this.routes)
 		},
+
+		checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "routes");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
     },
 }
 </script>

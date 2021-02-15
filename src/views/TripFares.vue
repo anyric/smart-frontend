@@ -22,7 +22,7 @@
 								class="mr-1"
 							></v-text-field>
 							<v-spacer></v-spacer>
-							<v-tooltip bottom color="green">
+							<v-tooltip bottom color="green" v-if="canAdd">
 								<template v-slot:activator="{ on }">
 								<v-btn
 									color="teal darken-1"
@@ -103,7 +103,7 @@
 						</v-toolbar>
 					</template>
 					<template v-slot:item.action="{ item }">
-						<v-tooltip bottom color="primary">
+						<v-tooltip bottom color="primary" v-if="canEdit">
 							<template v-slot:activator="{ on }">
 								<v-icon
 									color="primary"
@@ -115,7 +115,7 @@
 							</template>
 							<span>Edit Fare</span>
 						</v-tooltip>
-						<v-tooltip bottom color="red">
+						<v-tooltip bottom color="red" v-if="canDelete">
 							<template v-slot:activator="{ on }">
 								<v-icon
 									color="red"
@@ -150,6 +150,9 @@ import { idToName, fareReport } from "@/services/helper";
 export default {
 	data: () => ({
 		overlay: false,
+		canAdd: false,
+		canEdit: false,
+		canDelete: false,
 		editedItem: {
 			id: 0,
 			fleet_type: 0,
@@ -172,7 +175,6 @@ export default {
 		},
 		{ text: "Route Name", value: "trip_route" },
 		{ text: "Fare Per Person", value: "price_per_person" },
-		{ text: "Actions", value: "action", sortable: false }
 		]
 	}),
 
@@ -181,6 +183,9 @@ export default {
 			fleetTypes: "FLEET_TYPES",
 			routes: "ROUTES",
 			fares: "FARES",
+			company: 'COMPANY',
+			collections: "COLLECTIONS",
+			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
 			isLoggedIn: "IS_LOGGED_IN"
 		}),
 		formTitle() {
@@ -203,10 +208,14 @@ export default {
 		if (!this.isLoggedIn) {
 			this.$router.push({ name: "login" });
 		}
-		this.overlay = true;
 		this.$store.dispatch("GET_FLEET_TYPES");
 		this.$store.dispatch("GET_ROUTES");
 		this.$store.dispatch("GET_FARES");
+		this.$store.dispatch("GET_COMPANY");
+        this.$store.dispatch("GET_COLLECTIONS");
+		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+        this.checkPermissions();
+		this.overlay = true;
 	},
 
 	updated() {
@@ -322,8 +331,33 @@ export default {
 			}
 		},
 		generateReport() {
-			return fareReport(this.fares)
+			return fareReport(this.company[0].name, this.fares)
 		},
+
+		checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "fares");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
 	}
 };
 </script>

@@ -24,7 +24,7 @@
                     <v-spacer></v-spacer>
                     <v-tooltip bottom color="green">
                       <template v-slot:activator="{ on }">
-                        <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()"><i class="fas fa-plus mr-1"></i> Add New</v-btn>
+                        <v-btn color="teal darken-1" dark v-on="on" class="mb-2 button-small" @click="editItem()" v-if="canAdd" ><i class="fas fa-plus mr-1"></i> Add New</v-btn>
                       </template>
                       <span>User</span>
                     </v-tooltip>
@@ -104,13 +104,13 @@
                 </v-toolbar>
             </template>
             <template v-slot:item.action="{ item }">
-                <v-tooltip bottom color="primary">
+                <v-tooltip bottom color="primary" v-if="canEdit">
                     <template v-slot:activator="{ on }">
                         <v-icon color="primary" small v-on="on" class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
                     </template>
                     <span>Edit User</span>
                 </v-tooltip>
-                <v-tooltip bottom color="red">
+                <v-tooltip bottom color="red" v-if="canDelete">
                     <template v-slot:activator="{ on }">
                         <v-icon color="red" small v-on="on" @click="openDialog(item)">mdi-delete</v-icon>
                     </template>
@@ -142,6 +142,9 @@ import { userReport } from "@/services/helper";
 export default {
     data: () => ({
         overlay: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false,
 		editedItem: {
             id: '',
 			mobile: '',
@@ -175,13 +178,15 @@ export default {
             { text: 'Active', value: 'is_active' },
             { text: 'Staff', value: 'is_staff' },
             { text: 'Admin', value: 'is_admin' },
-			{ text: 'Actions', value: 'action', sortable: false },
 		],
     }),
 
     computed: {
 		...mapGetters({
                 users: 'USERS',
+                collections: "COLLECTIONS",
+                roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
+                company: 'COMPANY',
                 isLoggedIn: "IS_LOGGED_IN"
 			}),
 		formTitle () {
@@ -204,8 +209,12 @@ export default {
         if(!this.isLoggedIn){
             this.$router.push({name: 'login'});
         }
-        this.overlay = true;
         this.$store.dispatch('GET_USERS');
+        this.$store.dispatch("GET_COLLECTIONS");
+        this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
+        this.$store.dispatch("GET_COMPANY");
+        this.checkPermissions();
+        this.overlay = true;
     },
     created() {
 		EventBus.$on('delete', data => {
@@ -279,8 +288,33 @@ export default {
         },
         
         generateReport() {
-			return userReport(this.users)
+			return userReport(this.company[0].name, this.users)
 		},
+
+        checkPermissions() {
+            const rec = this.collections.filter(item => item.name.toLowerCase() === "users");
+            const records =  this.roleObjectPermissions.filter(record => record.objectId == rec[0].id)
+            
+            if(records.length > 0){
+                if(records[0].permissions.split(',').includes('add')){
+                    this.canAdd = true;
+                }
+
+                if(records[0].permissions.split(',').includes('edit')){
+                    this.canEdit = true;
+                }
+
+                if(records[0].permissions.split(',').includes('delete')){
+                    this.canDelete = true;
+
+                }
+
+                if(this.canEdit | this.canDelete){
+                    this.headers.push({ text: 'Actions', value: 'action', sortable: false });
+
+                }
+            }
+        }
 	},
 }
 </script>
