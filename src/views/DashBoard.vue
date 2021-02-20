@@ -44,13 +44,13 @@ import {mapGetters} from "vuex";
             {name:"agents", text: "Total Agents", url: "agents", icon: "fas fa-handshake", show: false},
             {name:"fleets", text: "Total Fleets", url: "fleet-register", icon: "fas fa-bus-alt", show: false},
             {name:"fleet types", text: "Total Fleet-Types", url: "fleet-types", icon: "fas fa-bus", show: false},
-            {name:"locations", text: "Total Locations", url: "trip-locations", icon: "fas fa-map-marker", show: false},
-            {name:"routes", text: "Total Routes", url: "trip-routes", icon: "fas fa-road", show: false},
-            {name:"schedules", text: "Total Schedules", url: "trip-assigned", icon: "fas fa-suitcase", show: false},
             {name:"collections", text: "Total Collections", url: "collections", icon: "fas fa-user", show: false},
             {name:"fares", text: "Total Fares", url: "trip-fares", icon: "fa fa-credit-card", show: false},
             {name:"tickets", text: "Total Tickets", url: "trip-ticket", icon: "fa fa-credit-card", show: false},
             {name:"roles", text: "Total Roles", url: "roles", icon: "fas fa-user", show: false},
+            {name:"locations", text: "Total Locations", url: "trip-locations", icon: "fas fa-map-marker", show: false},
+            {name:"routes", text: "Total Routes", url: "trip-routes", icon: "fas fa-road", show: false},
+            {name:"schedules", text: "Total Schedules", url: "trip-assigned", icon: "fas fa-suitcase", show: false},
         ],
     }),
     computed: {
@@ -95,7 +95,7 @@ import {mapGetters} from "vuex";
         overlay (val) {
             val && setTimeout(() => {
                 this.overlay = false
-            }, 1000)
+            }, 500)
         },
     },
 

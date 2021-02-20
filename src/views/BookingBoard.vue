@@ -11,12 +11,36 @@
                 </h5>
             </div>
         </v-row>
+        <v-row class="container justify-center px-10">
+                <v-select
+                    class="px-10"
+                    :items="branches"
+                    label="From *"
+                    item-text="name"
+                    item-value="name"
+                    id="from"
+                    v-model="from"
+                    required
+                ></v-select>
+                <v-select
+                    class="pl-10"
+                    :items="branches"
+                    label="To *"
+                    item-text="name"
+                    item-value="name"
+                    id="to"
+                    v-model="to"
+                    required
+                    @change="filterRoutes"
+                ></v-select>
+        </v-row>
         <div class="container px-0">
             <v-simple-table
                 fixed-header
                 height="300px"
                 style="width: 90%"
                 class="table-responsive container px-0"
+                
             >
                 <template v-slot:default>
                     <thead>
@@ -40,7 +64,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="item in schedule"
+                            v-for="item in filteredSchedule"
                             :key="item.id"
                         >
                             <td>{{ item.trip_start_date }}</td>
@@ -79,7 +103,10 @@ export default {
     data: () => ({
         overlay: false,
         items: [],
-        pickUpPoints: []
+        pickUpPoints: [],
+        from: '',
+        to: '',
+        filteredSchedule: []
     }),
 
     computed: {
@@ -88,22 +115,29 @@ export default {
             locations: 'LOCATIONS',
             schedule: "TRIP_SCHEDULE",
             company: 'COMPANY',
+            branches: 'BRANCH',
             isLoggedIn: "IS_LOGGED_IN"
 		}),
     },
     mounted() {
-        this.overlay = true;
         this.$store.dispatch('GET_LOCATIONS');
         this.$store.dispatch('GET_ROUTES');
         this.$store.dispatch('GET_TRIP_SCHEDULE');
         this.$store.dispatch('GET_COMPANY');
+        this.$store.dispatch("GET_BRANCH");
+        this.filteredSchedule = this.schedule;
+        this.overlay = true;
+    },
+
+    updated() {
+        this.filterRoutes()
     },
 
     watch: {
         overlay (val) {
             val && setTimeout(() => {
                 this.overlay = false
-            }, 1000)
+            }, 500)
         },
     },
     
@@ -123,6 +157,17 @@ export default {
                 this.$router.push({name: 'schedule', params: { scheduleId: trip.id }});
             }else{
                 this.$router.push({name: 'premiumschedule', params: { scheduleId: trip.id }});
+            }
+        },
+
+        filterRoutes() {
+            if (this.from && this.to) {
+                this.filteredSchedule = [];
+                this.filteredSchedule = this.schedule.filter(route => route.route_name === this.from + ' - '+ this.to );
+            }
+
+            if((!this.from && !this.to) || this.from === this.to){
+                this.filteredSchedule = this.schedule;
             }
         }
     }

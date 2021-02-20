@@ -252,7 +252,7 @@ export default {
             val && setTimeout(() => {
                 this.overlay = false;
                 this.checkSeat();
-            }, 5000)
+            }, 500)
         },
     },
 

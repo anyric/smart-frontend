@@ -89,7 +89,7 @@ export const printTicket = (company, ticket) => {
     ticketwindow.document.write('<table style="width:60%; border-bottom: 2px solid #dddddd;" id="data">')
     ticketwindow.document.write('<caption><span style="text-transform:uppercase"><strong>Passenger Ticket<strong></span></caption>')
     ticketwindow.document.write(`<tr><th colspan=2><img class="mt-1" src="${ company.logo}" style="width: 25px; height: 25px"> ${ company.name }</th></tr>`)
-    ticketwindow.document.write(`<tr><td><small>P.O.Box 770 Arua</small></td><td><small>SEAT NO. <strong> ${ ticket.seat} </strong></small></td></tr>`)
+    ticketwindow.document.write(`<tr><td><small>P.O.Box ${ company.box_no } ${ company.district } </small></td><td><small>SEAT NO. <strong> ${ ticket.seat} </strong></small></td></tr>`)
     ticketwindow.document.write(`<tr><td><small>BUS NO.<strong> <br> ${ ticket.fleet_registration_no }
                                     </strong></small></td><td><small>RECEIPT NO. <strong> <br>
                                     ${ ticket.ticket_no } </strong></small></td></tr>`)

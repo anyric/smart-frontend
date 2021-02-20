@@ -107,7 +107,7 @@ export default {
             val && setTimeout(() => {
                 this.updatePermissions();
                 this.overlay = false
-            }, 1000)
+            }, 500)
         },
     },
 
@@ -183,7 +183,7 @@ export default {
         generateRoleObjectPermissions(entity){
             const selectedPermissions = this.getSelectedCheckboxValues(entity.name)
 
-            if(this.roleHasPermissions & selectedPermissions.length > 0){
+            if(this.roleHasPermissions && selectedPermissions.length > 0){
                 const recordExist =  this.roleObjectPermissions.filter(record => record.objectId == entity.id & record.roleId == this.roleId)
                 if(recordExist.length > 0){
                     if(recordExist[0].permissions.split(',').sort().join(',') === selectedPermissions.sort().join(',')){

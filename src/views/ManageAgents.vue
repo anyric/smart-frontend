@@ -204,7 +204,7 @@ export default {
 		overlay (val) {
             val && setTimeout(() => {
                 this.overlay = false
-            }, 1000)
+            }, 500)
         },
     },
 

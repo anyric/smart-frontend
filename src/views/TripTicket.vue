@@ -236,7 +236,7 @@
 						</v-row>
 						<v-row class="mt-0 mb-0">
 							<v-col cols="5" class="sm12 py-1">
-								<div class="ml-5 pl-0">P.O.Box 770 Arua</div>
+								<div class="ml-5 pl-0">P.O.Box {{ company[0].box_no }} {{ company[0].district }}</div>
 							</v-col>
 							<v-col cols="7" class="sm12 pb-0 pt-1 text-right">
 								<small> SEAT NO. <strong> {{ viewTicket.seat }} </strong></small>
@@ -439,7 +439,7 @@ export default {
             val && setTimeout(() => {
 				this.logo = this.company[0].logo;
 				this.overlay = false
-            }, 1000)
+            }, 500)
         },
 	},
 

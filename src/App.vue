@@ -222,6 +222,7 @@ export default {
         this.$store.dispatch('GET_COMPANY');
 		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
 		this.$store.dispatch('GET_COLLECTIONS');
+		this.addIndexTitle();
     },
 	created() {
 		let user = this.$cookie.get('currentUser');
@@ -298,12 +299,17 @@ export default {
 			this.isOpen1 = true;
 		},
 
-
 		async logout() {
 			this.overlay = true;
 			this.$store.dispatch("LOGOUT");
 			this.close()
 			this.isShowing = true;
+		},
+
+		addIndexTitle() {
+			if (this.company.length > 0 ) {
+				document.getElementById('index').innerHTML = this.company[0].name;
+			}
 		}
 	}
 };

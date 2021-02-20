@@ -14,6 +14,16 @@
                                 label="Name"
                                 required
                             ></v-text-field>
+                            <v-text-field
+                                v-model="box_no"
+                                label="P.0.Box"
+                                required
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="district"
+                                label="District/City"
+                                required
+                            ></v-text-field>
                             <v-subheader class="pl-0">Logo</v-subheader>
                             <input @change="selectLogo" type="file" name="logo" accept="image/*">
                             <img :src="logo" style="width: 40px; height: 40px">
@@ -120,6 +130,8 @@ import {mapGetters} from "vuex";
 export default {
     data: () => ({
         name: '',
+        box_no: 0,
+        district: '',
         color: '',
         logo: null,
         base64TextString: '',
@@ -181,10 +193,12 @@ export default {
         overlay (val) {
             val && setTimeout(() => {
                 this.name = this.company[0].name;
+                this.box_no = this.company[0].box_no;
+                this.district = this.company[0].district;
                 this.color = this.company[0].color;
                 this.logo = this.company[0].logo;
                 this.overlay = false;
-            }, 5000)
+            }, 500)
         },
     },
     methods: {
@@ -221,6 +235,8 @@ export default {
                         pk: this.company[0].id,
                         data: {
                             name: this.name,
+                            box_no: this.box_no,
+                            district: this.district,
                             color: this.color,
                             logo: this.logo
                         }
@@ -229,6 +245,8 @@ export default {
                 } else {
                     let data = {
                         name: this.name,
+                        box_no: this.box_no,
+                        district: this.district,
                         color: this.color,
                         created_by: JSON.parse(this.$cookie.get('currentUser')).user.pk,
                         logo: this.logo
