@@ -13,7 +13,7 @@
 			<template>
 				<v-list>
 					<v-list-item v-for="(menu, i) in menus" :key="i" :to="menu.route" :name="menu.name">
-						<v-list-group v-if="menu.children && menu.children.length && menu.show" :key="menu.text">
+						<v-list-group v-if="menu.children && menu.children.length && menu.show" :key="i">
 							<template v-slot:activator>
 								<v-list-item-icon>
 									<v-icon small color="white darken-2">{{menu.icon}}</v-icon>
@@ -31,7 +31,7 @@
 							</v-list-item>
 							<!-- end of children list -->
 						</v-list-group>
-						<v-list-item v-else :key="menu.text" link>
+						<v-list-item v-else :key="i" link>
 							<v-list-item-icon v-if="menu.show">
 								<v-icon small color="white darken-2 mr-1">{{ menu.icon }}</v-icon>
 							</v-list-item-icon>
@@ -208,9 +208,9 @@ export default {
 	computed: {
 		...mapGetters({
 			company: "COMPANY",
-			isLoggedIn: "IS_LOGGED_IN",
-			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
 			collections: "COLLECTIONS",
+			roleObjectPermissions: "ROLEOBJECTPERMISSIONS",
+			isLoggedIn: "IS_LOGGED_IN",
 		}),
 
 		formTitle() {
@@ -223,6 +223,7 @@ export default {
 		this.$store.dispatch('GET_ROLEOBJECTPERMISSIONS');
 		this.$store.dispatch('GET_COLLECTIONS');
 		this.addIndexTitle();
+		this.updateMenu();
     },
 	created() {
 		let user = this.$cookie.get('currentUser');
@@ -234,6 +235,7 @@ export default {
 		EventBus.$on('show-snackbar', data => {
 			this.showSnackbar(data);
 		})
+		this.updateMenu();
 	},
 
 	updated() {
@@ -241,6 +243,7 @@ export default {
             this.$router.push({name: 'login'});
 		}
 		this.updateMenu();
+		this.addIndexTitle()
 	},
 
 	watch: {
@@ -249,6 +252,12 @@ export default {
 			this.overlay = false
 			}, 5000)
 		},
+
+		isShowing(val) {
+			val && setTimeout(() => {
+				this.isShowing = false;
+			}, 5000);
+		}
 	},
 
 	methods: {

@@ -12,27 +12,51 @@
             </div>
         </v-row>
         <v-row class="container justify-center px-10">
-                <v-select
-                    class="px-10"
-                    :items="branches"
-                    label="From *"
-                    item-text="name"
-                    item-value="name"
-                    id="from"
-                    v-model="from"
-                    required
-                ></v-select>
-                <v-select
-                    class="pl-10"
-                    :items="branches"
-                    label="To *"
-                    item-text="name"
-                    item-value="name"
-                    id="to"
-                    v-model="to"
-                    required
+            <v-select
+                class="px-10"
+                :items="branches"
+                label="From *"
+                item-text="name"
+                item-value="name"
+                id="from"
+                v-model="from"
+                required
+            ></v-select>
+            <v-select
+                class="pl-10"
+                :items="branches"
+                label="To *"
+                item-text="name"
+                item-value="name"
+                id="to"
+                v-model="to"
+                required
+            ></v-select>
+            <v-menu
+                v-model="travel_date"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+            >
+                <template v-slot:activator="{ on }">
+                    <v-text-field
+                        class="pl-10"
+                        required
+                        v-model="trip_date"
+                        label="Travel Date"
+                        prepend-icon="fa fa-calendar"
+                        readonly
+                        v-on="on"
+                    ></v-text-field>
+                </template>
+                <v-date-picker
+                    v-model="trip_date"
+                    @input="travel_date = false"
                     @change="filterRoutes"
-                ></v-select>
+                ></v-date-picker>
+            </v-menu>
         </v-row>
         <div class="container px-0">
             <v-simple-table
@@ -43,7 +67,7 @@
                 
             >
                 <template v-slot:default>
-                    <thead>
+                    <thead v-if="!noRecord">
                         <tr>
                             <th class="text-left">
                             Date
@@ -83,6 +107,11 @@
                                 </v-btn>
                             </td>
                         </tr>
+                        <tr>
+                            <td colspan="4" v-if="noRecord">
+                                <span> <strong> No schedule(s) found!, Please try again. </strong></span>
+                            </td>
+                        </tr>
                     </tbody>
                 </template>
             </v-simple-table>
@@ -99,14 +128,18 @@
 
 <script>
 import {mapGetters} from "vuex";
+import { EventBus } from "@/services/bus";
 export default {
     data: () => ({
         overlay: false,
+        travel_date: false,
+        trip_date: '',
         items: [],
         pickUpPoints: [],
         from: '',
         to: '',
-        filteredSchedule: []
+        filteredSchedule: [],
+        noRecord: false
     }),
 
     computed: {
@@ -161,13 +194,25 @@ export default {
         },
 
         filterRoutes() {
-            if (this.from && this.to) {
+            if (this.from && this.to && this.trip_date) {
                 this.filteredSchedule = [];
-                this.filteredSchedule = this.schedule.filter(route => route.route_name === this.from + ' - '+ this.to );
+                this.filteredSchedule = this.schedule.filter(route => route.route_name === this.from + ' - '+ this.to && route.trip_start_date === this.trip_date );
+                this.noRecord = false;
             }
 
-            if((!this.from && !this.to) || this.from === this.to){
-                this.filteredSchedule = this.schedule;
+            if(this.from !== '' && this.to !== '' && this.from === this.to ){
+                EventBus.$emit("show-snackbar", {
+                    text: "From and To can't be the same!",
+                    color: "red",
+                });
+            }
+
+            if((this.from && this.to) && this.trip_date || !this.from === this.to){
+                this.filteredSchedule = []
+                this.filteredSchedule = this.schedule.filter(route => route.route_name === this.from + ' - '+ this.to && route.trip_start_date === this.trip_date );
+                if(this.filteredSchedule.length < 1){
+                    this.noRecord = true;
+                }
             }
         }
     }
